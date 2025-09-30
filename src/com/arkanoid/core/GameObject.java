@@ -1,11 +1,12 @@
 package com.arkanoid.core;
 
-public abstract class GameObject {
-    // Thuộc tính được bảo vệ để lớp con có thể truy cập
-    protected int x, y;
-    protected int width, height;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
-    // Constructor (Hàm khởi tạo)
+public abstract class GameObject {
+    protected int x, y, width, height;
+    protected boolean active = true;
+
     public GameObject(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -13,24 +14,21 @@ public abstract class GameObject {
         this.height = height;
     }
 
-    // Các phương thức trừu tượng buộc lớp con phải triển khai
     public abstract void update();
-    public abstract void render();
+    public abstract void render(Graphics2D g);
 
-    // Getters để các lớp khác có thể đọc thông tin (Tính đóng gói)
-    public int getX() {
-        return x;
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    public int setY(int y) { this.y = y; return y; }
+    public int setX(int x) { this.x = x; return x; }
+    public int setWidth(int width) { this.width = width; return width; }
+    public int setHeight(int height) { this.height = height; return height; }
 }

@@ -2,6 +2,8 @@ package com.arkanoid.entities;
 
 import com.arkanoid.core.GameObject;
 
+import java.awt.*;
+
 public class Brick extends GameObject {
     private int hitPoints;
     private String type;
@@ -15,7 +17,7 @@ public class Brick extends GameObject {
     public void update() { /* Logic cập nhật gạch */ }
 
     @Override
-    public void render() { /* Logic vẽ gạch */ }
+    public void render(Graphics2D g) { /* Logic vẽ gạch */ }
 
     public void takeHit() { this.hitPoints--; }
     public boolean isDestroyed() { return this.hitPoints <= 0; }

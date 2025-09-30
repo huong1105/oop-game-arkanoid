@@ -3,6 +3,8 @@ package com.arkanoid.entities;
 import com.arkanoid.core.MovableObject;
 import com.arkanoid.core.GameObject;
 
+import java.awt.*;
+
 // Lớp Ball kế thừa từ MovableObject
 public class Ball extends MovableObject {
     private int speed;
@@ -16,7 +18,7 @@ public class Ball extends MovableObject {
     public void update() { /* Logic cập nhật bóng */ }
 
     @Override
-    public void render() { /* Logic vẽ bóng */ }
+    public void render(Graphics2D g) { /* Logic vẽ bóng */ }
 
     public void bounceOff(GameObject other) { /* Logic nảy bóng */ }
     public void checkCollision(GameObject other) { /* Logic kiểm tra va chạm */ }
