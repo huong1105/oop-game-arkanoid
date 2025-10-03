@@ -2,6 +2,8 @@ package com.arkanoid.entities;
 
 import com.arkanoid.core.MovableObject;
 
+import java.awt.*;
+
 // Lớp Paddle kế thừa từ MovableObject
 public class Paddle extends MovableObject {
     private int speed;
@@ -15,7 +17,7 @@ public class Paddle extends MovableObject {
     public void update() { /* Logic cập nhật paddle */ }
 
     @Override
-    public void render() { /* Logic vẽ paddle */ }
+    public void render(Graphics2D g) { /* Logic vẽ paddle */ }
 
     public void moveLeft() { /* Logic di chuyển trái */ }
     public void moveRight() { /* Logic di chuyển phải */ }
