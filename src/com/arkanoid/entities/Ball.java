@@ -7,19 +7,39 @@ import java.awt.*;
 
 // Lớp Ball kế thừa từ MovableObject
 public class Ball extends MovableObject {
-    private int speed;
-    private int directionX, directionY;
+    private int maxSpeed;
 
-    public Ball(int x, int y, int width, int height) {
-        super(x, y, width, height, 1, -1); // Vận tốc ban đầu
+    public Ball(int x, int y, int diameter, int speedX, int speedY) {
+        super(x, y, diameter, diameter, speedX, speedY);
     }
 
+    /**
+     * cập nhật vị trí bóng.
+     */
     @Override
-    public void update() { /* Logic cập nhật bóng */ }
+    public void update() {
+        while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed){
+            setSpeedX(getSpeedX() * 0.99);
+            setSpeedY(getSpeedY() * 0.99);
+        }
+        setX(getX() + (int)getSpeedX());
+        setY(getY() + (int)getSpeedY());
+    }
 
     @Override
     public void render(Graphics2D g) { /* Logic vẽ bóng */ }
 
-    public void bounceOff(GameObject other) { /* Logic nảy bóng */ }
-    public void checkCollision(GameObject other) { /* Logic kiểm tra va chạm */ }
+    /**
+     * thay đổi hướng theo phương y.
+     */
+    private void reverseX() {
+        setSpeedX(-getSpeedX());
+    }
+
+    /**
+     * thay đổi hướng theo phương x.
+     */
+    private void reverseY() {
+        setSpeedY(-getSpeedY());
+    }
 }
