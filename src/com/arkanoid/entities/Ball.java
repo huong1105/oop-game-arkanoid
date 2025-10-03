@@ -13,6 +13,14 @@ public class Ball extends MovableObject {
         super(x, y, diameter, diameter, speedX, speedY);
     }
 
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
     /**
      * cập nhật vị trí bóng.
      */
@@ -32,14 +40,14 @@ public class Ball extends MovableObject {
     /**
      * thay đổi hướng theo phương y.
      */
-    private void reverseX() {
+    public void reverseX() {
         setSpeedX(-getSpeedX());
     }
 
     /**
      * thay đổi hướng theo phương x.
      */
-    private void reverseY() {
+    public void reverseY() {
         setSpeedY(-getSpeedY());
     }
 }
