@@ -1,6 +1,7 @@
 package com.arkanoid.core;
 
 import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public abstract class GameObject {
@@ -17,6 +18,8 @@ public abstract class GameObject {
     }
 
     public abstract void update();
+    
+    public abstract void render(GraphicsContext gc);
 
     public Image getSprite() {
         return sprite;

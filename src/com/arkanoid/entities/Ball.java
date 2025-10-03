@@ -2,6 +2,7 @@ package com.arkanoid.entities;
 
 import com.arkanoid.core.MovableObject;
 import com.arkanoid.core.GameObject;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.*;
 
@@ -35,7 +36,7 @@ public class Ball extends MovableObject {
     }
 
     @Override
-    public void render(Graphics2D g) { /* Logic vẽ bóng */ }
+    public void render(GraphicsContext gc) { /* Logic vẽ bóng */ }
 
     /**
      * thay đổi hướng theo phương y.

@@ -1,6 +1,7 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.core.MovableObject;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.*;
 
@@ -17,7 +18,7 @@ public class Paddle extends MovableObject {
     public void update() { /* Logic cập nhật paddle */ }
 
     @Override
-    public void render(Graphics2D g) { /* Logic vẽ paddle */ }
+    public void render(GraphicsContext gc) { /* Logic vẽ paddle */ }
 
     public void moveLeft() { /* Logic di chuyển trái */ }
     public void moveRight() { /* Logic di chuyển phải */ }
