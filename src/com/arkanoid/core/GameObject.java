@@ -1,13 +1,15 @@
 package com.arkanoid.core;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 
 public abstract class GameObject {
-    protected int x, y, width, height;
-    protected boolean active = true;
 
-    public GameObject(int x, int y, int width, int height) {
+    protected double x, y, width, height;
+    protected boolean active = true;
+    protected Image sprite;
+
+    public GameObject(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -15,20 +17,28 @@ public abstract class GameObject {
     }
 
     public abstract void update();
-    public abstract void render(Graphics2D g);
 
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+    public Image getSprite() {
+        return sprite;
     }
 
+    public Rectangle2D getBounds() {
+        return new Rectangle2D(x, y, width, height);
+    }
+
+    public boolean intersects(GameObject other) {
+        return this.getBounds().intersects(other.getBounds());
+    }
+
+    // Getters and Setters
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    public int setY(int y) { this.y = y; return y; }
-    public int setX(int x) { this.x = x; return x; }
-    public int setWidth(int width) { this.width = width; return width; }
-    public int setHeight(int height) { this.height = height; return height; }
+    public double getX() { return x; }
+    public void setX(double x) { this.x = x; }
+    public double getY() { return y; }
+    public void setY(double y) { this.y = y; }
+    public double getWidth() { return width; }
+    public void setWidth(double width) { this.width = width; }
+    public double getHeight() { return height; }
+    public void setHeight(double height) { this.height = height; }
 }
