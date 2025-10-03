@@ -66,6 +66,20 @@ public class GameManager implements Runnable {
     }
 
     private void checkCollisions() {
+        if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= 1000 ){
+            ball.reverseX();
+        }
+        if (ball.getY() <= 0){
+            ball.reverseY();
+        }
+        if (ball.getBounds().intersects(paddle.getBounds())){
+            int paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+            int ballCenterX = ball.getX() + ball.getWidth() / 2;
+            int offX = ballCenterX - paddleCenterX;
+            ball.setSpeedX(ball.getMaxSpeed() * offX / (paddle.getWidth() / 2));
+            double newSpeedY = Math.sqrt(ball.getMaxSpeed() * ball.getMaxSpeed() - ball.getSpeedX() * ball.getSpeedX());
+            ball.setSpeedY(-newSpeedY);
+        }
 
     }
 
