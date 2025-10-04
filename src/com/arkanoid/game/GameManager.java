@@ -3,6 +3,7 @@ package com.arkanoid.game;
 import com.arkanoid.core.GameObject;
 import com.arkanoid.entities.*;
 import com.arkanoid.ui.Renderer;
+import javafx.geometry.Rectangle2D;
 
 import java.awt.*;
 import java.util.List;
@@ -65,6 +66,9 @@ public class GameManager implements Runnable {
         }
     }
 
+    /**
+     * Kiểm tra va chạm giữa bóng với tường, paddle và brick
+     */
     private void checkCollisions() {
         if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= 1000 ){
             ball.reverseX();
@@ -72,15 +76,33 @@ public class GameManager implements Runnable {
         if (ball.getY() <= 0){
             ball.reverseY();
         }
+        if (ball.getY() >= 1000){
+            loseLife();
+        }
         if (ball.getBounds().intersects(paddle.getBounds())){
             double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
             double ballCenterX = ball.getX() + ball.getWidth() / 2;
             double offX = ballCenterX - paddleCenterX;
-            ball.setSpeedX(ball.getMaxSpeed() * offX / (paddle.getWidth() / 2));
+            ball.setSpeedX(ball.getMaxSpeed() * 0.9 * offX / (paddle.getWidth() / 2));
             double newSpeedY = Math.sqrt(ball.getMaxSpeed() * ball.getMaxSpeed() - ball.getSpeedX() * ball.getSpeedX());
             ball.setSpeedY(-newSpeedY);
         }
-
+        for (GameObject obj : gameObjects){
+            if (obj instanceof Brick){
+                Rectangle2D brickBound = obj.getBounds();
+                if (ball.getBounds().intersects(brickBound)){
+                    Rectangle2D intersection = ball.intersection(brickBound);
+                    if (intersection.getHeight() >= intersection.getWidth()){
+                        ball.reverseY();
+                    }
+                    else {
+                        ball.reverseX();
+                    }
+                    ((Brick) obj).takeHit();
+                    break;
+                }
+            }
+        }
     }
 
     // Getters for Renderer and KeyInput
