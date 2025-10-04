@@ -3,6 +3,7 @@ package com.arkanoid.core;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 
 public abstract class GameObject {
 
@@ -18,7 +19,7 @@ public abstract class GameObject {
     }
 
     public abstract void update();
-    
+
     public abstract void render(GraphicsContext gc);
 
     public Image getSprite() {
@@ -31,6 +32,31 @@ public abstract class GameObject {
 
     public boolean intersects(GameObject other) {
         return this.getBounds().intersects(other.getBounds());
+    }
+
+    /**
+     * Phương thức tính toán và trả về vùng giao nhau của 2 Rectangle2D.
+     * Trả về null nếu chúng không giao nhau.
+     * @param other - vật giao với vật hiện tại
+     * @return - Rectangle2D là vùng giao của 2 vật hoặc null.
+     */
+    public Rectangle2D intersection(Rectangle2D other){
+        Rectangle2D thisRec = this.getBounds();
+        //tính tọa độ góc trên trái
+        double newX = Math.max(thisRec.getMinX(), other.getMinX());
+        double newY = Math.max(thisRec.getMinY(), other.getMinY());
+        //tính tọa độ góc dưới phải
+        double newMaxX = Math.min(thisRec.getMaxX(), other.getMaxX());
+        double newMaxY = Math.min(thisRec.getMaxY(), other.getMaxY());
+        //tính độ dài rộng của vùng giao
+        double newWidth = newMaxX - newX;
+        double newHeight = newMaxY - newY;
+        //trả về vùng giao nếu có
+        if (newWidth > 0 && newHeight > 0) {
+            return new Rectangle2D(newX, newY, newWidth, newHeight);
+        } else {
+            return null;
+        }
     }
 
     // Getters and Setters
