@@ -1,7 +1,5 @@
 package com.arkanoid.entities;
 
-package com.arkanoid.powerups;
-
 import com.arkanoid.GameController;
 import com.arkanoid.Paddle;
 
