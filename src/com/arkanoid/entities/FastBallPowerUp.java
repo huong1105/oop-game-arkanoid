@@ -2,11 +2,22 @@ package com.arkanoid.entities;
 
 public class FastBallPowerUp extends PowerUp {
     public FastBallPowerUp(int x, int y, int width, int height) {
-        super(x, y, width, height, "FAST_BALL");
+        super(x, y, width, height, "FastBall");
     }
 
     @Override
-    public void applyEffect(Paddle paddle) {
-        // Logic làm cho bóng nhanh hơn (cần tham chiếu đến Ball)
+    public void applyEffect(Object obj) {
+        if (obj instanceof Ball) {
+            Ball ball = (Ball) obj;
+            ball.setMaxSpeed(ball.getMaxSpeed() * 2);
+        }
+    }
+
+    @Override
+    public void removeEffect(Object obj) {
+        if (obj instanceof Ball) {
+            Ball ball = (Ball) obj;
+            ball.setMaxSpeed(ball.getMaxSpeed() / 2);
+        }
     }
 }
