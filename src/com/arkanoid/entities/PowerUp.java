@@ -5,7 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.*;
 
-public class PowerUp extends GameObject {
+public abstract class PowerUp extends GameObject {
     private String type;
     private int duration;
 
@@ -20,6 +20,7 @@ public class PowerUp extends GameObject {
     @Override
     public void render(GraphicsContext gc) { /* Logic vẽ power-up */ }
 
-    public void applyEffect(Paddle paddle) { /* Logic áp dụng hiệu ứng */ }
-    public void removeEffect(Paddle paddle) { /* Logic gỡ hiệu ứng */ }
+    public abstract void applyEffect(Object obj);
+
+    public abstract void removeEffect(Object obj);
 }

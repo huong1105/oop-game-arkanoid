@@ -1,34 +1,24 @@
 package com.arkanoid.entities;
 
-import com.arkanoid.GameController;
-import com.arkanoid.Paddle;
-
 public class ExpandPaddlePowerUp extends PowerUp {
-    private double factor;
 
-    /**
-     * @param x vị trí spawn (x)
-     * @param y vị trí spawn (y)
-     * @param factor hệ số mở rộng (ví dụ 1.5 = tăng 50%)
-     * @param durationMillis thời gian hiệu lực (ms)
-     */
-    public ExpandPaddlePowerUp(double x, double y, double factor, long durationMillis) {
-        super(x, y, Type.EXPAND_PADDLE, durationMillis);
-        this.factor = factor;
+    public ExpandPaddlePowerUp(int x, int y, int width, int height) {
+        super(x, y, width, height, "ExpandPaddle");
     }
 
     @Override
-    public void applyEffect(GameController controller) {
-        Paddle paddle = controller.getPaddle();
-        // add modifier để mở rộng paddle
-        paddle.addWidthModifier(getId(), factor);
+    public void applyEffect(Object obj) {
+        if (obj instanceof Paddle) {
+            Paddle paddle = (Paddle) obj;
+            paddle.setWidth(paddle.getWidth() * 2.0);
+        }
     }
 
     @Override
-    public void removeEffect(GameController controller) {
-        Paddle paddle = controller.getPaddle();
-        // gỡ modifier đã thêm khi hết hiệu lực
-        paddle.removeWidthModifier(getId());
+    public void removeEffect(Object obj) {
+        if (obj instanceof Paddle) {
+            Paddle paddle = (Paddle) obj;
+            paddle.setWidth(paddle.getWidth() / 2.0);
+        }
     }
 }
-
