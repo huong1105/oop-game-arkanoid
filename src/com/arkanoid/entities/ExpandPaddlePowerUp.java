@@ -7,7 +7,7 @@ import com.arkanoid.Paddle;
 
 public class ExpandPaddlePowerUp extends PowerUp {
     private double factor;
-
+// ttestts
     /**
      * @param x vị trí spawn (x)
      * @param y vị trí spawn (y)
