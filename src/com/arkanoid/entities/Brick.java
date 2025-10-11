@@ -31,15 +31,25 @@ public class Brick extends GameObject {
             return;
         }
         switch (type) {
-            case NORMAL:
+            case NORMAL: {
                 gc.setFill(Color.RED);
-            case HARD:
+                break;
+            }
+            case HARD: {
                 double intensity = (double) hitPoints / maxHitPoints;
                 gc.setFill(Color.rgb(128, 128, 128, intensity));
-            case SPECIAL:
-                gc.setFill(Color.GOLD);
-            default:
+                break;
+            }
+            case SPECIAL: {
+                double intensity = (double) hitPoints / maxHitPoints;
+                double opacity = (Math.sin(System.currentTimeMillis()) / 200.0 + 1) / 2 * intensity;
+                gc.setFill(Color.rgb(255,215, 0, opacity));
+                break;
+            }
+            default: {
                 gc.setFill(Color.WHITE);
+                break;
+            }
         }
         gc.fillRect(x, y, width, height);
     }
