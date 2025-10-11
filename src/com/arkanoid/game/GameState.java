@@ -2,7 +2,9 @@ package com.arkanoid.game;
 
 public enum GameState {
     MENU,
+    LEVEL_SELECTION,
     PLAYING,
-    GAME_OVER,
-    WIN
+    PAUSED,
+    WIN,
+    GAME_OVER
 }

@@ -31,4 +31,5 @@ public abstract class MovableObject extends GameObject {
         x += speedX;
         y += speedY;
     }
+
 }

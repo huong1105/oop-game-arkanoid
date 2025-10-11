@@ -1,5 +1,6 @@
 package com.arkanoid.entities;
 
+import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
 import com.arkanoid.core.GameObject;
 import javafx.scene.canvas.GraphicsContext;
@@ -37,6 +38,15 @@ public class Ball extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) { /* Logic vẽ bóng */ }
+
+    public void reset(Paddle paddle) {
+        x = (Const.INSTANCE.getScreenWidth() / 2) - (Const.INSTANCE.getBallDiameter() / 2);
+        y = paddle.getY() - Const.INSTANCE.getBallDiameter();
+        width = Const.INSTANCE.getBallDiameter();
+        height = Const.INSTANCE.getBallDiameter();
+        speedX =  Const.INSTANCE.getBallSpeedX();
+        speedY = Const.INSTANCE.getBallSpeedY();
+    }
 
     /**
      * thay đổi hướng theo phương y.

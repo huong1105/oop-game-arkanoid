@@ -1,24 +1,16 @@
 package com.arkanoid.ui;
 
+import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
+import com.arkanoid.game.GameState;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+public class KeyInput {
+    private KeyInput() {}
 
-public class KeyInput extends KeyAdapter {
-    private GameManager gameManager;
-
-    public KeyInput(GameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
+    public static void setupInput(Scene scene) {
+        GameManager gm = GameManager.getInstance();
 
     }
 }

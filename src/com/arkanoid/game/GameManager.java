@@ -1,26 +1,26 @@
 package com.arkanoid.game;
 
+import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
 import com.arkanoid.entities.*;
 import com.arkanoid.ui.Renderer;
 import javafx.geometry.Rectangle2D;
 
-import java.awt.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class GameManager implements Runnable {
+public class GameManager {
     private static GameManager instance;
-    private Thread gameThread;
-    private Renderer renderer;
+    private int currentLevel = 1;
+    private int savedLevel = 1;
 
     private List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
     private Paddle paddle;
     private Ball ball;
 
     private GameState gameState = GameState.MENU;
-    private int score = 0;
-    private int lives = 3;
+    private int score;
+    private int lives;
 
     private GameManager() {}
 
@@ -29,30 +29,75 @@ public class GameManager implements Runnable {
         return instance;
     }
 
-    public void initGame() {
+    public void startLevel(int level) {
+        this.currentLevel = level;
+        gameObjects.clear();
+        int paddleX = (Const.INSTANCE.getScreenWidth() / 2) - (Const.INSTANCE.getPaddleWidth() / 2);
+        int paddleY = Const.INSTANCE.getScreenHeight() - Const.INSTANCE.getPaddleHeight();
+        paddle = new Paddle(paddleX, paddleY, Const.INSTANCE.getPaddleWidth(), Const.INSTANCE.getPaddleHeight());
 
+        int ballX = (Const.INSTANCE.getScreenWidth() / 2) - (Const.INSTANCE.getBallDiameter() / 2);
+        int ballY = (int)paddle.getY() - Const.INSTANCE.getBallDiameter();
+        ball = new Ball(ballX, ballY, Const.INSTANCE.getBallDiameter(), Const.INSTANCE.getBallSpeedX(), -Const.INSTANCE.getBallSpeedY());
+
+        addGameObject(paddle);
+        addGameObject(ball);
+
+        lives = Const.INSTANCE.getDefaultLives();
+        score = Const.INSTANCE.getDefaultScores();
+        loadLevel(level);
+        gameState =  GameState.PLAYING;
+    }
+
+    public void loadLevel(int level){
+        //Của Khiêm;
+    }
+
+    public void continueGame() {
+        gameState = GameState.LEVEL_SELECTION;
+    }
+
+    public void selectLevel(int level) {
+        if (level <= savedLevel) {
+            startLevel(level);
+        }
+    }
+
+    public void newGame() {
+        savedLevel = 1;
+        startLevel(1);
+    }
+
+    public void pauseGame() {
+        if (gameState == GameState.PLAYING) {
+            gameState = GameState.PAUSED;
+        }
+    }
+
+    public void resumeGame() {
+        if (gameState == GameState.PAUSED) {
+            gameState = GameState.PLAYING;
+        }
+    }
+
+    public void quitToMainMenu() {
+        gameState = GameState.MENU;
     }
 
     public void addGameObject(GameObject object) { gameObjects.add(object); }
 
-    public void startGame(Renderer renderer) {
-        this.renderer = renderer;
-        this.gameState = GameState.MENU;
-        new Thread(this).start();
-    }
+    public void update() {
+        if (gameState != GameState.PLAYING) return;
 
-    @Override
-    public void run() {
-
-    }
-
-    private void update() {
         gameObjects.forEach(GameObject::update);
         checkCollisions();
         gameObjects.removeIf(obj -> !obj.isActive());
 
         long remainingBricks = gameObjects.stream().filter(obj -> obj instanceof Brick).count();
         if (remainingBricks == 0) {
+            if (currentLevel == savedLevel) {
+                savedLevel++; // Mở khóa màn tiếp theo
+            }
             gameState = GameState.WIN;
         }
     }
@@ -63,6 +108,8 @@ public class GameManager implements Runnable {
             gameState = GameState.GAME_OVER;
         } else {
             // Quả bóng và thanh về vị trí mặc định
+            ball.reset(paddle);
+            paddle.reset();
         }
     }
 
