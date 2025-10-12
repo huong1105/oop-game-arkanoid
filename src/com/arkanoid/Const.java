@@ -10,19 +10,24 @@ public enum Const {
     private final int BALL_DIAMETER = 20;
     private final int BALL_SPEEDX = 5;
     private final int BALL_SPEEDY = 5;
+    private final int PADDLE_DEFAULT_SPEED = 10;
+    private final int PADDLE_DEFAULT_POS_X = SCREEN_WIDTH / 2 - PADDLE_WIDTH / 2;
+    private final int PADDLE_DEFAULT_POS_Y = SCREEN_HEGHT - PADDLE_HEIGHT;
+    private final int BALL_DEFAULT_POS_X = SCREEN_WIDTH / 2 - BALL_DIAMETER / 2;
+    private final int BALL_DEFAULT_POS_Y = PADDLE_DEFAULT_POS_Y + BALL_DIAMETER;
 
     private final int DEFAULT_LIVES = 3;
     private final int DEFAULT_SCORES = 0;
 
-    public int getDefaultLives(){
+    public int getDefaultLives() {
         return DEFAULT_LIVES;
     }
 
-    public int getDefaultScores(){
+    public int getDefaultScores() {
         return DEFAULT_SCORES;
     }
 
-    public int  getScreenWidth() {
+    public int getScreenWidth() {
         return SCREEN_WIDTH;
     }
 
@@ -50,7 +55,27 @@ public enum Const {
         return BALL_SPEEDY;
     }
 
-    public int  getBallDiameter() {
+    public int getBallDiameter() {
         return BALL_DIAMETER;
+    }
+
+    public int getPaddleDefaultSpeed() {
+        return PADDLE_DEFAULT_SPEED;
+    }
+
+    public int getPaddleDefaultPosX() {
+        return PADDLE_DEFAULT_POS_X;
+    }
+
+    public int getPaddleDefaultPosY() {
+        return PADDLE_DEFAULT_POS_Y;
+    }
+
+    public int getBallDefaultPosX() {
+        return BALL_DEFAULT_POS_X;
+    }
+
+    public int getBallDefaultPosY() {
+        return BALL_DEFAULT_POS_Y;
     }
 }
