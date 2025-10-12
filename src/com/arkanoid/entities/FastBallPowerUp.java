@@ -1,5 +1,7 @@
 package com.arkanoid.entities;
 
+import com.arkanoid.Const;
+
 public class FastBallPowerUp extends PowerUp {
     public FastBallPowerUp(int x, int y, int width, int height) {
         super(x, y, width, height, "FastBall");
@@ -17,7 +19,7 @@ public class FastBallPowerUp extends PowerUp {
     public void removeEffect(Object obj) {
         if (obj instanceof Ball) {
             Ball ball = (Ball) obj;
-            ball.setMaxSpeed(ball.getMaxSpeed() / 2);
+            ball.setMaxSpeed(Const.INSTANCE.getBallMaxSpeed());
         }
     }
 }
