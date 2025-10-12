@@ -4,8 +4,6 @@ import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.awt.*;
-
 // Lớp Paddle kế thừa từ MovableObject
 public class Paddle extends MovableObject {
     private int speed;
@@ -16,19 +14,35 @@ public class Paddle extends MovableObject {
     }
 
     @Override
-    public void update() { /* Logic cập nhật paddle */ }
+    public void update() {
+        setX(getX() + getSpeedX());
+    }
 
     @Override
     public void render(GraphicsContext gc) { /* Logic vẽ paddle */ }
 
     public void reset() {
-        x = (Const.INSTANCE.getScreenWidth() / 2) - (Const.INSTANCE.getPaddleWidth() / 2);
-        y = Const.INSTANCE.getScreenHeight() - Const.INSTANCE.getPaddleHeight();
-        width =  Const.INSTANCE.getPaddleWidth();
+        x = Const.INSTANCE.getPaddleDefaultPosX();
+        y = Const.INSTANCE.getPaddleDefaultPosY();
+        width = Const.INSTANCE.getPaddleWidth();
         height = Const.INSTANCE.getPaddleHeight();
     }
 
-    public void moveLeft() { /* Logic di chuyển trái */ }
-    public void moveRight() { /* Logic di chuyển phải */ }
+    public void moveLeft() {
+        if (getX() > 0) {
+            setSpeedX(-speed);
+        } else {
+            setSpeedX(0);
+        }
+    }
+
+    public void moveRight() {
+        if (getX() + getWidth() < Const.INSTANCE.getScreenWidth()) {
+            setSpeedX(speed);
+        } else {
+            setSpeedX(0);
+        }
+    }
+
     public void applyPowerUp() { /* Logic áp dụng power-up */ }
 }
