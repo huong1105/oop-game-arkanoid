@@ -2,8 +2,9 @@ package com.arkanoid.game;
 
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
-import com.arkanoid.entities.*;
-import com.arkanoid.ui.Renderer;
+import com.arkanoid.entities.Ball;
+import com.arkanoid.entities.Brick;
+import com.arkanoid.entities.Paddle;
 import javafx.geometry.Rectangle2D;
 
 import java.util.List;
@@ -22,22 +23,25 @@ public class GameManager {
     private int score;
     private int lives;
 
-    private GameManager() {}
+    private GameManager() {
+    }
 
     public static GameManager getInstance() {
-        if (instance == null) { instance = new GameManager(); }
+        if (instance == null) {
+            instance = new GameManager();
+        }
         return instance;
     }
 
     public void startLevel(int level) {
         this.currentLevel = level;
         gameObjects.clear();
-        int paddleX = (Const.INSTANCE.getScreenWidth() / 2) - (Const.INSTANCE.getPaddleWidth() / 2);
-        int paddleY = Const.INSTANCE.getScreenHeight() - Const.INSTANCE.getPaddleHeight();
+        int paddleX = Const.INSTANCE.getPaddleDefaultPosX();
+        int paddleY = Const.INSTANCE.getPaddleDefaultPosY();
         paddle = new Paddle(paddleX, paddleY, Const.INSTANCE.getPaddleWidth(), Const.INSTANCE.getPaddleHeight());
 
-        int ballX = (Const.INSTANCE.getScreenWidth() / 2) - (Const.INSTANCE.getBallDiameter() / 2);
-        int ballY = (int)paddle.getY() - Const.INSTANCE.getBallDiameter();
+        int ballX = Const.INSTANCE.getBallDefaultPosX();
+        int ballY = Const.INSTANCE.getBallDefaultPosY();
         ball = new Ball(ballX, ballY, Const.INSTANCE.getBallDiameter(), Const.INSTANCE.getBallSpeedX(), -Const.INSTANCE.getBallSpeedY());
 
         addGameObject(paddle);
@@ -46,10 +50,10 @@ public class GameManager {
         lives = Const.INSTANCE.getDefaultLives();
         score = Const.INSTANCE.getDefaultScores();
         loadLevel(level);
-        gameState =  GameState.PLAYING;
+        gameState = GameState.PLAYING;
     }
 
-    public void loadLevel(int level){
+    public void loadLevel(int level) {
         //Của Khiêm;
     }
 
@@ -84,7 +88,9 @@ public class GameManager {
         gameState = GameState.MENU;
     }
 
-    public void addGameObject(GameObject object) { gameObjects.add(object); }
+    public void addGameObject(GameObject object) {
+        gameObjects.add(object);
+    }
 
     public void update() {
         if (gameState != GameState.PLAYING) return;
@@ -117,32 +123,34 @@ public class GameManager {
      * Kiểm tra va chạm giữa bóng với tường, paddle và brick
      */
     private void checkCollisions() {
-        if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= 1000 ){
+        if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.INSTANCE.getScreenWidth()) {
             ball.reverseX();
         }
-        if (ball.getY() <= 0){
+        if (ball.getY() <= 0) {
             ball.reverseY();
         }
-        if (ball.getY() >= 1000){
+        if (ball.getY() >= Const.INSTANCE.getScreenHeight()) {
             loseLife();
         }
-        if (ball.getBounds().intersects(paddle.getBounds())){
+        if (ball.getBounds().intersects(paddle.getBounds())) {
             double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
             double ballCenterX = ball.getX() + ball.getWidth() / 2;
             double offX = ballCenterX - paddleCenterX;
+            // Set tốc độ phương y dựa theo tỷ lệ khoảng cách từ điểm rơi tới tâm / (chiều dài paddle/2)
             ball.setSpeedX(ball.getMaxSpeed() * 0.9 * offX / (paddle.getWidth() / 2));
-            double newSpeedY = Math.sqrt(ball.getMaxSpeed() * ball.getMaxSpeed() - ball.getSpeedX() * ball.getSpeedX());
+            // Set tốc độ phương x dựa theo tốc độ phương y
+            double newSpeedY = Math.sqrt(ball.getMaxSpeed() * ball.getMaxSpeed()
+                    - ball.getSpeedX() * ball.getSpeedX());
             ball.setSpeedY(-newSpeedY);
         }
-        for (GameObject obj : gameObjects){
-            if (obj instanceof Brick){
+        for (GameObject obj : gameObjects) {
+            if (obj instanceof Brick) {
                 Rectangle2D brickBound = obj.getBounds();
-                if (ball.getBounds().intersects(brickBound)){
+                if (ball.getBounds().intersects(brickBound)) {
                     Rectangle2D intersection = ball.intersection(brickBound);
-                    if (intersection.getHeight() >= intersection.getWidth()){
+                    if (intersection.getHeight() >= intersection.getWidth()) {
                         ball.reverseY();
-                    }
-                    else {
+                    } else {
                         ball.reverseX();
                     }
                     ((Brick) obj).takeHit();
@@ -153,10 +161,27 @@ public class GameManager {
     }
 
     // Getters for Renderer and KeyInput
-    public List<GameObject> getGameObjects() { return gameObjects; }
-    public GameState getGameState() { return gameState; }
-    public int getScore() { return score; }
-    public int getLives() { return lives; }
-    public Paddle getPaddle() { return paddle; }
-    public Ball getBall() { return ball; }
+    public List<GameObject> getGameObjects() {
+        return gameObjects;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public Paddle getPaddle() {
+        return paddle;
+    }
+
+    public Ball getBall() {
+        return ball;
+    }
 }
