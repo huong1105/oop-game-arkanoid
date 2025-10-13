@@ -1,81 +1,23 @@
 package com.arkanoid;
 
-public enum Const {
-    INSTANCE;
-    private final int SCREEN_WIDTH = 1000;
-    private final int SCREEN_HEGHT = 800;
-    private final int BALL_MAXSPEED = 15;
-    private final int PADDLE_WIDTH = 120;
-    private final int PADDLE_HEIGHT = 20;
-    private final int BALL_DIAMETER = 20;
-    private final int BALL_SPEEDX = 5;
-    private final int BALL_SPEEDY = 5;
-    private final int PADDLE_DEFAULT_SPEED = 10;
-    private final int PADDLE_DEFAULT_POS_X = SCREEN_WIDTH / 2 - PADDLE_WIDTH / 2;
-    private final int PADDLE_DEFAULT_POS_Y = SCREEN_HEGHT - PADDLE_HEIGHT;
-    private final int BALL_DEFAULT_POS_X = SCREEN_WIDTH / 2 - BALL_DIAMETER / 2;
-    private final int BALL_DEFAULT_POS_Y = PADDLE_DEFAULT_POS_Y + BALL_DIAMETER;
-
-    private final int DEFAULT_LIVES = 3;
-    private final int DEFAULT_SCORES = 0;
-
-    public int getDefaultLives() {
-        return DEFAULT_LIVES;
+public final class Const {
+    private Const() {
     }
 
-    public int getDefaultScores() {
-        return DEFAULT_SCORES;
-    }
+    public static final int SCREEN_WIDTH = 1000;
+    public static final int SCREEN_HEGHT = 800;
+    public static final int BALL_MAXSPEED = 15;
+    public static final int PADDLE_WIDTH = 120;
+    public static final int PADDLE_HEIGHT = 20;
+    public static final int BALL_DIAMETER = 20;
+    public static final int BALL_SPEEDX = 5;
+    public static final int BALL_SPEEDY = 5;
+    public static final int PADDLE_DEFAULT_SPEED = 10;
+    public static final int PADDLE_DEFAULT_POS_X = SCREEN_WIDTH / 2 - PADDLE_WIDTH / 2;
+    public static final int PADDLE_DEFAULT_POS_Y = SCREEN_HEGHT - PADDLE_HEIGHT;
+    public static final int BALL_DEFAULT_POS_X = SCREEN_WIDTH / 2 - BALL_DIAMETER / 2;
+    public static final int BALL_DEFAULT_POS_Y = PADDLE_DEFAULT_POS_Y + BALL_DIAMETER;
 
-    public int getScreenWidth() {
-        return SCREEN_WIDTH;
-    }
-
-    public int getScreenHeight() {
-        return SCREEN_HEGHT;
-    }
-
-    public int getPaddleWidth() {
-        return PADDLE_WIDTH;
-    }
-
-    public int getPaddleHeight() {
-        return PADDLE_HEIGHT;
-    }
-
-    public int getBallMaxSpeed() {
-        return BALL_MAXSPEED;
-    }
-
-    public int getBallSpeedX() {
-        return BALL_SPEEDX;
-    }
-
-    public int getBallSpeedY() {
-        return BALL_SPEEDY;
-    }
-
-    public int getBallDiameter() {
-        return BALL_DIAMETER;
-    }
-
-    public int getPaddleDefaultSpeed() {
-        return PADDLE_DEFAULT_SPEED;
-    }
-
-    public int getPaddleDefaultPosX() {
-        return PADDLE_DEFAULT_POS_X;
-    }
-
-    public int getPaddleDefaultPosY() {
-        return PADDLE_DEFAULT_POS_Y;
-    }
-
-    public int getBallDefaultPosX() {
-        return BALL_DEFAULT_POS_X;
-    }
-
-    public int getBallDefaultPosY() {
-        return BALL_DEFAULT_POS_Y;
-    }
+    public static final int DEFAULT_LIVES = 3;
+    public static final int DEFAULT_SCORES = 0;
 }
