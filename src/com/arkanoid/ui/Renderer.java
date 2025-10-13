@@ -1,8 +1,11 @@
 package com.arkanoid.ui;
 
 import com.arkanoid.core.GameObject;
+import com.arkanoid.game.GameState;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 import java.util.List;
 
@@ -14,38 +17,46 @@ public class Renderer {
     public Renderer(GraphicsContext gc, double canvasWidth, double canvasHeight) {
         this.gc = gc;
         this.canvasWidth = canvasWidth;
-        this.canvasHeight =  canvasHeight;
+        this.canvasHeight = canvasHeight;
     }
 
-    public void clear() {
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, canvasWidth, canvasHeight);
-    }
-
-    /**
-     * Vẽ một đối tượng GameObject lên canvas.
-     * Giả sử mỗi GameObject đều có sprite (hình ảnh).
-     * @param obj Đối tượng cần vẽ.
-     */
-    public void draw(GameObject obj) {
-        if (obj.getSprite() != null) {
-            gc.drawImage(obj.getSprite(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
-        } else {
-            gc.setFill(Color.WHITE);
-            gc.fillRect(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
-        }
-    }
-
-    /**
-     * Vẽ tất cả các đối tượng trong một danh sách.
-     * @param objects Danh sách các đối tượng cần vẽ.
-     */
-    public void render(List<GameObject> objects) {
+    public void render(List<GameObject> objects, GameState gameState) {
         clear();
         for (GameObject obj : objects) {
             if (obj.isActive()) {
                 draw(obj);
             }
         }
+        
+        // Vẽ các thông báo trạng thái game
+        if (gameState == GameState.PAUSED) {
+            drawMessage("PAUSED");
+        } else if (gameState == GameState.GAME_OVER) {
+            drawMessage("GAME OVER");
+        }
+    }
+    
+    private void clear() {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    private void draw(GameObject obj) {
+        if (obj.getSprite() != null) {
+            gc.drawImage(obj.getSprite(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
+        } else {
+            gc.setFill(Color.MAGENTA); // Màu báo lỗi nếu không có sprite
+            gc.fillRect(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
+        }
+    }
+    
+    private void drawMessage(String message) {
+        gc.setFill(Color.rgba(0, 0, 0, 0.5));
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        gc.setFill(Color.WHITE);
+        gc.setFont(new Font("Arial", 50));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText(message, canvasWidth / 2, canvasHeight / 2);
     }
 }
