@@ -6,14 +6,14 @@ import javafx.scene.canvas.GraphicsContext;
 
 // Lớp Ball kế thừa từ MovableObject
 public class Ball extends MovableObject {
-    private int maxSpeed = Const.INSTANCE.getBallMaxSpeed();
+    private int maxSpeed = Const.BALL_MAXSPEED;
 
     public Ball(int x, int y, int diameter, int speedX, int speedY) {
         super(x, y, diameter, diameter, speedX, speedY);
     }
 
     public Ball() {
-        super(0, 0, Const.INSTANCE.getBallDiameter(), Const.INSTANCE.getBallDiameter(), 0, 0);
+        super(0, 0, Const.BALL_DIAMETER, Const.BALL_DIAMETER, 0, 0);
     }
 
     public int getMaxSpeed() {
@@ -41,12 +41,12 @@ public class Ball extends MovableObject {
     public void render(GraphicsContext gc) { /* Logic vẽ bóng */ }
 
     public void reset(Paddle paddle) {
-        x = Const.INSTANCE.getBallDefaultPosX();
-        y = Const.INSTANCE.getBallDefaultPosY();
-        width = Const.INSTANCE.getBallDiameter();
-        height = Const.INSTANCE.getBallDiameter();
-        speedX = Const.INSTANCE.getBallSpeedX();
-        speedY = Const.INSTANCE.getBallSpeedY();
+        x = Const.BALL_DEFAULT_POS_X;
+        y = Const.BALL_DEFAULT_POS_Y;
+        width = Const.BALL_DIAMETER;
+        height = Const.BALL_DIAMETER;
+        speedX = Const.BALL_SPEEDX;
+        speedY = Const.BALL_SPEEDY;
     }
 
     /**

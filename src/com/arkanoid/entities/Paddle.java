@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 // Lớp Paddle kế thừa từ MovableObject
 public class Paddle extends MovableObject {
-    private int speed;
+    private int speed = Const.PADDLE_DEFAULT_SPEED;
     private String currentPowerUp;
 
     public Paddle(int x, int y, int width, int height) {
@@ -22,10 +22,10 @@ public class Paddle extends MovableObject {
     public void render(GraphicsContext gc) { /* Logic vẽ paddle */ }
 
     public void reset() {
-        x = Const.INSTANCE.getPaddleDefaultPosX();
-        y = Const.INSTANCE.getPaddleDefaultPosY();
-        width = Const.INSTANCE.getPaddleWidth();
-        height = Const.INSTANCE.getPaddleHeight();
+        x = Const.PADDLE_DEFAULT_POS_X;
+        y = Const.PADDLE_DEFAULT_POS_Y;
+        width = Const.PADDLE_WIDTH;
+        height = Const.PADDLE_HEIGHT;
     }
 
     public void moveLeft() {
@@ -37,7 +37,7 @@ public class Paddle extends MovableObject {
     }
 
     public void moveRight() {
-        if (getX() + getWidth() < Const.INSTANCE.getScreenWidth()) {
+        if (getX() + getWidth() < Const.SCREEN_WIDTH) {
             setSpeedX(speed);
         } else {
             setSpeedX(0);

@@ -2,7 +2,7 @@ package com.arkanoid;
 
 import com.arkanoid.game.GameManager;
 import com.arkanoid.ui.KeyInput;
-import com.arkanoid.ui.Renderer; // Import lớp Renderer của bạn
+import com.arkanoid.ui.Renderer;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -18,7 +18,7 @@ public class Main extends Application {
         GameManager gm = GameManager.getInstance();
 
         Pane root = new Pane();
-        Canvas canvas = new Canvas(Const.INSTANCE.getScreenWidth(), Const.INSTANCE.getScreenHeight());
+        Canvas canvas = new Canvas(Const.SCREEN_WIDTH, Const.SCREEN_HEGHT);
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 

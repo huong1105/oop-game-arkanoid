@@ -19,7 +19,7 @@ public class FastBallPowerUp extends PowerUp {
     public void removeEffect(Object obj) {
         if (obj instanceof Ball) {
             Ball ball = (Ball) obj;
-            ball.setMaxSpeed(Const.INSTANCE.getBallMaxSpeed());
+            ball.setMaxSpeed(Const.BALL_MAXSPEED);
         }
     }
 }

@@ -36,19 +36,19 @@ public class GameManager {
     public void startLevel(int level) {
         this.currentLevel = level;
         gameObjects.clear();
-        int paddleX = Const.INSTANCE.getPaddleDefaultPosX();
-        int paddleY = Const.INSTANCE.getPaddleDefaultPosY();
-        paddle = new Paddle(paddleX, paddleY, Const.INSTANCE.getPaddleWidth(), Const.INSTANCE.getPaddleHeight());
+        int paddleX = Const.BALL_DEFAULT_POS_X;
+        int paddleY = Const.BALL_DEFAULT_POS_Y;
+        paddle = new Paddle(paddleX, paddleY, Const.PADDLE_WIDTH, Const.PADDLE_HEIGHT);
 
-        int ballX = Const.INSTANCE.getBallDefaultPosX();
-        int ballY = Const.INSTANCE.getBallDefaultPosY();
-        ball = new Ball(ballX, ballY, Const.INSTANCE.getBallDiameter(), Const.INSTANCE.getBallSpeedX(), -Const.INSTANCE.getBallSpeedY());
+        int ballX = Const.BALL_DEFAULT_POS_X;
+        int ballY = Const.BALL_DEFAULT_POS_Y;
+        ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, Const.BALL_SPEEDX, -Const.BALL_SPEEDY);
 
         addGameObject(paddle);
         addGameObject(ball);
 
-        lives = Const.INSTANCE.getDefaultLives();
-        score = Const.INSTANCE.getDefaultScores();
+        lives = Const.DEFAULT_LIVES;
+        score = Const.DEFAULT_SCORES;
         loadLevel(level);
         gameState = GameState.PLAYING;
     }
@@ -123,13 +123,13 @@ public class GameManager {
      * Kiểm tra va chạm giữa bóng với tường, paddle và brick
      */
     private void checkCollisions() {
-        if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.INSTANCE.getScreenWidth()) {
+        if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
             ball.reverseX();
         }
         if (ball.getY() <= 0) {
             ball.reverseY();
         }
-        if (ball.getY() >= Const.INSTANCE.getScreenHeight()) {
+        if (ball.getY() >= Const.SCREEN_HEGHT) {
             loseLife();
         }
         if (ball.getBounds().intersects(paddle.getBounds())) {
