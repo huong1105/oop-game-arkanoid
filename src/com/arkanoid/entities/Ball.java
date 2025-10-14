@@ -3,6 +3,7 @@ package com.arkanoid.entities;
 import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 // Lớp Ball kế thừa từ MovableObject
 public class Ball extends MovableObject {
@@ -33,12 +34,14 @@ public class Ball extends MovableObject {
             setSpeedX(getSpeedX() * 0.99);
             setSpeedY(getSpeedY() * 0.99);
         }
-        setX(getX() + (int) getSpeedX());
-        setY(getY() + (int) getSpeedY());
+        super.update();
     }
 
     @Override
-    public void render(GraphicsContext gc) { /* Logic vẽ bóng */ }
+    public void render(GraphicsContext gc) {
+        gc.setFill(Color.rgb(0, 0, 255));
+        gc.fillRect(x, y, width, height);
+    }
 
     public void reset(Paddle paddle) {
         x = Const.BALL_DEFAULT_POS_X;
