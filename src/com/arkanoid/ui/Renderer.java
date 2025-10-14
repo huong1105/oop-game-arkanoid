@@ -20,11 +20,11 @@ public class Renderer {
         this.canvasHeight = canvasHeight;
     }
 
-    public void render(List<GameObject> objects, GameState gameState) {
+    public void render(List<GameObject> objects,GameState gameState) {
         clear();
         for (GameObject obj : objects) {
             if (obj.isActive()) {
-                draw(obj);
+                obj.render(gc);
             }
         }
 
