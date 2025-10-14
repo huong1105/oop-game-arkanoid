@@ -27,7 +27,7 @@ public class Renderer {
                 draw(obj);
             }
         }
-        
+
         // Vẽ các thông báo trạng thái game
         if (gameState == GameState.PAUSED) {
             drawMessage("PAUSED");
@@ -35,7 +35,7 @@ public class Renderer {
             drawMessage("GAME OVER");
         }
     }
-    
+
     private void clear() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -49,11 +49,11 @@ public class Renderer {
             gc.fillRect(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight());
         }
     }
-    
+
     private void drawMessage(String message) {
-        gc.setFill(Color.rgba(0, 0, 0, 0.5));
+        gc.setFill(Color.rgb(0, 0, 0, 0.5));
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
-        
+
         gc.setFill(Color.WHITE);
         gc.setFont(new Font("Arial", 50));
         gc.setTextAlign(TextAlignment.CENTER);

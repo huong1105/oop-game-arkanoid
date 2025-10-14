@@ -35,7 +35,7 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
                 gm.update();
-                renderer.render(gm.getGameObjects());
+                renderer.render(gm.getGameObjects(), gm.getGameState());
             }
         };
         gameLoop.start();
