@@ -36,8 +36,8 @@ public class GameManager {
     public void startLevel(int level) {
         this.currentLevel = level;
         gameObjects.clear();
-        int paddleX = Const.BALL_DEFAULT_POS_X;
-        int paddleY = Const.BALL_DEFAULT_POS_Y;
+        int paddleX = Const.PADDLE_DEFAULT_POS_X;
+        int paddleY = Const.PADDLE_DEFAULT_POS_Y;
         paddle = new Paddle(paddleX, paddleY, Const.PADDLE_WIDTH, Const.PADDLE_HEIGHT);
 
         int ballX = Const.BALL_DEFAULT_POS_X;
@@ -93,19 +93,19 @@ public class GameManager {
     }
 
     public void update() {
+        //System.err.println("gm update" );
         if (gameState != GameState.PLAYING) return;
-
         gameObjects.forEach(GameObject::update);
         checkCollisions();
-        gameObjects.removeIf(obj -> !obj.isActive());
+        //gameObjects.removeIf(obj -> !obj.isActive());
 
         long remainingBricks = gameObjects.stream().filter(obj -> obj instanceof Brick).count();
-        if (remainingBricks == 0) {
-            if (currentLevel == savedLevel) {
-                savedLevel++; // Mở khóa màn tiếp theo
-            }
-            gameState = GameState.WIN;
-        }
+//        if (remainingBricks == 0) {
+//            if (currentLevel == savedLevel) {
+//                savedLevel++; // Mở khóa màn tiếp theo
+//            }
+//            gameState = GameState.WIN;
+//        }
     }
 
     private void loseLife() {
@@ -129,7 +129,7 @@ public class GameManager {
         if (ball.getY() <= 0) {
             ball.reverseY();
         }
-        if (ball.getY() >= Const.SCREEN_HEGHT) {
+        if (ball.getY() >= Const.SCREEN_HEIGHT) {
             loseLife();
         }
         if (ball.getBounds().intersects(paddle.getBounds())) {
@@ -137,7 +137,7 @@ public class GameManager {
             double ballCenterX = ball.getX() + ball.getWidth() / 2;
             double offX = ballCenterX - paddleCenterX;
             // Set tốc độ phương y dựa theo tỷ lệ khoảng cách từ điểm rơi tới tâm / (chiều dài paddle/2)
-            ball.setSpeedX(ball.getMaxSpeed() * 0.9 * offX / (paddle.getWidth() / 2));
+            ball.setSpeedX(ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2));
             // Set tốc độ phương x dựa theo tốc độ phương y
             double newSpeedY = Math.sqrt(ball.getMaxSpeed() * ball.getMaxSpeed()
                     - ball.getSpeedX() * ball.getSpeedX());
