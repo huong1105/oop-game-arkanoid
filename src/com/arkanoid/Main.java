@@ -16,9 +16,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         GameManager gm = GameManager.getInstance();
-
+        gm.startLevel(1);
         Pane root = new Pane();
-        Canvas canvas = new Canvas(Const.SCREEN_WIDTH, Const.SCREEN_HEGHT);
+        Canvas canvas = new Canvas(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -28,6 +28,7 @@ public class Main extends Application {
         primaryStage.setTitle("Arkanoid - JavaFX");
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.requestFocus();
 
         KeyInput.setupInput(scene);
 
