@@ -6,6 +6,7 @@ import com.arkanoid.entities.Ball;
 import com.arkanoid.entities.Brick;
 import com.arkanoid.entities.Paddle;
 import javafx.geometry.Rectangle2D;
+import com.arkanoid.ui.MainMenu;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -19,11 +20,18 @@ public class GameManager {
     private Paddle paddle;
     private Ball ball;
 
+    private MainMenu mainMenu;
+
     private GameState gameState = GameState.MENU;
+    public void setGameState(GameState newState) {
+        this.gameState = newState;
+    }
+
     private int score;
     private int lives;
 
     private GameManager() {
+        mainMenu = new MainMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
     }
 
     public static GameManager getInstance() {
@@ -70,6 +78,10 @@ public class GameManager {
     public void newGame() {
         savedLevel = 1;
         startLevel(1);
+    }
+
+    public MainMenu getMainMenu() {
+        return mainMenu;
     }
 
     public void pauseGame() {
