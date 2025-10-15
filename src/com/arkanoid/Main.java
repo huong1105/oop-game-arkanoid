@@ -16,7 +16,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         GameManager gm = GameManager.getInstance();
-        gm.startLevel(1);
         Pane root = new Pane();
         Canvas canvas = new Canvas(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         root.getChildren().add(canvas);
@@ -36,9 +35,10 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
                 gm.update();
-                renderer.render(gm.getGameObjects(), gm.getGameState());
+                renderer.render(gm);
             }
         };
+
         gameLoop.start();
     }
 
