@@ -5,8 +5,8 @@ import com.arkanoid.core.GameObject;
 import com.arkanoid.entities.Ball;
 import com.arkanoid.entities.Brick;
 import com.arkanoid.entities.Paddle;
-import javafx.geometry.Rectangle2D;
 import com.arkanoid.ui.MainMenu;
+import javafx.geometry.Rectangle2D;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,6 +23,7 @@ public class GameManager {
     private MainMenu mainMenu;
 
     private GameState gameState = GameState.MENU;
+
     public void setGameState(GameState newState) {
         this.gameState = newState;
     }
@@ -50,7 +51,7 @@ public class GameManager {
 
         int ballX = Const.BALL_DEFAULT_POS_X;
         int ballY = Const.BALL_DEFAULT_POS_Y;
-        ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, Const.BALL_SPEEDX, -Const.BALL_SPEEDY);
+        ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, 0, 0);
 
         addGameObject(paddle);
         addGameObject(ball);
@@ -68,7 +69,7 @@ public class GameManager {
 
         int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
         int startY = 50;
-        int [][] levelLayout = new int [8][8];
+        int[][] levelLayout = new int[8][8];
 
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -129,11 +130,10 @@ public class GameManager {
     }
 
     public void update() {
-        //System.err.println("gm update" );
         if (gameState != GameState.PLAYING) return;
         gameObjects.forEach(GameObject::update);
         checkCollisions();
-        //gameObjects.removeIf(obj -> !obj.isActive());
+        gameObjects.removeIf(obj -> !obj.isActive());
 
         long remainingBricks = gameObjects.stream().filter(obj -> obj instanceof Brick).count();
 //        if (remainingBricks == 0) {
@@ -159,25 +159,46 @@ public class GameManager {
      * Kiểm tra va chạm giữa bóng với tường, paddle và brick
      */
     private void checkCollisions() {
+        if (!ball.isStarted()) {
+            ball.setSpeedX(paddle.getSpeedX());
+            return;
+        }
         if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
             ball.reverseX();
+            if (ball.getX() <= 0) {
+                ball.setX(0);
+            } else {
+                ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
+            }
         }
         if (ball.getY() <= 0) {
             ball.reverseY();
+            ball.setY(0);
         }
         if (ball.getY() >= Const.SCREEN_HEIGHT) {
             loseLife();
         }
         if (ball.getBounds().intersects(paddle.getBounds())) {
+            Rectangle2D intersection = ball.intersection(paddle.getBounds());
             double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
             double ballCenterX = ball.getX() + ball.getWidth() / 2;
             double offX = ballCenterX - paddleCenterX;
             // Set tốc độ phương y dựa theo tỷ lệ khoảng cách từ điểm rơi tới tâm / (chiều dài paddle/2)
-            ball.setSpeedX(ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2));
+            double ballCurrentSpeedX = ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2);
+            double paddleCurrentSpeed = paddle.getSpeedX();
+            ballCurrentSpeedX += paddleCurrentSpeed * 0.25;
+            if (ballCurrentSpeedX > ball.getMaxSpeed()) {
+                ballCurrentSpeedX = ball.getMaxSpeed() * 0.99;
+            }
+            if (ballCurrentSpeedX < -ball.getMaxSpeed()) {
+                ballCurrentSpeedX = -ball.getMaxSpeed() * 0.99;
+            }
+            ball.setSpeedX(ballCurrentSpeedX);
             // Set tốc độ phương x dựa theo tốc độ phương y
-            double newSpeedY = Math.sqrt(ball.getMaxSpeed() * ball.getMaxSpeed()
-                    - ball.getSpeedX() * ball.getSpeedX());
+            double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
+                    - Math.pow(ball.getSpeedX(), 2));
             ball.setSpeedY(-newSpeedY);
+            ball.setY(ball.getY() - intersection.getHeight());
         }
         for (GameObject obj : gameObjects) {
             if (obj instanceof Brick) {
