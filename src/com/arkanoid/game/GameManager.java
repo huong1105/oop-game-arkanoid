@@ -177,12 +177,12 @@ public class GameManager {
         gameObjects.removeIf(obj -> !obj.isActive());
 
         long remainingBricks = gameObjects.stream().filter(obj -> obj instanceof Brick).count();
-//        if (remainingBricks == 0) {
-//            if (currentLevel == savedLevel) {
-//                savedLevel++; // Mở khóa màn tiếp theo
-//            }
-//            gameState = GameState.WIN;
-//        }
+        if (remainingBricks == 0) {
+            if (currentLevel == savedLevel) {
+                savedLevel++; // Mở khóa màn tiếp theo
+            }
+            gameState = GameState.WIN;
+        }
     }
 
     private void loseLife() {
@@ -247,9 +247,15 @@ public class GameManager {
                 if (ball.getBounds().intersects(brickBound)) {
                     Rectangle2D intersection = ball.intersection(brickBound);
                     if (intersection.getHeight() >= intersection.getWidth()) {
-                        ball.reverseY();
-                    } else {
+                        if (ball.getX() < brickBound.getMinX()) {
+                            ball.setX(brickBound.getMinX() - ball.getWidth());
+                        } else ball.setX(brickBound.getMaxX());
                         ball.reverseX();
+                    } else {
+                        if (ball.getY() < brickBound.getMinY()) {
+                            ball.setY(brickBound.getMinY() - ball.getHeight());
+                        } else ball.setY(brickBound.getMaxY());
+                        ball.reverseY();
                     }
                     ((Brick) obj).takeHit();
                     break;
