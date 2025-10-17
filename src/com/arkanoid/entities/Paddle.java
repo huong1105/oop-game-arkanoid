@@ -19,12 +19,14 @@ public class Paddle extends MovableObject {
 
     @Override
     public void update() {
-        if (movingLeft ) {
-            setX(getX() -speed);
+        if (movingLeft && getX() > 0) {
+            setSpeedX(-speed);
+        } else if (movingRight && getX() + width < Const.SCREEN_WIDTH) {
+            setSpeedX(speed);
+        } else {
+            setSpeedX(0);
         }
-        if (movingRight) {
-            setX(getX() + speed);
-        }
+        super.update();
     }
 
     @Override
