@@ -5,7 +5,7 @@ import com.arkanoid.core.GameObject;
 import com.arkanoid.entities.Ball;
 import com.arkanoid.entities.Brick;
 import com.arkanoid.entities.Paddle;
-import com.arkanoid.entities.StrongBrick;
+import com.arkanoid.entities.*;
 import javafx.geometry.Rectangle2D;
 import com.arkanoid.ui.MainMenu;
 
@@ -63,9 +63,6 @@ public class GameManager {
     }
 
     public void loadLevel(int level) {
-        addGameObject(paddle);
-        addGameObject(ball);
-
         int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
         int startY = 50;
         int[][] levelLayout;
@@ -93,6 +90,18 @@ public class GameManager {
                     {4, 2, 1, 1, 1, 2, 2, 4},
                     {4, 2, 2, 2, 2, 2, 2, 4},
                     {4, 4, 4, 4, 4, 4, 4, 4}
+                };
+                break;
+            default:
+                levelLayout = new int[][] {
+                        {3, 1, 1, 3, 3, 1, 1, 3},
+                        {1, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 4, 4, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {3, 1, 1, 1, 1, 1, 1, 3}
                 };
                 break;
         }
