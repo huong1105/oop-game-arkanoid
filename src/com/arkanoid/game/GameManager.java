@@ -2,9 +2,7 @@ package com.arkanoid.game;
 
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
-import com.arkanoid.entities.Ball;
-import com.arkanoid.entities.Brick;
-import com.arkanoid.entities.Paddle;
+import com.arkanoid.entities.*;
 import com.arkanoid.ui.MainMenu;
 import javafx.geometry.Rectangle2D;
 
@@ -63,31 +61,74 @@ public class GameManager {
     }
 
     public void loadLevel(int level) {
-        //Của Khiêm;
-        addGameObject(paddle);
-        addGameObject(ball);
-
         int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
         int startY = 50;
-        int[][] levelLayout = new int[8][8];
+        int[][] levelLayout;
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (row == 0 || row == 7 || col == 0 || col == 7) {
-                    levelLayout[row][col] = 1;
-                } else {
-                    if ((row + col) % 3 == 0) {
-                        levelLayout[row][col] = 2;
-                    } else if ((row + col) % 3 == 1) {
-                        levelLayout[row][col] = 3;
-                    } else {
-                        levelLayout[row][col] = 4;
-                    }
-                }
-            }
+        switch (level) {
+            case 1:
+                levelLayout = new int[][]{
+                        {1, 1, 1, 3, 3, 1, 1, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 4, 4, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1}
+                };
+                break;
+            case 2:
+                levelLayout = new int[][]{
+                        {1, 1, 1, 1, 1, 1, 1, 1},
+                        {4, 2, 2, 2, 2, 2, 2, 4},
+                        {4, 2, 1, 1, 1, 2, 2, 4},
+                        {4, 2, 1, 3, 3, 1, 2, 4},
+                        {4, 2, 1, 3, 3, 1, 2, 4},
+                        {4, 2, 1, 1, 1, 2, 2, 4},
+                        {4, 2, 2, 2, 2, 2, 2, 4},
+                        {4, 4, 4, 4, 4, 4, 4, 4}
+                };
+                break;
+            default:
+                levelLayout = new int[][]{
+                        {3, 1, 1, 3, 3, 1, 1, 3},
+                        {1, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 4, 4, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {3, 1, 1, 1, 1, 1, 1, 3}
+                };
+                break;
         }
 
 
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                int x = startX + col * Const.BRICK_WIDTH;
+                int y = startY + row * Const.BRICK_HEIGHT;
+                Brick brick = null;
+                switch (levelLayout[row][col]) {
+                    case 1:
+                        brick = new NormalBrick(x, y);
+                        break;
+                    case 2:
+                        brick = new StrongBrick(x, y);
+                        break;
+                    case 3:
+                        brick = new SpecialBrick(x, y);
+                        break;
+                    case 4:
+                        brick = new Wall(x, y);
+                        break;
+                    default:
+                        continue;
+                }
+                addGameObject(brick);
+            }
+        }
     }
 
     public void continueGame() {
