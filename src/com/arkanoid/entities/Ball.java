@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 // Lớp Ball kế thừa từ MovableObject
 public class Ball extends MovableObject {
     private int maxSpeed = Const.BALL_MAXSPEED;
+    private boolean started = false;
 
     public Ball(int x, int y, int diameter, int speedX, int speedY) {
         super(x, y, diameter, diameter, speedX, speedY);
@@ -25,14 +26,28 @@ public class Ball extends MovableObject {
         this.maxSpeed = maxSpeed;
     }
 
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void start() {
+        started = true;
+    }
+
+    public void stop() {
+        started = false;
+    }
+
     /**
      * cập nhật vị trí bóng.
      */
     @Override
     public void update() {
-        while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed) {
-            setSpeedX(getSpeedX() * 0.99);
-            setSpeedY(getSpeedY() * 0.99);
+        if (started) {
+            while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed) {
+                setSpeedX(getSpeedX() * 0.99);
+                setSpeedY(getSpeedY() * 0.99);
+            }
         }
         super.update();
     }
@@ -48,8 +63,9 @@ public class Ball extends MovableObject {
         y = Const.BALL_DEFAULT_POS_Y;
         width = Const.BALL_DIAMETER;
         height = Const.BALL_DIAMETER;
-        speedX = Const.BALL_SPEEDX;
-        speedY = Const.BALL_SPEEDY;
+        speedX = 0;
+        speedY = 0;
+        started = false;
     }
 
     /**
