@@ -1,5 +1,7 @@
 package com.arkanoid.ui;
 
+import com.arkanoid.Const;
+import com.arkanoid.entities.Ball;
 import com.arkanoid.entities.Paddle;
 import com.arkanoid.game.GameManager;
 import com.arkanoid.game.GameState;
@@ -15,6 +17,7 @@ public class KeyInput {
 
     /**
      * Thiết lập tất cả các trình lắng nghe sự kiện đầu vào (bàn phím và chuột) cho scene chính.
+     *
      * @param scene Scene của trò chơi.
      */
     public static void setupInput(Scene scene) {
@@ -67,11 +70,20 @@ public class KeyInput {
 
                 case PLAYING:
                     Paddle paddle = gm.getPaddle();
+                    Ball ball = gm.getBall();
+                    if (ball != null && ball.isStarted() == false) {
+                        if (code == KeyCode.SPACE) {
+                            ball.start();
+                            ball.setSpeedY(Const.BALL_MAXSPEED);
+                        }
+                    }
                     if (paddle != null) {
                         if (code == KeyCode.LEFT || code == KeyCode.A) {
                             paddle.setMovingLeft(true);
+                            paddle.setMovingRight(false);
                         } else if (code == KeyCode.RIGHT || code == KeyCode.D) {
                             paddle.setMovingRight(true);
+                            paddle.setMovingLeft(false);
                         }
                     }
                     // Phím P để tạm dừng
@@ -115,7 +127,8 @@ public class KeyInput {
 
     /**
      * Xử lý các hành động tương ứng khi một mục trong menu được click.
-     * @param gm Thể hiện của GameManager.
+     *
+     * @param gm       Thể hiện của GameManager.
      * @param itemName Tên của mục được click (ví dụ: "New Game").
      */
     private static void handleMenuClick(GameManager gm, String itemName) {
