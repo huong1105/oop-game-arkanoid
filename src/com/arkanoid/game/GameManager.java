@@ -63,6 +63,30 @@ public class GameManager {
 
     public void loadLevel(int level) {
         //Của Khiêm;
+        addGameObject(paddle);
+        addGameObject(ball);
+
+        int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
+        int startY = 50;
+        int [][] levelLayout = new int [8][8];
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row == 0 || row == 7 || col == 0 || col == 7) {
+                    levelLayout[row][col] = 1;
+                } else {
+                    if ((row + col) % 3 == 0) {
+                        levelLayout[row][col] = 2;
+                    } else if ((row + col) % 3 == 1) {
+                        levelLayout[row][col] = 3;
+                    } else {
+                        levelLayout[row][col] = 4;
+                    }
+                }
+            }
+        }
+
+
     }
 
     public void continueGame() {
