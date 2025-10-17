@@ -1,5 +1,6 @@
 package com.arkanoid.entities;
 
+import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -11,8 +12,8 @@ public class Brick extends GameObject {
     private int maxHitPoints;
     private BrickType type;
 
-    public Brick(int x, int y, int width, int height, BrickType type) {
-        super(x, y, width, height);
+    public Brick(int x, int y, BrickType type) {
+        super(x, y, Const.BRICK_WIDTH, Const.BRICK_HEIGHT);
         this.hitPoints = type.getHitPoints();
         this.maxHitPoints = type.getHitPoints();
         this.type = type;
