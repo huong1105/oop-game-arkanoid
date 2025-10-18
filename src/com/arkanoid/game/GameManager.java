@@ -1,5 +1,6 @@
 package com.arkanoid.game;
 
+import com.arkanoid.BrickType;
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
 import com.arkanoid.entities.*;
@@ -81,12 +82,12 @@ public class GameManager {
             case 2:
                 levelLayout = new int[][]{
                         {1, 1, 1, 1, 1, 1, 1, 1},
-                        {4, 2, 2, 2, 2, 2, 2, 4},
+                        {4, 2, 1, 1, 2, 2, 2, 4},
                         {4, 2, 1, 1, 1, 2, 2, 4},
                         {5, 2, 1, 3, 3, 1, 2, 5},
                         {5, 2, 1, 3, 3, 1, 2, 5},
                         {4, 2, 1, 1, 1, 2, 2, 4},
-                        {4, 2, 2, 2, 2, 2, 2, 4},
+                        {4, 2, 1, 1, 2, 2, 2, 4},
                         {4, 4, 4, 4, 4, 4, 4, 4}
                 };
                 break;
@@ -103,7 +104,6 @@ public class GameManager {
                 };
                 break;
         }
-
 
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -130,6 +130,34 @@ public class GameManager {
                         continue;
                 }
                 addGameObject(brick);
+            }
+        }
+    }
+
+    public int[] getBrickGridPosition(Brick brick) {
+        int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
+        int startY = 50;
+        int brickRow = (int) ((brick.getY() - startY) / Const.BRICK_HEIGHT);
+        int brickCol = (int) ((brick.getX() - startX) / Const.BRICK_WIDTH);
+        return new int[] {brickRow, brickCol};
+    }
+
+    private void handleExplosion (int centerRow, int centerCol) {
+        for (int row = Math.max(0, centerRow - 1); row <= Math.min(7, centerRow + 1); row++) {
+            for (int col = Math.max(0, centerCol - 1); col <= Math.min(7, centerCol + 1); col++) {
+                for (GameObject obj : gameObjects) {
+                    if (obj instanceof Brick && ((Brick) obj).getType() != BrickType.WALL) {
+                            int[] gridPos = getBrickGridPosition((Brick) obj);
+                            int brickRow = gridPos[0];
+                            int brickCol = gridPos[1];
+                            if (brickRow == row && brickCol == col) {
+                            boolean destroyed = ((Brick) obj).takeHit();
+                            if (destroyed) {
+                                score += ((Brick) obj).getScoreValue();
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -260,7 +288,16 @@ public class GameManager {
                         } else ball.setY(brickBound.getMaxY());
                         ball.reverseY();
                     }
-                    ((Brick) obj).takeHit();
+                    boolean destroyed = ((Brick) obj).takeHit();
+                    if (destroyed) {
+                        score += ((Brick) obj).getScoreValue();
+                        if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
+                            int[] gridPos = getBrickGridPosition((Brick) obj);
+                            int brickRow = gridPos[0];
+                            int brickCol = gridPos[1];
+                            handleExplosion(brickRow, brickCol);
+                        }
+                    }
                     break;
                 }
             }
