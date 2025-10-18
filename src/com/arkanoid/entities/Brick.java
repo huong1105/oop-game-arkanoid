@@ -2,10 +2,10 @@ package com.arkanoid.entities;
 
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
+import com.arkanoid.ui.SpriteManager;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import com.arkanoid.BrickType;
-import java.awt.*;
 
 public class Brick extends GameObject {
     private int hitPoints;
@@ -17,6 +17,30 @@ public class Brick extends GameObject {
         this.hitPoints = type.getHitPoints();
         this.maxHitPoints = type.getHitPoints();
         this.type = type;
+        setSpriteByType(type);
+    }
+
+    /**
+     * Phương thức private để gán sprite dựa trên BrickType.
+     */
+    private void setSpriteByType(BrickType type) {
+        switch (type) {
+            case NORMAL:
+                this.sprite = SpriteManager.getSprite(1, 1, 24, 10);
+                break;
+            case HARD:
+                this.sprite = SpriteManager.getSprite(27, 1, 24, 10);
+                break;
+            case SPECIAL:
+                this.sprite = SpriteManager.getSprite(53, 1, 24, 10);
+                break;
+            case EXPLOSIVE:
+                this.sprite = SpriteManager.getSprite(79, 1, 24, 10);
+                break;
+            case WALL:
+                this.sprite = SpriteManager.getSprite(105, 1, 24, 10);
+                break;
+        }
     }
 
     @Override
@@ -31,32 +55,15 @@ public class Brick extends GameObject {
         if (!isActive()) {
             return;
         }
-        switch (type) {
-            case NORMAL: {
-                gc.setFill(Color.RED);
-                break;
-            }
-            case HARD: {
-                double intensity = (double) hitPoints / maxHitPoints;
-                gc.setFill(Color.rgb(128, 128, 128, intensity));
-                break;
-            }
-            case SPECIAL: {
-                double intensity = (double) hitPoints / maxHitPoints;
-                double opacity = (Math.sin(System.currentTimeMillis()) / 200.0 + 1) / 2 * intensity;
-                gc.setFill(Color.rgb(255,215, 0, opacity));
-                break;
-            }
-            case EXPLOSIVE: {
-                gc.setFill(Color.ORANGE);
-                break;
-            }
-            default: {
-                gc.setFill(Color.WHITE);
-                break;
+
+        super.render(gc);
+
+        if (type == BrickType.HARD && hitPoints < maxHitPoints) {
+            Image crackedSprite = SpriteManager.getSprite(27, 13, 24, 10);
+            if (crackedSprite != null) {
+                gc.drawImage(crackedSprite, x, y, width, height);
             }
         }
-        gc.fillRect(x, y, width, height);
     }
 
     public boolean takeHit() {
