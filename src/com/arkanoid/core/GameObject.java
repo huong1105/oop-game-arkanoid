@@ -18,30 +18,23 @@ public abstract class GameObject {
         this.height = height;
     }
 
-    /**
-     * Phương thức tiện ích để tải sprite từ thư mục resources.
-     * Các lớp con sẽ gọi phương thức này trong hàm khởi tạo của chúng.
-     * @param resourcePath - Đường dẫn đến file ảnh trong thư mục resources (ví dụ: "/Images/ball.png").
-     */
-    protected void loadSprite(String resourcePath) {
-        try {
-            this.sprite = new Image(getClass().getResourceAsStream(resourcePath));
-        } catch (Exception e) {
-            System.err.println("Không thể tải ảnh: " + resourcePath);
-            e.printStackTrace();
-        }
-    }
-
     public abstract void update();
 
-    public abstract void render(GraphicsContext gc);
-
-    public Image getSprite() {
-        return sprite;
+    /**
+     * Sửa đổi phương thức render
+     */
+    public void render(GraphicsContext gc) {
+        if (sprite != null && active) {
+            gc.drawImage(sprite, x, y, width, height);
+        }
     }
 
     public Rectangle2D getBounds() {
         return new Rectangle2D(x, y, width, height);
+    }
+
+    public Image getSprite() {
+        return sprite;
     }
 
     public boolean intersects(GameObject other) {
