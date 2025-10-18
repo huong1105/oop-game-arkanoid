@@ -71,11 +71,11 @@ public class GameManager {
                 levelLayout = new int[][]{
                         {1, 1, 1, 3, 3, 1, 1, 1},
                         {1, 2, 2, 2, 2, 2, 2, 1},
-                        {5, 2, 4, 2, 2, 4, 2, 5},
-                        {1, 2, 4, 4, 4, 4, 2, 1},
-                        {1, 2, 4, 2, 2, 4, 2, 1},
-                        {5, 2, 4, 2, 2, 4, 2, 5},
-                        {1, 2, 4, 2, 2, 4, 2, 1},
+                        {5, 2, 0, 2, 2, 0, 2, 5},
+                        {1, 2, 0, 0, 0, 0, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 1},
+                        {5, 2, 0, 2, 2, 0, 2, 5},
+                        {1, 2, 0, 2, 2, 0, 2, 1},
                         {1, 1, 1, 1, 1, 1, 1, 1}
                 };
                 break;
@@ -207,7 +207,11 @@ public class GameManager {
         checkCollisions();
         gameObjects.removeIf(obj -> !obj.isActive());
 
-        long remainingBricks = gameObjects.stream().filter(obj -> obj instanceof Brick).count();
+        long remainingBricks = gameObjects.stream()
+                .filter(obj -> obj instanceof Brick)
+                .filter(obj -> ((Brick) obj).getType() != BrickType.WALL)
+                .count(); // Chỉnh để không đếm tường nữa
+
         if (remainingBricks == 0) {
             if (currentLevel == savedLevel) {
                 savedLevel++; // Mở khóa màn tiếp theo
