@@ -9,6 +9,7 @@ import javafx.geometry.Rectangle2D;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class GameManager {
     private static GameManager instance;
@@ -18,6 +19,7 @@ public class GameManager {
     private List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
     private Paddle paddle;
     private Ball ball;
+    private boolean feverBallActive = false;
 
     private MainMenu mainMenu;
 
@@ -25,6 +27,10 @@ public class GameManager {
 
     public void setGameState(GameState newState) {
         this.gameState = newState;
+    }
+
+    public void setFeverBallActive(boolean active) {
+        this.feverBallActive = active;
     }
 
     private int score;
@@ -142,18 +148,33 @@ public class GameManager {
         return new int[] {brickRow, brickCol};
     }
 
-    private void handleExplosion (int centerRow, int centerCol) {
+    private void handleExplosion(int centerRow, int centerCol) {
         for (int row = Math.max(0, centerRow - 1); row <= Math.min(7, centerRow + 1); row++) {
             for (int col = Math.max(0, centerCol - 1); col <= Math.min(7, centerCol + 1); col++) {
                 for (GameObject obj : gameObjects) {
                     if (obj instanceof Brick && ((Brick) obj).getType() != BrickType.WALL) {
-                            int[] gridPos = getBrickGridPosition((Brick) obj);
-                            int brickRow = gridPos[0];
-                            int brickCol = gridPos[1];
-                            if (brickRow == row && brickCol == col) {
+                        int[] gridPos = getBrickGridPosition((Brick) obj);
+                        int brickRow = gridPos[0];
+                        int brickCol = gridPos[1];
+                        if (brickRow == row && brickCol == col) {
                             boolean destroyed = ((Brick) obj).takeHit();
                             if (destroyed) {
-                                score += ((Brick) obj).getScoreValue();
+                                score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
+                                // Rơi power-up ngẫu nhiên (30% cơ hội)
+                                if (Math.random() < 0.3) {
+                                    PowerUp powerUp;
+                                    double rand = Math.random();
+                                    if (rand < 0.25) {
+                                        powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else if (rand < 0.5) {
+                                        powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else if (rand < 0.75) {
+                                        powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else {
+                                        powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                    }
+                                    addGameObject(powerUp);
+                                }
                             }
                         }
                     }
@@ -210,105 +231,148 @@ public class GameManager {
         long remainingBricks = gameObjects.stream()
                 .filter(obj -> obj instanceof Brick)
                 .filter(obj -> ((Brick) obj).getType() != BrickType.WALL)
-                .count(); // Chỉnh để không đếm tường nữa
+                .count();
 
         if (remainingBricks == 0) {
             if (currentLevel == savedLevel) {
-                savedLevel++; // Mở khóa màn tiếp theo
+                savedLevel++;
             }
             gameState = GameState.WIN;
         }
     }
 
     private void loseLife() {
-        lives--;
-        if (lives <= 0) {
-            gameState = GameState.GAME_OVER;
-        } else {
-            // Quả bóng và thanh về vị trí mặc định
-            ball.reset(paddle);
-            paddle.reset();
+        long remainingBalls = gameObjects.stream()
+                .filter(obj -> obj instanceof Ball)
+                .count();
+
+        if (remainingBalls <= 1) {
+            int lifePenalty = feverBallActive ? FeverBallPowerUp.getLifePenaltyMultiplier() : 1;
+            if (lives <= lifePenalty) {
+                lives = 0;
+                gameState = GameState.GAME_OVER;
+            } else {
+                lives -= lifePenalty;
+                gameObjects.removeIf(obj -> obj instanceof Ball);
+                int ballX = Const.BALL_DEFAULT_POS_X;
+                int ballY = Const.BALL_DEFAULT_POS_Y;
+                ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, 0, 0);
+                addGameObject(ball);
+                paddle.reset();
+            }
         }
     }
 
-    /**
-     * Kiểm tra va chạm giữa bóng với tường, paddle và brick
-     */
     private void checkCollisions() {
-        if (!ball.isStarted()) {
-            ball.setSpeedX(paddle.getSpeedX());
-            return;
-        }
-        if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
-            ball.reverseX();
-            if (ball.getX() <= 0) {
-                ball.setX(0);
-            } else {
-                ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
+        for (GameObject ballObj : gameObjects.stream()
+                .filter(obj -> obj instanceof Ball)
+                .collect(Collectors.toList())) {
+            Ball ball = (Ball) ballObj;
+
+            if (!ball.isStarted()) {
+                ball.setSpeedX(paddle.getSpeedX());
+                continue;
             }
-        }
-        if (ball.getY() <= 0) {
-            ball.reverseY();
-            ball.setY(0);
-        }
-        if (ball.getY() >= Const.SCREEN_HEIGHT) {
-            loseLife();
-        }
-        if (ball.getBounds().intersects(paddle.getBounds())) {
-            Rectangle2D intersection = ball.intersection(paddle.getBounds());
-            double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
-            double ballCenterX = ball.getX() + ball.getWidth() / 2;
-            double offX = ballCenterX - paddleCenterX;
-            // Set tốc độ phương y dựa theo tỷ lệ khoảng cách từ điểm rơi tới tâm / (chiều dài paddle/2)
-            double ballCurrentSpeedX = ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2);
-            double paddleCurrentSpeed = paddle.getSpeedX();
-            ballCurrentSpeedX += paddleCurrentSpeed * 0.25;
-            if (ballCurrentSpeedX > ball.getMaxSpeed()) {
-                ballCurrentSpeedX = ball.getMaxSpeed() * 0.99;
+
+            if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
+                ball.reverseX();
+                if (ball.getX() <= 0) {
+                    ball.setX(0);
+                } else {
+                    ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
+                }
             }
-            if (ballCurrentSpeedX < -ball.getMaxSpeed()) {
-                ballCurrentSpeedX = -ball.getMaxSpeed() * 0.99;
+            if (ball.getY() <= 0) {
+                ball.reverseY();
+                ball.setY(0);
             }
-            ball.setSpeedX(ballCurrentSpeedX);
-            // Set tốc độ phương x dựa theo tốc độ phương y
-            double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
-                    - Math.pow(ball.getSpeedX(), 2));
-            ball.setSpeedY(-newSpeedY);
-            ball.setY(ball.getY() - intersection.getHeight());
-        }
-        for (GameObject obj : gameObjects) {
-            if (obj instanceof Brick) {
-                Rectangle2D brickBound = obj.getBounds();
-                if (ball.getBounds().intersects(brickBound)) {
-                    Rectangle2D intersection = ball.intersection(brickBound);
-                    if (intersection.getHeight() >= intersection.getWidth()) {
-                        if (ball.getX() < brickBound.getMinX()) {
-                            ball.setX(brickBound.getMinX() - ball.getWidth());
-                        } else ball.setX(brickBound.getMaxX());
-                        ball.reverseX();
-                    } else {
-                        if (ball.getY() < brickBound.getMinY()) {
-                            ball.setY(brickBound.getMinY() - ball.getHeight());
-                        } else ball.setY(brickBound.getMaxY());
-                        ball.reverseY();
-                    }
-                    boolean destroyed = ((Brick) obj).takeHit();
-                    if (destroyed) {
-                        score += ((Brick) obj).getScoreValue();
-                        if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
-                            int[] gridPos = getBrickGridPosition((Brick) obj);
-                            int brickRow = gridPos[0];
-                            int brickCol = gridPos[1];
-                            handleExplosion(brickRow, brickCol);
+            if (ball.getY() >= Const.SCREEN_HEIGHT) {
+                ball.setActive(false);
+                loseLife();
+                continue;
+            }
+
+            if (ball.getBounds().intersects(paddle.getBounds())) {
+                Rectangle2D intersection = ball.intersection(paddle.getBounds());
+                double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+                double ballCenterX = ball.getX() + ball.getWidth() / 2;
+                double offX = ballCenterX - paddleCenterX;
+                double ballCurrentSpeedX = ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2);
+                double paddleCurrentSpeed = paddle.getSpeedX();
+                ballCurrentSpeedX += paddleCurrentSpeed * 0.25;
+                if (ballCurrentSpeedX > ball.getMaxSpeed()) {
+                    ballCurrentSpeedX = ball.getMaxSpeed() * 0.99;
+                }
+                if (ballCurrentSpeedX < -ball.getMaxSpeed()) {
+                    ballCurrentSpeedX = -ball.getMaxSpeed() * 0.99;
+                }
+                ball.setSpeedX(ballCurrentSpeedX);
+                double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
+                        - Math.pow(ball.getSpeedX(), 2));
+                ball.setSpeedY(-newSpeedY);
+                ball.setY(ball.getY() - intersection.getHeight());
+            }
+
+            for (GameObject obj : gameObjects) {
+                if (obj instanceof Brick) {
+                    Rectangle2D brickBound = obj.getBounds();
+                    if (ball.getBounds().intersects(brickBound)) {
+                        Rectangle2D intersection = ball.intersection(brickBound);
+                        if (intersection.getHeight() >= intersection.getWidth()) {
+                            if (ball.getX() < brickBound.getMinX()) {
+                                ball.setX(brickBound.getMinX() - ball.getWidth());
+                            } else {
+                                ball.setX(brickBound.getMaxX());
+                            }
+                            ball.reverseX();
+                        } else {
+                            if (ball.getY() < brickBound.getMinY()) {
+                                ball.setY(brickBound.getMinY() - ball.getHeight());
+                            } else {
+                                ball.setY(brickBound.getMaxY());
+                            }
+                            ball.reverseY();
                         }
+                        boolean destroyed = ((Brick) obj).takeHit();
+                        if (destroyed) {
+                            score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
+                            if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
+                                int[] gridPos = getBrickGridPosition((Brick) obj);
+                                int brickRow = gridPos[0];
+                                int brickCol = gridPos[1];
+                                handleExplosion(brickRow, brickCol);
+                            } else {
+                                if (Math.random() < 0.3) {
+                                    PowerUp powerUp;
+                                    double rand = Math.random();
+                                    if (rand < 0.25) {
+                                        powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else if (rand < 0.5) {
+                                        powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else if (rand < 0.75) {
+                                        powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else {
+                                        powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                    }
+                                    addGameObject(powerUp);
+                                }
+                            }
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
+
+        // Kiểm tra va chạm giữa paddle và power-up
+        for (GameObject obj : gameObjects) {
+            if (obj instanceof PowerUp && obj.getBounds().intersects(paddle.getBounds())) {
+                ((PowerUp) obj).activate(paddle);
+                obj.setActive(false);
+            }
+        }
     }
 
-    // Getters for Renderer and KeyInput
     public List<GameObject> getGameObjects() {
         return gameObjects;
     }
