@@ -3,8 +3,7 @@ package com.arkanoid.entities;
 import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
+import com.arkanoid.ui.SpriteManager;
 
 // Lớp Paddle kế thừa từ MovableObject
 public class Paddle extends MovableObject {
@@ -15,6 +14,7 @@ public class Paddle extends MovableObject {
 
     public Paddle(int x, int y, int width, int height) {
         super(x, y, width, height, 0, 0); // Vận tốc ban đầu là 0
+        this.sprite = SpriteManager.getSprite(131, 1, 32, 10);
     }
 
     @Override
@@ -31,8 +31,7 @@ public class Paddle extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.setFill(Color.rgb(0, 255, 255));
-        gc.fillRect(x, y, width, height);
+        super.render(gc);
     }
 
     public void reset() {
