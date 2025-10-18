@@ -47,6 +47,10 @@ public class Brick extends GameObject {
                 gc.setFill(Color.rgb(255,215, 0, opacity));
                 break;
             }
+            case EXPLOSIVE: {
+                gc.setFill(Color.ORANGE);
+                break;
+            }
             default: {
                 gc.setFill(Color.WHITE);
                 break;
