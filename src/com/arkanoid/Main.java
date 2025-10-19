@@ -34,7 +34,7 @@ public class Main extends Application {
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                gm.update();
+                gm.update(now);
                 renderer.render(gm);
             }
         };
