@@ -15,11 +15,15 @@ public class GameManager {
     private static GameManager instance;
     private int currentLevel = 1;
     private int savedLevel = 1;
+    private static final int MAX_LEVELS = 3;
 
     private List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
     private Paddle paddle;
     private Ball ball;
     private boolean feverBallActive = false;
+
+    private long levelTransitionStartTime = 0;
+    private static final long LEVEL_TRANSITION_DELAY = 1_500_000_000L;
 
     private MainMenu mainMenu;
 
@@ -33,8 +37,8 @@ public class GameManager {
         this.feverBallActive = active;
     }
 
-    private int score;
-    private int lives;
+    private int score = Const.DEFAULT_SCORES;
+    private int lives =  Const.DEFAULT_LIVES;
 
     private GameManager() {
         mainMenu = new MainMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
@@ -45,6 +49,13 @@ public class GameManager {
             instance = new GameManager();
         }
         return instance;
+    }
+
+    public void newGame() {
+        savedLevel = 1;
+        score = Const.DEFAULT_SCORES;
+        lives = Const.DEFAULT_LIVES;
+        startLevel(1);
     }
 
     public void startLevel(int level) {
@@ -61,8 +72,6 @@ public class GameManager {
         addGameObject(paddle);
         addGameObject(ball);
 
-        lives = Const.DEFAULT_LIVES;
-        score = Const.DEFAULT_SCORES;
         loadLevel(level);
         gameState = GameState.PLAYING;
     }
@@ -193,11 +202,6 @@ public class GameManager {
         }
     }
 
-    public void newGame() {
-        savedLevel = 1;
-        startLevel(1);
-    }
-
     public MainMenu getMainMenu() {
         return mainMenu;
     }
@@ -222,22 +226,37 @@ public class GameManager {
         gameObjects.add(object);
     }
 
-    public void update() {
+    public void update(long now) {
+        if (gameState == GameState.LEVEL_TRANSITION) {
+            if (now - levelTransitionStartTime > LEVEL_TRANSITION_DELAY) {
+                currentLevel++;
+                startLevel(currentLevel); // Chỉ cần gọi startLevel
+                if (savedLevel < currentLevel) {
+                    savedLevel = currentLevel;
+                }
+            }
+            return; // Dừng update trong lúc chờ
+        }
+
         if (gameState != GameState.PLAYING) return;
         gameObjects.forEach(GameObject::update);
         checkCollisions();
         gameObjects.removeIf(obj -> !obj.isActive());
 
-        long remainingBricks = gameObjects.stream()
-                .filter(obj -> obj instanceof Brick)
-                .filter(obj -> ((Brick) obj).getType() != BrickType.WALL)
-                .count();
+        long remainingBricks = 0;
+        for (GameObject obj : gameObjects) {
+            if (obj instanceof Brick && obj.isActive() && ((Brick) obj).getType() != BrickType.WALL) {
+                remainingBricks++;
+            }
+        }
 
         if (remainingBricks == 0) {
-            if (currentLevel == savedLevel) {
-                savedLevel++;
+            if (currentLevel >= MAX_LEVELS) {
+                gameState = GameState.WIN;
+            } else {
+                gameState = GameState.LEVEL_TRANSITION;
+                levelTransitionStartTime = now;
             }
-            gameState = GameState.WIN;
         }
     }
 
@@ -264,112 +283,118 @@ public class GameManager {
     }
 
     private void checkCollisions() {
-        for (GameObject ballObj : gameObjects.stream()
-                .filter(obj -> obj instanceof Ball)
-                .collect(Collectors.toList())) {
-            Ball ball = (Ball) ballObj;
+        for (GameObject ballObj : gameObjects) {
+            if (ballObj instanceof Ball ball && ball.isActive()) {
 
-            if (ball.isStarted() == false) {
-                ball.setSpeedX(paddle.getSpeedX());
-                return;
-            }
-
-            if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
-                ball.reverseX();
-                if (ball.getX() <= 0) {
-                    ball.setX(0);
-                } else {
-                    ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
+                // Xử lý bóng chưa được phóng
+                if (!ball.isStarted()) {
+                    if (paddle != null) {
+                        ball.setX(paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2);
+                        ball.setY(paddle.getY() - ball.getHeight());
+                    }
+                    continue;
                 }
-            }
-            if (ball.getY() <= 0) {
-                ball.reverseY();
-                ball.setY(0);
-            }
-            if (ball.getY() >= Const.SCREEN_HEIGHT) {
-                ball.setActive(false);
-                loseLife();
-                continue;
-            }
 
-            if (ball.getBounds().intersects(paddle.getBounds())) {
-                Rectangle2D intersection = ball.intersection(paddle.getBounds());
-                double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
-                double ballCenterX = ball.getX() + ball.getWidth() / 2;
-                double offX = ballCenterX - paddleCenterX;
-                double ballCurrentSpeedX = ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2);
-                double paddleCurrentSpeed = paddle.getSpeedX();
-                ballCurrentSpeedX += paddleCurrentSpeed * 0.25;
-                if (ballCurrentSpeedX > ball.getMaxSpeed()) {
-                    ballCurrentSpeedX = ball.getMaxSpeed() * 0.99;
+                if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
+                    ball.reverseX();
+                    if (ball.getX() <= 0) {
+                        ball.setX(0);
+                    } else {
+                        ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
+                    }
                 }
-                if (ballCurrentSpeedX < -ball.getMaxSpeed()) {
-                    ballCurrentSpeedX = -ball.getMaxSpeed() * 0.99;
+                if (ball.getY() <= 0) {
+                    ball.reverseY();
+                    ball.setY(0);
                 }
-                ball.setSpeedX(ballCurrentSpeedX);
-                double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
-                        - Math.pow(ball.getSpeedX(), 2));
-                ball.setSpeedY(-newSpeedY);
-                ball.setY(ball.getY() - intersection.getHeight());
-            }
+                if (ball.getY() >= Const.SCREEN_HEIGHT) {
+                    ball.setActive(false);
+                    loseLife();
+                    continue;
+                }
 
-            for (GameObject obj : gameObjects) {
-                if (obj instanceof Brick) {
-                    Rectangle2D brickBound = obj.getBounds();
-                    if (ball.getBounds().intersects(brickBound)) {
-                        Rectangle2D intersection = ball.intersection(brickBound);
-                        if (intersection.getHeight() >= intersection.getWidth()) {
-                            if (ball.getX() < brickBound.getMinX()) {
-                                ball.setX(brickBound.getMinX() - ball.getWidth());
-                            } else {
-                                ball.setX(brickBound.getMaxX());
-                            }
-                            ball.reverseX();
-                        } else {
-                            if (ball.getY() < brickBound.getMinY()) {
-                                ball.setY(brickBound.getMinY() - ball.getHeight());
-                            } else {
-                                ball.setY(brickBound.getMaxY());
-                            }
-                            ball.reverseY();
-                        }
-                        boolean destroyed = ((Brick) obj).takeHit();
-                        if (destroyed) {
-                            score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
-                            if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
-                                int[] gridPos = getBrickGridPosition((Brick) obj);
-                                int brickRow = gridPos[0];
-                                int brickCol = gridPos[1];
-                                handleExplosion(brickRow, brickCol);
-                            } else {
-                                if (Math.random() < 0.3) {
-                                    PowerUp powerUp;
-                                    double rand = Math.random();
-                                    if (rand < 0.25) {
-                                        powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.5) {
-                                        powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.75) {
-                                        powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else {
-                                        powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
+                if (ball.getBounds().intersects(paddle.getBounds())) {
+                    Rectangle2D intersection = ball.intersection(paddle.getBounds());
+                    if (intersection != null) {
+                        double ballCurrentSpeedX = getBallCurrentSpeedX(ball);
+                        ball.setSpeedX(ballCurrentSpeedX);
+                        double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2) - Math.pow(ball.getSpeedX(), 2));
+                        ball.setSpeedY(-newSpeedY);
+                        ball.setY(paddle.getY() - ball.getHeight());
+                    }
+                }
+
+                boolean xReversedThisFrame = false;
+                boolean yReversedThisFrame = false;
+                for (GameObject obj : gameObjects) {
+                    if (obj instanceof Brick && obj.isActive()) {
+                        Rectangle2D brickBound = obj.getBounds();
+                        if (ball.getBounds().intersects(brickBound)) {
+                            Rectangle2D intersection = ball.intersection(brickBound);
+                            if (intersection != null) {
+                                // Chỉ đảo chiều nếu chưa đảo chiều trên trục đó trong frame này
+                                if (intersection.getHeight() >= intersection.getWidth()) { // Va chạm cạnh bên
+                                    if (!xReversedThisFrame) {
+                                        ball.reverseX();
+                                        xReversedThisFrame = true;
                                     }
-                                    addGameObject(powerUp);
+                                } else { // Va chạm cạnh trên/dưới
+                                    if (!yReversedThisFrame) {
+                                        ball.reverseY();
+                                        yReversedThisFrame = true;
+                                    }
+                                }
+
+                                // Luôn luôn điều chỉnh lại vị trí để bóng không bị kẹt
+                                if (intersection.getHeight() >= intersection.getWidth()) {
+                                    if (ball.getX() < brickBound.getMinX()) ball.setX(brickBound.getMinX() - ball.getWidth());
+                                    else ball.setX(brickBound.getMaxX());
+                                } else {
+                                    if (ball.getY() < brickBound.getMinY()) ball.setY(brickBound.getMinY() - ball.getHeight());
+                                    else ball.setY(brickBound.getMaxY());
+                                }
+
+                                boolean destroyed = ((Brick) obj).takeHit();
+                                if (destroyed) {
+                                    score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
+                                    if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
+                                        int[] gridPos = getBrickGridPosition((Brick) obj);
+                                        handleExplosion(gridPos[0], gridPos[1]);
+                                    } else {
+                                        if (Math.random() < 0.3) {
+                                            PowerUp powerUp;
+                                            double rand = Math.random();
+                                            if (rand < 0.25) powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                            else if (rand < 0.5) powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                            else if (rand < 0.75) powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
+                                            else powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
+                                            addGameObject(powerUp);
+                                        }
+                                    }
                                 }
                             }
                         }
-                        break;
                     }
                 }
             }
         }
 
         for (GameObject obj : gameObjects) {
-            if (obj instanceof PowerUp && obj.getBounds().intersects(paddle.getBounds())) {
+            if (obj instanceof PowerUp && obj.isActive() && obj.getBounds().intersects(paddle.getBounds())) {
                 ((PowerUp) obj).activate(paddle);
-                // Xóa dòng setActive(false) để power-up tự xử lý khi hết duration
             }
         }
+    }
+
+    private double getBallCurrentSpeedX(Ball ball) {
+        double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
+        double ballCenterX = ball.getX() + ball.getWidth() / 2;
+        double offX = ballCenterX - paddleCenterX;
+        double ballCurrentSpeedX = ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2);
+        ballCurrentSpeedX += paddle.getSpeedX() * 0.25;
+        if (ballCurrentSpeedX > ball.getMaxSpeed()) ballCurrentSpeedX = ball.getMaxSpeed() * 0.99;
+        if (ballCurrentSpeedX < -ball.getMaxSpeed()) ballCurrentSpeedX = -ball.getMaxSpeed() * 0.99;
+        return ballCurrentSpeedX;
     }
 
     public List<GameObject> getGameObjects() {
@@ -395,4 +420,8 @@ public class GameManager {
     public Ball getBall() {
         return ball;
     }
+
+    public int getCurrentLevel() { return currentLevel; }
+
+    public int getSavedLevel() { return savedLevel; }
 }
