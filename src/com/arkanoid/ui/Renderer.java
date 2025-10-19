@@ -57,6 +57,8 @@ public class Renderer {
                 drawMessage("GAME OVER");
             } else if (gameState == GameState.WIN) {
                 drawMessage("YOU WIN!");
+            } else if (gameState == GameState.LEVEL_TRANSITION) {
+                drawMessage("Level " + (gm.getCurrentLevel() + 1));
             }
         }
     }
