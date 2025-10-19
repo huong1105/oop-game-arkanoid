@@ -7,6 +7,7 @@ import com.arkanoid.game.GameManager;
 import com.arkanoid.game.GameState;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public class KeyInput {
@@ -30,17 +31,35 @@ public class KeyInput {
             if (gm.getGameState() == GameState.MENU) {
                 gm.getMainMenu().update(event.getX(), event.getY());
             }
+            // Điều khiển paddle bằng chuột
+            if (gm.getGameState() == GameState.PLAYING) {
+                Paddle paddle = gm.getPaddle();
+                Ball ball = gm.getBall();
+                paddle.setX(event.getX() - paddle.getWidth() / 2);
+                if (ball.isStarted() == false) {
+                    ball.setX(event.getX() - ball.getWidth() / 2);
+                }
+            }
         });
 
         // Xử lý khi click chuột
         scene.setOnMouseClicked((MouseEvent event) -> {
-            if (gm.getGameState() == GameState.MENU) {
+            MouseButton button = event.getButton();
+            //Điều khiển menu bằng chuột trái
+            if (gm.getGameState() == GameState.MENU && button == MouseButton.PRIMARY) {
                 for (MenuItem item : gm.getMainMenu().getMenuItems()) {
                     // Kiểm tra xem có click vào nút nào không
                     if (item.getBounds().contains(event.getX(), event.getY())) {
                         handleMenuClick(gm, item.getText());
                         break; // Dừng lại sau khi tìm thấy nút được click
                     }
+                }
+            }
+            //Bắt đầu bóng bằng chuột phải
+            if (gm.getGameState() == GameState.PLAYING) {
+                if (button == MouseButton.SECONDARY && gm.getBall().isStarted() == false) {
+                    gm.getBall().start();
+                    gm.getBall().setSpeedY(-Const.BALL_MAXSPEED);
                 }
             }
         });
@@ -61,13 +80,6 @@ public class KeyInput {
                     }
                     break;
 
-                case READY:
-                    // Phím Space để bắt đầu lượt chơi mới
-                    if (code == KeyCode.SPACE) {
-                        gm.setGameState(GameState.PLAYING);
-                    }
-                    break;
-
                 case PLAYING:
                     Paddle paddle = gm.getPaddle();
                     Ball ball = gm.getBall();
@@ -85,8 +97,7 @@ public class KeyInput {
                             paddle.setMovingRight(true);
                             paddle.setMovingLeft(false);
                         }
-                    }
-                    // Phím P để tạm dừng
+                    }// Phím P để tạm dừng
                     if (code == KeyCode.P) {
                         gm.setGameState(GameState.PAUSED);
                     }
