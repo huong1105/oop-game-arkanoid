@@ -19,6 +19,7 @@ public class Renderer {
         this.gc = gc;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
+        gc.setImageSmoothing(false);
     }
 
     /**
@@ -60,13 +61,17 @@ public class Renderer {
         }
     }
 
-    /** Xóa toàn bộ canvas và tô màu đen. */
+    /**
+     * Xóa toàn bộ canvas và tô màu đen.
+     */
     private void clear() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
     }
 
-    /** Vẽ màn hình Menu chính. */
+    /**
+     * Vẽ màn hình Menu chính.
+     */
     private void drawMenuScreen() {
         gc.setFill(Color.WHITE);
         gc.setTextAlign(TextAlignment.CENTER);
@@ -80,7 +85,9 @@ public class Renderer {
         gc.fillText("Press ENTER to Start", canvasWidth / 2, canvasHeight / 2);
     }
 
-    /** Vẽ các thông tin như điểm và mạng sống. */
+    /**
+     * Vẽ các thông tin như điểm và mạng sống.
+     */
     private void drawUI(int score, int lives) {
         gc.setFill(Color.WHITE);
         gc.setFont(new Font("Arial", 20));
@@ -91,7 +98,9 @@ public class Renderer {
         gc.fillText("Lives: " + lives, canvasWidth - 10, 25);
     }
 
-    /** Vẽ một thông báo lớn ở giữa màn hình. */
+    /**
+     * Vẽ một thông báo lớn ở giữa màn hình.
+     */
     private void drawMessage(String message) {
         gc.setFill(Color.rgb(0, 0, 0, 0.6));
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
