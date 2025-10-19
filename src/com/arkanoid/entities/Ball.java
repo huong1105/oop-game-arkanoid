@@ -2,9 +2,8 @@ package com.arkanoid.entities;
 
 import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
-import javafx.scene.canvas.GraphicsContext;
 import com.arkanoid.ui.SpriteManager;
-import javafx.scene.paint.Color;
+import javafx.scene.canvas.GraphicsContext;
 
 public class Ball extends MovableObject {
     private int maxSpeed = Const.BALL_MAXSPEED;
