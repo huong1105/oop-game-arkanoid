@@ -10,12 +10,14 @@ public abstract class GameObject {
     protected double x, y, width, height;
     protected boolean active = true;
     protected Image sprite;
+    protected Rectangle2D bounds;
 
     public GameObject(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.bounds = new Rectangle2D(x, y, width, height);
     }
 
     public abstract void update();
@@ -30,7 +32,7 @@ public abstract class GameObject {
     }
 
     public Rectangle2D getBounds() {
-        return new Rectangle2D(x, y, width, height);
+        return bounds;
     }
 
     public Image getSprite() {
