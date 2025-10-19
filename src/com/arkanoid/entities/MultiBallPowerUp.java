@@ -22,21 +22,19 @@ public class MultiBallPowerUp extends PowerUp {
                 .map(obj -> (Ball) obj)
                 .collect(Collectors.toList());
 
-        // Nhân đôi: clone mỗi ball hiện tại và thêm vào game
         for (Ball currentBall : currentBalls) {
-            // Tạo ball mới với vị trí tương tự nhưng offset nhẹ
             Ball newBall = new Ball(
                     (int) currentBall.getX() + 5,
                     (int) currentBall.getY(),
                     Const.BALL_DIAMETER,
-                    (int) -currentBall.getSpeedX(), // Đảo ngược hướng X
-                    (int) currentBall.getSpeedY() // Giữ nguyên speedY ban đầu
+                    (int) -currentBall.getSpeedX(),
+                    (int) currentBall.getSpeedY()
             );
 
             double speedX = newBall.getSpeedX();
             double speedY = newBall.getSpeedY();
             if (speedY == 0) {
-                speedY = currentBall.getMaxSpeed() * 0.7; // Giá trị tùy chọn
+                speedY = currentBall.getMaxSpeed() * 0.7;
                 speedX = Math.sqrt(Math.pow(currentBall.getMaxSpeed(), 2) - Math.pow(speedY, 2));
                 if (newBall.getSpeedX() < 0) {
                     speedX = -speedX;
@@ -45,7 +43,6 @@ public class MultiBallPowerUp extends PowerUp {
                 newBall.setSpeedY(speedY);
             }
 
-            // Chuẩn hóa tốc độ để tổng tốc độ bằng maxSpeed
             double currentSpeed = Math.sqrt(Math.pow(newBall.getSpeedX(), 2) + Math.pow(newBall.getSpeedY(), 2));
             if (currentSpeed != 0) {
                 double scale = currentBall.getMaxSpeed() / currentSpeed;

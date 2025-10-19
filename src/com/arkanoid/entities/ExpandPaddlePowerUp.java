@@ -4,7 +4,7 @@ import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
 
 public class ExpandPaddlePowerUp extends PowerUp {
-    private static final int DURATION = 10; // 10 giây
+    private static final int DURATION = 10000;
     private static final double WIDTH_MULTIPLIER = 2.0;
     private double originalWidth;
 
@@ -14,22 +14,20 @@ public class ExpandPaddlePowerUp extends PowerUp {
 
     @Override
     public void applyEffect() {
-        GameManager gameManager = GameManager.getInstance();
-        Paddle paddle = gameManager.getPaddle();
-        if (!paddle.isExpanded()) {
-            originalWidth = paddle.getWidth();
-            paddle.setWidth(paddle.getWidth() * WIDTH_MULTIPLIER);
-            if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH) {
-                paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth());
-            }
-            paddle.setExpanded(true);
+        Paddle paddle = GameManager.getInstance().getPaddle();
+        if (paddle.isExpanded()) return;
+
+        originalWidth = paddle.getWidth();
+        paddle.setWidth(paddle.getWidth() * WIDTH_MULTIPLIER);
+        if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH) {
+            paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth());
         }
+        paddle.setExpanded(true);
     }
 
     @Override
     public void removeEffect() {
-        GameManager gameManager = GameManager.getInstance();
-        Paddle paddle = gameManager.getPaddle();
+        Paddle paddle = GameManager.getInstance().getPaddle();
         paddle.setWidth(originalWidth);
         if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH) {
             paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth());

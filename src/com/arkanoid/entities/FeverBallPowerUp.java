@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FeverBallPowerUp extends PowerUp {
-    private static final int DURATION = 8000;
+    private static final int DURATION = 8000; // ms
     private static final double SCORE_MULTIPLIER = 2.0;
     private static final int LIFE_PENALTY_MULTIPLIER = 2;
 
@@ -15,10 +15,14 @@ public class FeverBallPowerUp extends PowerUp {
     }
 
     @Override
-    public void applyEffect() {}
+    public void applyEffect() {
+        GameManager.getInstance().setFeverBallActive(true);
+    }
 
     @Override
-    public void removeEffect() {}
+    public void removeEffect() {
+        GameManager.getInstance().setFeverBallActive(false);
+    }
 
     public static double getScoreMultiplier() {
         return SCORE_MULTIPLIER;

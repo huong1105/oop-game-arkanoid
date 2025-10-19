@@ -10,7 +10,6 @@ public class Paddle extends MovableObject {
     private int speed = Const.PADDLE_DEFAULT_SPEED;
     private boolean movingLeft;
     private boolean movingRight;
-    private String currentPowerUp;
     private boolean isExpanded;
 
     public Paddle(int x, int y, int width, int height) {
@@ -67,6 +66,4 @@ public class Paddle extends MovableObject {
     public void setExpanded(boolean expanded) {
         this.isExpanded = expanded;
     }
-
-    public void applyPowerUp() { /* Logic áp dụng power-up */ }
 }

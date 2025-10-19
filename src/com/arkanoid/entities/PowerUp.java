@@ -7,9 +7,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class PowerUp extends MovableObject {
-    private String type;
-    private int duration;
-    private long startTime;
+    protected String type;
+    protected int duration;
+    protected long startTime;
     protected Object target;
 
     private static final double FALL_SPEED = 2.0;
@@ -39,7 +39,7 @@ public abstract class PowerUp extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        if (!isActive()) return;
+        if (!isActive() || startTime != 0) return; // Chỉ render khi chưa activate
 
         switch (type) {
             case "MultiBall":
@@ -61,18 +61,16 @@ public abstract class PowerUp extends MovableObject {
     }
 
     public void activate(Object obj) {
-        if (this instanceof ExpandPaddlePowerUp && obj instanceof Paddle) {
-            Paddle paddle = (Paddle) obj;
-            if (paddle.isExpanded()) {
-                return;
-            }
-        }
+        if (startTime != 0) return; // Đã activate, bỏ qua
 
         this.target = obj;
         this.startTime = System.currentTimeMillis();
+        this.speedX = 0;
+        this.speedY = 0; // Ngừng di chuyển sau activate
         applyEffect();
-        if (this instanceof FeverBallPowerUp) {
-            GameManager.getInstance().setFeverBallActive(true);
+
+        if (duration == 0) {
+            setActive(false); // Đối với power-up không có thời gian
         }
     }
 

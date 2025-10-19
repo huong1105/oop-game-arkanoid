@@ -364,11 +364,10 @@ public class GameManager {
             }
         }
 
-        // Kiểm tra va chạm giữa paddle và power-up
         for (GameObject obj : gameObjects) {
             if (obj instanceof PowerUp && obj.getBounds().intersects(paddle.getBounds())) {
                 ((PowerUp) obj).activate(paddle);
-                obj.setActive(false);
+                // Xóa dòng setActive(false) để power-up tự xử lý khi hết duration
             }
         }
     }

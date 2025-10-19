@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FastBallPowerUp extends PowerUp {
-    private static final int DURATION = 5000;
+    private static final int DURATION = 5000; // ms
     private static final double SPEED_MULTIPLIER = 2.0;
 
     public FastBallPowerUp(int x, int y) {
@@ -15,8 +15,7 @@ public class FastBallPowerUp extends PowerUp {
 
     @Override
     public void applyEffect() {
-        GameManager gameManager = GameManager.getInstance();
-        List<Ball> currentBalls = gameManager.getGameObjects().stream()
+        List<Ball> currentBalls = GameManager.getInstance().getGameObjects().stream()
                 .filter(obj -> obj instanceof Ball)
                 .map(obj -> (Ball) obj)
                 .collect(Collectors.toList());
@@ -30,8 +29,7 @@ public class FastBallPowerUp extends PowerUp {
 
     @Override
     public void removeEffect() {
-        GameManager gameManager = GameManager.getInstance();
-        List<Ball> currentBalls = gameManager.getGameObjects().stream()
+        List<Ball> currentBalls = GameManager.getInstance().getGameObjects().stream()
                 .filter(obj -> obj instanceof Ball)
                 .map(obj -> (Ball) obj)
                 .collect(Collectors.toList());
