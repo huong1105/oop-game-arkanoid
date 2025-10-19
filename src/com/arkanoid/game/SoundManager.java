@@ -1,4 +1,4 @@
-package com.arkanoid.core;
+package com.arkanoid.game;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
