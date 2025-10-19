@@ -1,5 +1,7 @@
 package com.arkanoid.core;
 
+import javafx.geometry.Rectangle2D;
+
 public abstract class MovableObject extends GameObject {
     protected double speedX;
     protected double speedY;
@@ -30,6 +32,7 @@ public abstract class MovableObject extends GameObject {
     public void update() {
         x += speedX;
         y += speedY;
+        this.bounds = new Rectangle2D(x, y, width, height);
     }
 
 }
