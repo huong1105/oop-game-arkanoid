@@ -57,7 +57,7 @@ public class GameManager {
         int ballX = Const.BALL_DEFAULT_POS_X;
         int ballY = Const.BALL_DEFAULT_POS_Y;
         ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, 0, 0);
-
+        ball.stop();
         addGameObject(paddle);
         addGameObject(ball);
 
@@ -145,7 +145,7 @@ public class GameManager {
         int startY = 50;
         int brickRow = (int) ((brick.getY() - startY) / Const.BRICK_HEIGHT);
         int brickCol = (int) ((brick.getX() - startX) / Const.BRICK_WIDTH);
-        return new int[] {brickRow, brickCol};
+        return new int[]{brickRow, brickCol};
     }
 
     private void handleExplosion(int centerRow, int centerCol) {
@@ -269,9 +269,9 @@ public class GameManager {
                 .collect(Collectors.toList())) {
             Ball ball = (Ball) ballObj;
 
-            if (!ball.isStarted()) {
+            if (ball.isStarted() == false) {
                 ball.setSpeedX(paddle.getSpeedX());
-                continue;
+                return;
             }
 
             if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
