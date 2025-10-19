@@ -11,10 +11,12 @@ public class Paddle extends MovableObject {
     private boolean movingLeft;
     private boolean movingRight;
     private String currentPowerUp;
+    private boolean isExpanded;
 
     public Paddle(int x, int y, int width, int height) {
         super(x, y, width, height, 0, 0); // Vận tốc ban đầu là 0
         this.sprite = SpriteManager.getSprite(131, 1, 32, 10);
+        this.isExpanded = false;
     }
 
     @Override
@@ -39,6 +41,7 @@ public class Paddle extends MovableObject {
         y = Const.PADDLE_DEFAULT_POS_Y;
         width = Const.PADDLE_WIDTH;
         height = Const.PADDLE_HEIGHT;
+        isExpanded = false;
     }
 
     public boolean isMovingLeft() {
@@ -55,6 +58,14 @@ public class Paddle extends MovableObject {
 
     public void setMovingRight(boolean movingRight) {
         this.movingRight = movingRight;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.isExpanded = expanded;
     }
 
     public void applyPowerUp() { /* Logic áp dụng power-up */ }
