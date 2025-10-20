@@ -27,6 +27,7 @@ public class ExpandPaddlePowerUp extends PowerUp {
 
     @Override
     public void removeEffect() {
+        if (originalWidth == 0) return;
         Paddle paddle = GameManager.getInstance().getPaddle();
         paddle.setWidth(originalWidth);
         if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH) {
