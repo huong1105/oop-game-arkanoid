@@ -44,7 +44,7 @@ public class Brick extends GameObject {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTimeSeconds) {
         if (hitPoints <= 0) {
             setActive(false);
         }

@@ -7,39 +7,45 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class PowerUp extends MovableObject {
-    protected String type;
-    protected int duration;
-    protected long startTime;
+    protected double durationSeconds;
     protected Object target;
+    protected String type;
+    private boolean isActivated = false;
+    private double timeRemaining;
 
-    private static final double FALL_SPEED = 2.0;
+    private static final double FALL_SPEED = 120.0;
 
-    public PowerUp(int x, int y, int width, int height, String type, int duration) {
+    public PowerUp(int x, int y, int width, int height, String type, int durationMillis) {
         super(x, y, width, height, (float) 0, (float) FALL_SPEED);
         this.type = type;
-        this.duration = duration;
+
+        this.durationSeconds = durationMillis / 1000.0;
+        this.timeRemaining = this.durationSeconds;
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTimeSeconds) {
         if (!isActive()) return;
 
-        if (startTime == 0) {
-            // Chưa được kích hoạt: rơi xuống
-            super.update();
+        if (!isActivated) {
+            super.update(deltaTimeSeconds);
             if (getY() > Const.SCREEN_HEIGHT) {
                 setActive(false);
             }
-        } else if (duration > 0 && System.currentTimeMillis() - startTime >= duration) {
-            // Đã kích hoạt và hết thời gian: gọi removeEffect và deactivate
-            removeEffect();
-            setActive(false);
+        } else {
+            if (durationSeconds > 0) {
+                timeRemaining -= deltaTimeSeconds;
+                if (timeRemaining <= 0) {
+                    removeEffect();
+                    setActive(false);
+                }
+            }
         }
     }
 
     @Override
     public void render(GraphicsContext gc) {
-        if (!isActive() || startTime != 0) return; // Chỉ render khi chưa activate
+        if (!isActive() || isActivated) return; // Chỉ render khi chưa activate
 
         switch (type) {
             case "MultiBall":
@@ -61,15 +67,15 @@ public abstract class PowerUp extends MovableObject {
     }
 
     public void activate(Object obj) {
-        if (startTime != 0) return; // Đã activate, bỏ qua
+        if (isActivated) return;
 
+        this.isActivated = true;
         this.target = obj;
-        this.startTime = System.currentTimeMillis();
         this.speedX = 0;
-        this.speedY = 0; // Ngừng di chuyển sau activate
+        this.speedY = 0;
         applyEffect();
 
-        if (duration == 0) {
+        if (durationSeconds == 0) {
             setActive(false); // Đối với power-up không có thời gian
         }
     }

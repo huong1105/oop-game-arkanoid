@@ -26,8 +26,8 @@ public class GameManager {
     private Ball ball;
     private boolean feverBallActive = false;
 
-    private long levelTransitionStartTime = 0;
-    private static final long LEVEL_TRANSITION_DELAY = 1_500_000_000L;
+    private double levelTransitionTimer = 0;
+    private static final double LEVEL_TRANSITION_DELAY_SEC = 1.5;
 
     private MainMenu mainMenu;
 
@@ -108,14 +108,21 @@ public class GameManager {
                 break;
             case 2:
                 levelLayout = new int[][]{
-                        {1, 1, 1, 1, 1, 1, 1, 1},
-                        {4, 2, 1, 1, 2, 2, 2, 4},
-                        {4, 2, 1, 1, 1, 2, 2, 4},
-                        {5, 2, 1, 3, 3, 1, 2, 5},
-                        {5, 2, 1, 3, 3, 1, 2, 5},
-                        {4, 2, 1, 1, 1, 2, 2, 4},
-                        {4, 2, 1, 1, 2, 2, 2, 4},
-                        {4, 4, 4, 4, 4, 4, 4, 4}
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}
                 };
                 break;
             default:
@@ -139,8 +146,8 @@ public class GameManager {
                 break;
         }
 
-        for (int row = 0; row < 16; row++) {
-            for (int col = 0; col < 15; col++) {
+        for (int row = 0; row < levelLayout.length; row++) {
+            for (int col = 0; col < levelLayout[row].length; col++) {
                 int x = startX + col * Const.BRICK_WIDTH;
                 int y = startY + row * Const.BRICK_HEIGHT;
                 Brick brick = null;
@@ -269,19 +276,23 @@ public class GameManager {
         gameObjects.add(object);
     }
 
-    public void update(long now) {
+    public void update(double deltaTimeSeconds) {
         if (gameState == GameState.LEVEL_TRANSITION) {
-            if (now - levelTransitionStartTime > LEVEL_TRANSITION_DELAY) {
+            levelTransitionTimer -= deltaTimeSeconds;
+            if (levelTransitionTimer <= 0) {
                 currentLevel++;
-                startLevel(currentLevel); // Chỉ cần gọi startLevel
+                startLevel(currentLevel);
                 if (savedLevel < currentLevel) {
                     savedLevel = currentLevel;
                 }
             }
             return; // Dừng update trong lúc chờ
         }
+
         if (gameState != GameState.PLAYING) return;
-        gameObjects.forEach(GameObject::update);
+
+        gameObjects.forEach(obj -> obj.update(deltaTimeSeconds));
+
         checkCollisions();
         gameObjects.removeIf(obj -> !obj.isActive());
 
@@ -295,7 +306,7 @@ public class GameManager {
                 gameState = GameState.WIN;
             } else {
                 gameState = GameState.LEVEL_TRANSITION;
-                levelTransitionStartTime = now;
+                levelTransitionTimer = LEVEL_TRANSITION_DELAY_SEC;
             }
         }
     }

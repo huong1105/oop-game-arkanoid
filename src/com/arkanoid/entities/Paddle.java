@@ -19,7 +19,7 @@ public class Paddle extends MovableObject {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTimeSeconds) {
         if (movingLeft && getX() > 0) {
             setSpeedX(-speed);
         } else if (movingRight && getX() + width < Const.SCREEN_WIDTH) {
@@ -27,7 +27,8 @@ public class Paddle extends MovableObject {
         } else {
             setSpeedX(0);
         }
-        super.update();
+
+        super.update(deltaTimeSeconds);
     }
 
     @Override

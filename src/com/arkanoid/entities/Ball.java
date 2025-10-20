@@ -43,14 +43,15 @@ public class Ball extends MovableObject {
      * cập nhật vị trí bóng.
      */
     @Override
-    public void update() {
+    public void update(double deltaTimeSeconds) {
         if (started) {
             while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed) {
                 setSpeedX(getSpeedX() * 0.99);
                 setSpeedY(getSpeedY() * 0.99);
             }
         }
-        super.update();
+
+        super.update(deltaTimeSeconds);
     }
 
     @Override

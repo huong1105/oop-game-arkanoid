@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    private long lastFrameTime = 0;
 
     @Override
     public void start(Stage primaryStage) {
@@ -31,10 +32,13 @@ public class Main extends Application {
 
         KeyInput.setupInput(scene);
 
+        lastFrameTime = System.nanoTime();
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                gm.update(now);
+                double deltaTimeSeconds = (now - lastFrameTime) / 1_000_000_000.0;
+                lastFrameTime = now;
+                gm.update(deltaTimeSeconds);
                 renderer.render(gm);
             }
         };

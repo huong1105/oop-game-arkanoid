@@ -20,7 +20,7 @@ public abstract class GameObject {
         this.bounds = new Rectangle2D(x, y, width, height);
     }
 
-    public abstract void update();
+    public abstract void update(double deltaTimeSeconds);
 
     /**
      * Sửa đổi phương thức render

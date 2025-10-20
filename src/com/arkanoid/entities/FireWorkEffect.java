@@ -24,10 +24,10 @@ public class FireWorkEffect extends GameObject {
             this.alpha = 1.0;
         }
 
-        void update() {
-            x += dx;
-            y += dy;
-            alpha -= 0.03;
+        void update(double deltaTimeSeconds) {
+            x += dx * deltaTimeSeconds;
+            y += dy  * deltaTimeSeconds;
+            alpha -= 1.8 * deltaTimeSeconds;
         }
 
         boolean isDead() {
@@ -46,7 +46,7 @@ public class FireWorkEffect extends GameObject {
 
         for (int i = 0; i < NUM_PARTICLES; i++) {
             double angle = rand.nextDouble() * 2 * Math.PI;
-            double speed = 2 + rand.nextDouble() * 3;
+            double speed = 120 + rand.nextDouble() * 180;
             double dx = Math.cos(angle) * speed;
             double dy = Math.sin(angle) * speed;
             double sizeParticle = 2 + rand.nextDouble() * 3;
@@ -55,9 +55,9 @@ public class FireWorkEffect extends GameObject {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTimeSeconds) {
         for (Particle p : particles) {
-            p.update();
+            p.update(deltaTimeSeconds);
         }
         particles.removeIf(Particle::isDead);
         if (particles.isEmpty()) setActive(false);

@@ -29,9 +29,9 @@ public abstract class MovableObject extends GameObject {
     }
 
     @Override
-    public void update() {
-        x += speedX;
-        y += speedY;
+    public void update(double deltaTimeSeconds) {
+        x += speedX * deltaTimeSeconds;
+        y += speedY * deltaTimeSeconds;
         this.bounds = new Rectangle2D(x, y, width, height);
     }
 
