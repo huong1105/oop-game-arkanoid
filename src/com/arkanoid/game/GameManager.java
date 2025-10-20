@@ -15,11 +15,15 @@ public class GameManager {
     private static GameManager instance;
     private int currentLevel = 1;
     private int savedLevel = 1;
+    private static final int MAX_LEVELS = 3;
 
     private List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
     private Paddle paddle;
     private Ball ball;
     private boolean feverBallActive = false;
+
+    private long levelTransitionStartTime = 0;
+    private static final long LEVEL_TRANSITION_DELAY = 1_500_000_000L;
 
     private MainMenu mainMenu;
 
@@ -33,8 +37,8 @@ public class GameManager {
         this.feverBallActive = active;
     }
 
-    private int score;
-    private int lives;
+    private int score = Const.DEFAULT_SCORES;
+    private int lives = Const.DEFAULT_LIVES;
 
     private GameManager() {
         mainMenu = new MainMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
@@ -61,8 +65,6 @@ public class GameManager {
         addGameObject(paddle);
         addGameObject(ball);
 
-        lives = Const.DEFAULT_LIVES;
-        score = Const.DEFAULT_SCORES;
         loadLevel(level);
         gameState = GameState.PLAYING;
     }
@@ -195,6 +197,8 @@ public class GameManager {
 
     public void newGame() {
         savedLevel = 1;
+        lives = Const.DEFAULT_LIVES;
+        score =  Const.DEFAULT_SCORES;
         startLevel(1);
     }
 
@@ -222,7 +226,17 @@ public class GameManager {
         gameObjects.add(object);
     }
 
-    public void update() {
+    public void update(long now) {
+        if (gameState == GameState.LEVEL_TRANSITION) {
+            if (now - levelTransitionStartTime > LEVEL_TRANSITION_DELAY) {
+                currentLevel++;
+                startLevel(currentLevel); // Chỉ cần gọi startLevel
+                if (savedLevel < currentLevel) {
+                    savedLevel = currentLevel;
+                }
+            }
+            return; // Dừng update trong lúc chờ
+        }
         if (gameState != GameState.PLAYING) return;
         gameObjects.forEach(GameObject::update);
         checkCollisions();
@@ -234,10 +248,12 @@ public class GameManager {
                 .count();
 
         if (remainingBricks == 0) {
-            if (currentLevel == savedLevel) {
-                savedLevel++;
+            if (currentLevel >= MAX_LEVELS) {
+                gameState = GameState.WIN;
+            } else {
+                gameState = GameState.LEVEL_TRANSITION;
+                levelTransitionStartTime = now;
             }
-            gameState = GameState.WIN;
         }
     }
 
@@ -397,4 +413,6 @@ public class GameManager {
     public Ball getBall() {
         return ball;
     }
+
+    public int getCurrentLevel() { return currentLevel; }
 }
