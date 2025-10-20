@@ -310,7 +310,9 @@ public class GameManager {
                 double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
                         - Math.pow(ball.getSpeedX(), 2));
                 ball.setSpeedY(-newSpeedY);
-                ball.setY(ball.getY() - intersection.getHeight());
+                if (intersection != null){
+                    ball.setY(ball.getY() - intersection.getHeight());
+                }
             }
 
             for (GameObject obj : gameObjects) {
