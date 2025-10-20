@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 
 public class GameManager {
     private static GameManager instance;
@@ -184,7 +181,7 @@ public class GameManager {
                             boolean destroyed = ((Brick) obj).takeHit();
                             if (destroyed) {
                                 score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
-                                FireEffect fire = new FireEffect(
+                                FireWorkEffect fire = new FireWorkEffect(
                                         (int)obj.getX(),
                                         (int)obj.getY(),
                                         Const.BRICK_WIDTH,
@@ -388,7 +385,7 @@ public class GameManager {
                         boolean destroyed = ((Brick) obj).takeHit();
                         if (destroyed) {
                             score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
-                            FireEffect fire = new FireEffect(
+                            FireWorkEffect fire = new FireWorkEffect(
                                     (int)obj.getX(),
                                     (int)obj.getY(),
                                     Const.BRICK_WIDTH,
