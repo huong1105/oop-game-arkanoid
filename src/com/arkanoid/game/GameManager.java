@@ -3,6 +3,7 @@ package com.arkanoid.game;
 import com.arkanoid.BrickType;
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
+import com.arkanoid.ui.SettingsMenu;
 import com.arkanoid.entities.*;
 import com.arkanoid.ui.MainMenu;
 import javafx.animation.PauseTransition;
@@ -30,7 +31,11 @@ public class GameManager {
 
     private MainMenu mainMenu;
 
+    private SettingsMenu settingsMenu;
+
     private GameState gameState = GameState.MENU;
+
+    private HighScoreManager highScoreManager;
 
     public void setGameState(GameState newState) {
         this.gameState = newState;
@@ -45,6 +50,9 @@ public class GameManager {
 
     private GameManager() {
         mainMenu = new MainMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
+        settingsMenu = new SettingsMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
+        SoundManager.playBackgroundMusic("background_music.mp3");
+        highScoreManager = new HighScoreManager();
     }
 
     public static GameManager getInstance() {
@@ -233,6 +241,10 @@ public class GameManager {
         startLevel(1);
     }
 
+    public SettingsMenu getSettingsMenu() {
+        return settingsMenu;
+    }
+
     public MainMenu getMainMenu() {
         return mainMenu;
     }
@@ -298,6 +310,7 @@ public class GameManager {
             if (lives <= lifePenalty) {
                 lives = 0;
                 gameState = GameState.GAME_OVER;
+                highScoreManager.addScore(score);
             } else {
                 lives -= lifePenalty;
                 gameObjects.removeIf(obj -> obj instanceof Ball);
@@ -428,6 +441,24 @@ public class GameManager {
         }
     }
 
+    /**
+     * Reset tất cả các chỉ số của game về trạng thái ban đầu.
+     */
+    private void resetGame() {
+        this.score = Const.DEFAULT_SCORES;
+        this.lives = Const.DEFAULT_LIVES;
+        this.currentLevel = 1;
+        gameObjects.clear();
+    }
+
+    /**
+     * Bắt đầu một lần chơi mới.
+     */
+    public void startNewGame() {
+        resetGame();
+        startLevel(this.currentLevel);
+    }
+
     public List<GameObject> getGameObjects() {
         return gameObjects;
     }
@@ -450,6 +481,10 @@ public class GameManager {
 
     public Ball getBall() {
         return ball;
+    }
+
+    public HighScoreManager getHighScoreManager() {
+        return highScoreManager;
     }
 
     public int getCurrentLevel() { return currentLevel; }
