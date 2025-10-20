@@ -34,9 +34,17 @@ public class KeyInput {
             if (gm.getGameState() == GameState.PLAYING) {
                 Paddle paddle = gm.getPaddle();
                 Ball ball = gm.getBall();
-                paddle.setX(event.getX() - paddle.getWidth() / 2);
+                double mouseX = event.getX();
+                double newPaddleX = mouseX - paddle.getWidth() / 2;
+                if (newPaddleX < 0) {
+                    newPaddleX = 0;
+                }
+                if (newPaddleX + paddle.getWidth() > Const.SCREEN_WIDTH) {
+                    newPaddleX = Const.SCREEN_WIDTH - paddle.getWidth();
+                }
+                paddle.setX(newPaddleX);
                 if (ball.isStarted() == false) {
-                    ball.setX(event.getX() - ball.getWidth() / 2);
+                    ball.setX(newPaddleX + (paddle.getWidth() / 2) - (ball.getWidth() / 2));
                 }
             }
         });
