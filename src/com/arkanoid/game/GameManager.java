@@ -70,21 +70,29 @@ public class GameManager {
     }
 
     public void loadLevel(int level) {
-        int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
+        int startX = (Const.SCREEN_WIDTH - 15 * Const.BRICK_WIDTH) / 2;
         int startY = 50;
         int[][] levelLayout;
 
         switch (level) {
             case 1:
                 levelLayout = new int[][]{
-                        {1, 1, 1, 3, 3, 1, 1, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 1},
-                        {5, 2, 0, 2, 2, 0, 2, 5},
-                        {1, 2, 0, 0, 0, 0, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 5},
-                        {5, 2, 0, 2, 2, 0, 2, 5},
-                        {1, 2, 0, 2, 2, 0, 2, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1}
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
                 };
                 break;
             case 2:
@@ -101,20 +109,27 @@ public class GameManager {
                 break;
             default:
                 levelLayout = new int[][]{
-                        {3, 1, 1, 3, 3, 1, 1, 3},
-                        {1, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 2, 4, 2, 2, 4, 2, 1},
-                        {5, 2, 4, 4, 4, 4, 2, 5},
-                        {5, 2, 4, 2, 2, 4, 2, 5},
-                        {1, 2, 4, 2, 2, 4, 2, 1},
-                        {1, 2, 4, 2, 2, 4, 2, 1},
-                        {3, 1, 1, 1, 1, 1, 1, 3}
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
+                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}
                 };
                 break;
         }
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 0; row < 16; row++) {
+            for (int col = 0; col < 15; col++) {
                 int x = startX + col * Const.BRICK_WIDTH;
                 int y = startY + row * Const.BRICK_HEIGHT;
                 Brick brick = null;
@@ -143,7 +158,7 @@ public class GameManager {
     }
 
     public int[] getBrickGridPosition(Brick brick) {
-        int startX = (Const.SCREEN_WIDTH - 8 * Const.BRICK_WIDTH) / 2;
+        int startX = (Const.SCREEN_WIDTH - 15 * Const.BRICK_WIDTH) / 2;
         int startY = 50;
         int brickRow = (int) ((brick.getY() - startY) / Const.BRICK_HEIGHT);
         int brickCol = (int) ((brick.getX() - startX) / Const.BRICK_WIDTH);
@@ -151,8 +166,8 @@ public class GameManager {
     }
 
     private void handleExplosion(int centerRow, int centerCol) {
-        for (int row = Math.max(0, centerRow - 1); row <= Math.min(7, centerRow + 1); row++) {
-            for (int col = Math.max(0, centerCol - 1); col <= Math.min(7, centerCol + 1); col++) {
+        for (int row = Math.max(0, centerRow - 1); row <= Math.min(15, centerRow + 1); row++) {
+            for (int col = Math.max(0, centerCol - 1); col <= Math.min(14, centerCol + 1); col++) {
                 for (GameObject obj : gameObjects) {
                     if (obj instanceof Brick && ((Brick) obj).getType() != BrickType.WALL) {
                         int[] gridPos = getBrickGridPosition((Brick) obj);
