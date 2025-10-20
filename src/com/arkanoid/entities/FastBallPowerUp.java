@@ -35,9 +35,7 @@ public class FastBallPowerUp extends PowerUp {
                 .collect(Collectors.toList());
 
         for (Ball ball : currentBalls) {
-            ball.setMaxSpeed((int)(ball.getMaxSpeed() / SPEED_MULTIPLIER));
-            ball.setSpeedX(ball.getSpeedX() / SPEED_MULTIPLIER);
-            ball.setSpeedY(ball.getSpeedY() / SPEED_MULTIPLIER);
+            ball.setMaxSpeed(Const.BALL_MAXSPEED);
         }
     }
 }
