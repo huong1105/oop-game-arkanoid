@@ -5,6 +5,7 @@ import com.arkanoid.entities.Ball;
 import com.arkanoid.entities.Paddle;
 import com.arkanoid.game.GameManager;
 import com.arkanoid.game.GameState;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -13,23 +14,21 @@ import javafx.scene.input.MouseEvent;
 public class KeyInput {
 
     private KeyInput() {
-        // Lớp tiện ích không cần khởi tạo
     }
 
     /**
      * Thiết lập tất cả các trình lắng nghe sự kiện đầu vào (bàn phím và chuột) cho scene chính.
-     *
      * @param scene Scene của trò chơi.
      */
     public static void setupInput(Scene scene) {
         GameManager gm = GameManager.getInstance();
-
-        // --- 1. XỬ LÝ SỰ KIỆN CHUỘT ---
-
         // Cập nhật hiệu ứng "hover" khi di chuyển chuột trên menu
         scene.setOnMouseMoved((MouseEvent event) -> {
             if (gm.getGameState() == GameState.MENU) {
                 gm.getMainMenu().update(event.getX(), event.getY());
+            }
+            else if (gm.getGameState() == GameState.SETTINGS) { 
+                gm.getSettingsMenu().update(event.getX(), event.getY());
             }
             // Điều khiển paddle bằng chuột
             if (gm.getGameState() == GameState.PLAYING) {
@@ -42,35 +41,52 @@ public class KeyInput {
             }
         });
 
-        // Xử lý khi click chuột
-        scene.setOnMouseClicked((MouseEvent event) -> {
-            MouseButton button = event.getButton();
-            //Điều khiển menu bằng chuột trái
-            if (gm.getGameState() == GameState.MENU && button == MouseButton.PRIMARY) {
-                for (MenuItem item : gm.getMainMenu().getMenuItems()) {
-                    // Kiểm tra xem có click vào nút nào không
-                    if (item.getBounds().contains(event.getX(), event.getY())) {
-                        handleMenuClick(gm, item.getText());
-                        break; // Dừng lại sau khi tìm thấy nút được click
-                    }
-                }
-            }
-            //Bắt đầu bóng bằng chuột phải
-            if (gm.getGameState() == GameState.PLAYING) {
-                if (button == MouseButton.SECONDARY && gm.getBall().isStarted() == false) {
-                    gm.getBall().start();
-                    gm.getBall().setSpeedY(-Const.BALL_MAXSPEED);
-                }
+        scene.setOnMouseDragged(event -> {
+            if (gm.getGameState() == GameState.SETTINGS) {
+                gm.getSettingsMenu().handleMouseDrag(event.getX(), event.getY());
             }
         });
 
+        // Xử lý khi click chuột
+        scene.setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                double mouseX = event.getX();
+                double mouseY = event.getY();
 
-        // --- 2. XỬ LÝ SỰ KIỆN BÀN PHÍM ---
+                // Logic cho trạng thái SETTINGS
+                if (gm.getGameState() == GameState.SETTINGS) {
+                    String action = gm.getSettingsMenu().handleClick(mouseX, mouseY);
+                    if ("BACK_TO_MENU".equals(action)) {
+                        gm.setGameState(GameState.MENU);
+                    }
+                }
+                // Logic cho các trạng thái khác
+                else if (gm.getGameState() == GameState.MENU) {
+                    String clickedItem = gm.getMainMenu().getClickedItem(mouseX, mouseY);
+                    if (clickedItem != null) {
+                        handleMenuClick(gm, clickedItem);
+                    }
+                }
+                else if (gm.getGameState() == GameState.READY) {
+                    gm.getBall().start();
+                    gm.setGameState(GameState.PLAYING);
+                }
+                else if (gm.getGameState() == GameState.HIGH_SCORE) {
+                    gm.setGameState(GameState.MENU);
+                }
+            }
+        });
 
         // Xử lý khi nhấn phím
         scene.setOnKeyPressed(event -> {
             GameState currentState = gm.getGameState();
             KeyCode code = event.getCode();
+
+            if (gm.getGameState() == GameState.HIGH_SCORE) {
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    gm.setGameState(GameState.MENU);
+                }
+            }
 
             switch (currentState) {
                 case MENU:
@@ -89,6 +105,7 @@ public class KeyInput {
                             ball.setSpeedY(Const.BALL_MAXSPEED);
                         }
                     }
+
                     if (paddle != null) {
                         if (code == KeyCode.LEFT || code == KeyCode.A) {
                             paddle.setMovingLeft(true);
@@ -138,22 +155,20 @@ public class KeyInput {
 
     /**
      * Xử lý các hành động tương ứng khi một mục trong menu được click.
-     *
-     * @param gm       Thể hiện của GameManager.
-     * @param itemName Tên của mục được click (ví dụ: "New Game").
      */
     private static void handleMenuClick(GameManager gm, String itemName) {
         switch (itemName) {
             case "New Game":
-                gm.startLevel(1);
+                gm.startNewGame();
                 break;
             case "High Score":
-                System.out.println("Chức năng High Score chưa được cài đặt!");
-                // (Trong tương lai, bạn có thể chuyển game sang trạng thái GameState.HIGH_SCORE ở đây)
+                gm.setGameState(GameState.HIGH_SCORE);
                 break;
             case "Setting":
-                System.out.println("Chức năng Setting chưa được cài đặt!");
-                // (Trong tương lai, bạn có thể chuyển game sang trạng thái GameState.SETTINGS ở đây)
+                gm.setGameState(GameState.SETTINGS);
+                break;
+            case "Quit Game":
+                Platform.exit();
                 break;
         }
     }
