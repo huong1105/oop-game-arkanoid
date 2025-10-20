@@ -64,6 +64,20 @@ public class Brick extends GameObject {
                 gc.drawImage(crackedSprite, x, y, width, height);
             }
         }
+
+        else if (type == BrickType.SPECIAL && hitPoints < maxHitPoints) {
+            if (hitPoints == 2) {
+                Image crackedSpriteLight = SpriteManager.getSprite(53, 13, 24, 10);
+                if (crackedSpriteLight != null) {
+                    gc.drawImage(crackedSpriteLight, x, y, width, height);
+                }
+            } else if (hitPoints == 1) {
+                Image crackedSpriteHeavy = SpriteManager.getSprite(53, 25, 24, 10);
+                if (crackedSpriteHeavy != null) {
+                    gc.drawImage(crackedSpriteHeavy, x, y, width, height);
+                }
+            }
+        }
     }
 
     public boolean takeHit() {
