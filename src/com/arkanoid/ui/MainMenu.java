@@ -27,6 +27,7 @@ public class MainMenu {
         menuItems.add(new MenuItem("New Game", startX, startY, buttonWidth, buttonHeight));
         menuItems.add(new MenuItem("High Score", startX, startY + 80, buttonWidth, buttonHeight));
         menuItems.add(new MenuItem("Setting", startX, startY + 160, buttonWidth, buttonHeight));
+        menuItems.add(new MenuItem("Quit Game", startX, startY + 240, buttonWidth, buttonHeight));
     }
 
     /** Cập nhật trạng thái hover của các nút dựa trên vị trí chuột. */
@@ -52,6 +53,15 @@ public class MainMenu {
         for (MenuItem item : menuItems) {
             item.render(gc);
         }
+    }
+
+    public String getClickedItem(double mouseX, double mouseY) {
+        for (MenuItem item : menuItems) {
+            if (item.getBounds().contains(mouseX, mouseY)) {
+                return item.getText();
+            }
+        }
+        return null;
     }
 
     /** Lấy danh sách các mục menu để xử lý click. */
