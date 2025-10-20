@@ -188,15 +188,15 @@ public class GameManager {
                                         Const.BRICK_HEIGHT
                                 );
                                 addGameObject(fire);
-                                // Rơi power-up ngẫu nhiên (30% cơ hội)
+
                                 if (Math.random() < 0.05) {
                                     PowerUp powerUp;
                                     double rand = Math.random();
-                                    if (rand < 0.25) {
+                                    if (rand < 0.3) {
                                         powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.5) {
+                                    } else if (rand < 0.6) {
                                         powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.75) {
+                                    } else if (rand < 0.9) {
                                         powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
                                     } else {
                                         powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
@@ -398,14 +398,14 @@ public class GameManager {
                                 int brickCol = gridPos[1];
                                 handleExplosion(brickRow, brickCol);
                             } else {
-                                if (Math.random() < 0.3) {
+                                if (Math.random() < 0.05) {
                                     PowerUp powerUp;
                                     double rand = Math.random();
-                                    if (rand < 0.25) {
+                                    if (rand < 0.3) {
                                         powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.5) {
+                                    } else if (rand < 0.6) {
                                         powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.75) {
+                                    } else if (rand < 0.9) {
                                         powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
                                     } else  {
                                         powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
