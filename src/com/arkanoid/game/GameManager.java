@@ -5,11 +5,17 @@ import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
 import com.arkanoid.entities.*;
 import com.arkanoid.ui.MainMenu;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Rectangle2D;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 
 public class GameManager {
     private static GameManager instance;
@@ -77,22 +83,22 @@ public class GameManager {
         switch (level) {
             case 1:
                 levelLayout = new int[][]{
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+                    {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+                    {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                    {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
+                    {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}
                 };
                 break;
             case 2:
@@ -157,6 +163,7 @@ public class GameManager {
         }
     }
 
+
     public int[] getBrickGridPosition(Brick brick) {
         int startX = (Const.SCREEN_WIDTH - 15 * Const.BRICK_WIDTH) / 2;
         int startY = 50;
@@ -177,8 +184,15 @@ public class GameManager {
                             boolean destroyed = ((Brick) obj).takeHit();
                             if (destroyed) {
                                 score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
+                                FireEffect fire = new FireEffect(
+                                        (int)obj.getX(),
+                                        (int)obj.getY(),
+                                        Const.BRICK_WIDTH,
+                                        Const.BRICK_HEIGHT
+                                );
+                                addGameObject(fire);
                                 // Rơi power-up ngẫu nhiên (30% cơ hội)
-                                if (Math.random() < 0.3) {
+                                if (Math.random() < 0.05) {
                                     PowerUp powerUp;
                                     double rand = Math.random();
                                     if (rand < 0.25) {
@@ -192,7 +206,11 @@ public class GameManager {
                                     }
                                     addGameObject(powerUp);
                                 }
-                                if (((Brick) obj).getType() == BrickType.EXPLOSIVE) handleExplosion(brickRow, brickCol);
+                                if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
+                                    PauseTransition delay = new PauseTransition(Duration.millis(150));
+                                    delay.setOnFinished(e -> handleExplosion(brickRow, brickCol));
+                                    delay.play();
+                                }
                             }
                         }
                     }
@@ -370,6 +388,13 @@ public class GameManager {
                         boolean destroyed = ((Brick) obj).takeHit();
                         if (destroyed) {
                             score += ((Brick) obj).getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1);
+                            FireEffect fire = new FireEffect(
+                                    (int)obj.getX(),
+                                    (int)obj.getY(),
+                                    Const.BRICK_WIDTH,
+                                    Const.BRICK_HEIGHT
+                            );
+                            addGameObject(fire);
                             if (((Brick) obj).getType() == BrickType.EXPLOSIVE) {
                                 int[] gridPos = getBrickGridPosition((Brick) obj);
                                 int brickRow = gridPos[0];
@@ -385,7 +410,7 @@ public class GameManager {
                                         powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
                                     } else if (rand < 0.75) {
                                         powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else {
+                                    } else  {
                                         powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
                                     }
                                     addGameObject(powerUp);
