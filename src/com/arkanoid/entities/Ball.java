@@ -6,7 +6,7 @@ import com.arkanoid.ui.SpriteManager;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Ball extends MovableObject {
-    private int maxSpeed = Const.BALL_MAXSPEED;
+    private double maxSpeed = Const.BALL_MAXSPEED;
     private boolean started = false;
 
     public Ball(int x, int y, int diameter, int speedX, int speedY) {
@@ -19,11 +19,11 @@ public class Ball extends MovableObject {
         this.sprite = SpriteManager.getSprite(167, 1, 12, 12);
     }
 
-    public int getMaxSpeed() {
+    public double getMaxSpeed() {
         return maxSpeed;
     }
 
-    public void setMaxSpeed(int maxSpeed) {
+    public void setMaxSpeed(double maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
 
