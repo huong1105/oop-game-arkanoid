@@ -27,7 +27,7 @@ public class KeyInput {
             if (gm.getGameState() == GameState.MENU) {
                 gm.getMainMenu().update(event.getX(), event.getY());
             }
-            else if (gm.getGameState() == GameState.SETTINGS) { 
+            else if (gm.getGameState() == GameState.SETTINGS) {
                 gm.getSettingsMenu().update(event.getX(), event.getY());
             }
             // Điều khiển paddle bằng chuột
@@ -81,6 +81,12 @@ public class KeyInput {
                 }
                 else if (gm.getGameState() == GameState.HIGH_SCORE) {
                     gm.setGameState(GameState.MENU);
+                }
+            }
+            if (event.getButton() == MouseButton.SECONDARY) {
+                if (gm.getGameState() == GameState.PLAYING && gm.getBall().isStarted() == false) {
+                    gm.getBall().start();
+                    gm.getBall().setSpeedY(-Const.BALL_MAXSPEED);
                 }
             }
         });
