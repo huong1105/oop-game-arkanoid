@@ -18,9 +18,7 @@ public class ShieldPowerUp extends PowerUp {
     @Override
     public void applyEffect() {
         GameManager gm = GameManager.getInstance();
-        if (gm.getGameObjects().contains(shield)) {
-            gm.getGameObjects().remove(shield);
-        }
+        gm.getGameObjects().removeIf(obj -> obj instanceof Shield);
         gm.addGameObject(shield);
     }
 
