@@ -61,7 +61,7 @@ public class Renderer {
 
                 // Vẽ các thông báo đè lên màn hình
                 if (gameState == GameState.PAUSED) {
-                    drawMessage("PAUSED");
+                    gm.getPauseMenu().render(gc);
                 } else if (gameState == GameState.GAME_OVER) {
                     drawMessage("GAME OVER");
                 } else if (gameState == GameState.WIN) {

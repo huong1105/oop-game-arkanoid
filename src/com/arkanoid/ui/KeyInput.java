@@ -30,6 +30,9 @@ public class KeyInput {
             else if (gm.getGameState() == GameState.SETTINGS) {
                 gm.getSettingsMenu().update(event.getX(), event.getY());
             }
+            else if (gm.getGameState() == GameState.PAUSED) {
+                gm.getPauseMenu().update(event.getX(), event.getY());
+            }
             // Điều khiển paddle bằng chuột
             if (gm.getGameState() == GameState.PLAYING) {
                 Paddle paddle = gm.getPaddle();
@@ -43,7 +46,7 @@ public class KeyInput {
                     newPaddleX = Const.SCREEN_WIDTH - paddle.getWidth();
                 }
                 paddle.setX(newPaddleX);
-                if (ball.isStarted() == false) {
+                if (!ball.isStarted()) {
                     ball.setX(newPaddleX + (paddle.getWidth() / 2) - (ball.getWidth() / 2));
                 }
             }
@@ -65,7 +68,23 @@ public class KeyInput {
                 if (gm.getGameState() == GameState.SETTINGS) {
                     String action = gm.getSettingsMenu().handleClick(mouseX, mouseY);
                     if ("BACK_TO_MENU".equals(action)) {
-                        gm.setGameState(GameState.MENU);
+                        gm.quitToMainMenu();
+                    }
+                }
+                else if (gm.getGameState() == GameState.PAUSED) {
+                    String action = gm.getPauseMenu().getClickedItem(mouseX, mouseY);
+                    if (action != null) {
+                        switch (action) {
+                            case "Resume":
+                                gm.resumeGame();
+                                break;
+                            case "Restart Level":
+                                gm.startLevel(gm.getCurrentLevel());
+                                break;
+                            case "Quit to Menu":
+                                gm.quitToMainMenu();
+                                break;
+                        }
                     }
                 }
                 // Logic cho các trạng thái khác
@@ -84,7 +103,7 @@ public class KeyInput {
                 }
             }
             if (event.getButton() == MouseButton.SECONDARY) {
-                if (gm.getGameState() == GameState.PLAYING && gm.getBall().isStarted() == false) {
+                if (gm.getGameState() == GameState.PLAYING && !gm.getBall().isStarted()) {
                     gm.getBall().start();
                     gm.getBall().setSpeedY(-Const.BALL_MAXSPEED);
                 }
@@ -106,14 +125,15 @@ public class KeyInput {
                 case MENU:
                     // Phím Enter cũng có thể bắt đầu game
                     if (code == KeyCode.ENTER) {
-                        gm.startLevel(1);
+                        gm.newGame();
                     }
                     break;
 
                 case PLAYING:
+
                     Paddle paddle = gm.getPaddle();
                     Ball ball = gm.getBall();
-                    if (ball != null && ball.isStarted() == false) {
+                    if (ball != null && !ball.isStarted()) {
                         if (code == KeyCode.SPACE) {
                             ball.start();
                             ball.setSpeedY(Const.BALL_MAXSPEED);
@@ -128,20 +148,17 @@ public class KeyInput {
                             paddle.setMovingRight(true);
                             paddle.setMovingLeft(false);
                         }
-                    }// Phím P để tạm dừng
-                    if (code == KeyCode.P) {
-                        gm.setGameState(GameState.PAUSED);
                     }
-                    break;
 
-                case PAUSED:
-                    // Phím P để tiếp tục
                     if (code == KeyCode.P) {
-                        gm.setGameState(GameState.PLAYING);
+                        gm.pauseGame();
+
                     }
                     break;
 
                 case GAME_OVER:
+                    gm.quitToMainMenu();
+                    break;
                 case WIN:
                     // Phím Enter để quay về menu
                     if (code == KeyCode.ENTER) {
