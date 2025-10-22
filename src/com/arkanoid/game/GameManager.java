@@ -207,12 +207,14 @@ public class GameManager {
                                 if (Math.random() < 0.05) {
                                     PowerUp powerUp;
                                     double rand = Math.random();
-                                    if (rand < 0.3) {
+                                    if (rand < 0.2) {
                                         powerUp = new MultiBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.6) {
+                                    } else if (rand < 0.4) {
                                         powerUp = new FastBallPowerUp((int) obj.getX(), (int) obj.getY());
-                                    } else if (rand < 0.9) {
+                                    } else if (rand < 0.6) {
                                         powerUp = new ExpandPaddlePowerUp((int) obj.getX(), (int) obj.getY());
+                                    } else if (rand < 0.8 ) {
+                                        powerUp = new ShieldPowerUp((int) obj.getX(), (int) obj.getY());
                                     } else {
                                         powerUp = new FeverBallPowerUp((int) obj.getX(), (int) obj.getY());
                                     }
@@ -439,6 +441,14 @@ public class GameManager {
                             }
                         }
                         break;
+                    }
+                }
+                else if (obj instanceof Shield){
+                    Shield shield = (Shield) obj;
+                    if (ball.getBounds().intersects(shield.getBounds())){
+                        shield.hit();
+                        ball.setY(ball.getY() - ball.getHeight() - 5);
+                        ball.reverseY();
                     }
                 }
             }

@@ -60,6 +60,9 @@ public abstract class PowerUp extends MovableObject {
             case "FeverBall":
                 gc.setFill(Color.YELLOW);
                 break;
+            case "Shiled":
+                gc.setFill(Color.CYAN);
+                break;
             default:
                 gc.setFill(Color.YELLOW);
         }
@@ -81,5 +84,6 @@ public abstract class PowerUp extends MovableObject {
     }
 
     public abstract void applyEffect();
+
     public abstract void removeEffect();
 }
