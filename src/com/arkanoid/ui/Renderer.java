@@ -22,6 +22,10 @@ public class Renderer {
         gc.setImageSmoothing(false);
     }
 
+    public void updateCanvasSize(double width, double height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+    }
     /**
      * Phương thức render chính, được gọi mỗi khung hình.
      * Nó sẽ vẽ các thành phần khác nhau tùy thuộc vào trạng thái hiện tại của game.

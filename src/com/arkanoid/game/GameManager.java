@@ -55,7 +55,7 @@ public class GameManager {
     private int lives = Const.DEFAULT_LIVES;
 
     private GameManager() {
-        mainMenu = new MainMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
+        mainMenu = new MainMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
         settingsMenu = new SettingsMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         pauseMenu = new PauseMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         SoundManager.playBackgroundMusic("background_music.mp3");

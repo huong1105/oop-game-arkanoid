@@ -1,6 +1,7 @@
 package com.arkanoid;
 
 import com.arkanoid.game.GameManager;
+import com.arkanoid.game.GameState;
 import com.arkanoid.ui.KeyInput;
 import com.arkanoid.ui.Renderer;
 import javafx.animation.AnimationTimer;
@@ -27,6 +28,8 @@ public class Main extends Application {
 
         BorderPane root = new BorderPane();
 
+        root.setStyle("-fx-background-color: #000000;");
+
         Canvas canvas = new Canvas(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         root.setCenter(canvas);
@@ -39,7 +42,6 @@ public class Main extends Application {
                         "-fx-border-width: 0 0 0 2;" +
                         "-fx-border-style: solid;"
         );
-        root.setRight(infoPanel);
 
         Renderer renderer = new Renderer(gc, canvas.getWidth(), canvas.getHeight());
 
@@ -59,6 +61,32 @@ public class Main extends Application {
                 double deltaTimeSeconds = (now - lastFrameTime) / 1_000_000_000.0;
                 lastFrameTime = now;
                 gm.update(deltaTimeSeconds);
+                GameState currentState = gm.getGameState();
+
+                boolean isFullScreenState = (currentState == GameState.MENU ||
+                        currentState == GameState.HIGH_SCORE ||
+                        currentState == GameState.SETTINGS);
+
+                if (isFullScreenState) {
+                    // Ẩn infoPanel
+                    if (root.getRight() != null) {
+                        root.setRight(null);
+                    }
+                    // Phóng to Canvas ra toàn bộ cửa sổ
+                    canvas.setWidth(Const.WINDOW_WIDTH);
+                    canvas.setHeight(Const.SCREEN_HEIGHT);
+                    renderer.updateCanvasSize(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
+
+                } else {
+                    if (root.getRight() == null) {
+                        root.setRight(infoPanel);
+                    }
+                    // Thu nhỏ Canvas về kích thước game
+                    canvas.setWidth(Const.SCREEN_WIDTH);
+                    canvas.setHeight(Const.SCREEN_HEIGHT);
+                    renderer.updateCanvasSize(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
+                }
+
                 renderer.render(gm);
             }
         };
