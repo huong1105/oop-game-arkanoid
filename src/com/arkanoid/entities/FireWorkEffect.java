@@ -41,6 +41,20 @@ public class FireWorkEffect extends GameObject {
 
     public FireWorkEffect(int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.active = false;
+    }
+
+    public void reset(double x, double y, double width, double height) {
+        // 1. Cập nhật vị trí và trạng thái
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.active = true;
+        this.bounds = new javafx.geometry.Rectangle2D(x, y, width, height); // Cập nhật bounds nếu cần
+
+        particles.clear();
+
         double centerX = x + width / 2.0;
         double centerY = y + height / 2.0;
 
@@ -56,15 +70,22 @@ public class FireWorkEffect extends GameObject {
 
     @Override
     public void update(double deltaTimeSeconds) {
+        if (!active) return;
+
         for (Particle p : particles) {
             p.update(deltaTimeSeconds);
         }
+
         particles.removeIf(Particle::isDead);
-        if (particles.isEmpty()) setActive(false);
+
+        if (particles.isEmpty()) {
+            FireWorkEffectPool.getInstance().returnEffect(this);
+        }
     }
 
     @Override
     public void render(GraphicsContext gc) {
+        if (!active) return;
         for (Particle p : particles) {
             int grayValue = 200 + rand.nextInt(56);
             gc.setFill(Color.rgb(grayValue, grayValue, grayValue, p.alpha));
