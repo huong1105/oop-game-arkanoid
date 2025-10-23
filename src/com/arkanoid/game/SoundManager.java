@@ -6,6 +6,23 @@ import java.net.URL;
 
 public class SoundManager {
     private static MediaPlayer musicPlayer;
+    private static Media backgroundMusicMedia;
+
+    /**
+     * Tải trước các file âm thanh nặng.
+     */
+    public static void preload() {
+        try {
+            URL resource = SoundManager.class.getResource("/sounds/background_music.mp3");
+            if (resource == null) {
+                System.err.println("Không tìm thấy file nhạc nền: background_music.mp3");
+                return;
+            }
+            backgroundMusicMedia = new Media(resource.toString());
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tải trước nhạc nền: " + e.getMessage());
+        }
+    }
 
     /**
      * Phát một hiệu ứng âm thanh ngắn (SFX).
@@ -31,23 +48,32 @@ public class SoundManager {
      * Bắt đầu phát nhạc nền.
      * Nhạc sẽ tự động lặp lại.
      */
-    public static void playBackgroundMusic(String fileName) {
+    public static void playBackgroundMusic() {
+        if (backgroundMusicMedia == null) {
+            System.err.println("Nhạc nền chưa được tải! (preload() chưa chạy?)");
+            return;
+        }
+
+        if (musicPlayer == null || musicPlayer.getStatus() != MediaPlayer.Status.PLAYING) {
+
+            if (musicPlayer != null) {
+                musicPlayer.stop();
+            }
+
+            try {
+                musicPlayer = new MediaPlayer(backgroundMusicMedia);
+                musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+                musicPlayer.setVolume(GameSettings.getInstance().getBgmVolume());
+                musicPlayer.play();
+            } catch (Exception e) {
+                System.err.println("Lỗi khi phát nhạc nền: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void stopBackgroundMusic() {
         if (musicPlayer != null) {
             musicPlayer.stop();
-        }
-        try {
-            URL resource = SoundManager.class.getResource("/sounds/" + fileName);
-            if (resource == null) {
-                System.err.println("Không tìm thấy file nhạc nền: " + fileName);
-                return;
-            }
-            Media sound = new Media(resource.toString());
-            musicPlayer = new MediaPlayer(sound);
-            musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            musicPlayer.setVolume(GameSettings.getInstance().getBgmVolume());
-            musicPlayer.play();
-        } catch (Exception e) {
-            System.err.println("Lỗi khi phát nhạc nền: " + e.getMessage());
         }
     }
 

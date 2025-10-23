@@ -2,6 +2,7 @@ package com.arkanoid.game;
 
 public enum GameState {
     MENU,
+    LOADING,
     LEVEL_SELECTION,
     PLAYING,
     SETTINGS,

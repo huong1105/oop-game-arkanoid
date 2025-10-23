@@ -1,6 +1,6 @@
 package com.arkanoid.ui;
 
-import com.arkanoid.core.GameObject;
+import com.arkanoid.entities.*;
 import com.arkanoid.game.GameManager;
 import com.arkanoid.game.GameState;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,7 +11,7 @@ import javafx.scene.text.TextAlignment;
 import java.util.List;
 
 public class Renderer {
-    private GraphicsContext gc;
+    private final GraphicsContext gc;
     private double canvasWidth;
     private double canvasHeight;
 
@@ -36,6 +36,10 @@ public class Renderer {
         clear();
 
         switch (gameState) {
+            case LOADING:
+                drawLoadingScreen();
+                break;
+
             case MENU:
                 gm.getMainMenu().render(gc);
                 break;
@@ -55,11 +59,30 @@ public class Renderer {
             case WIN:
             case LEVEL_TRANSITION:
                 // Vẽ các đối tượng game
-                for (GameObject obj : gm.getGameObjects()) {
-                    if (obj.isActive()) {
-                        obj.render(gc);
-                    }
+                if (gm.getPaddle() != null) {
+                    gm.getPaddle().render(gc);
                 }
+
+                for (Brick b : gm.getBricks()) {
+                    if (b.isActive()) b.render(gc);
+                }
+
+                for (Ball b : gm.getBalls()) {
+                    if (b.isActive()) b.render(gc);
+                }
+
+                for (PowerUp p : gm.getPowerUps()) {
+                    if (p.isActive()) p.render(gc);
+                }
+
+                for (Shield s : gm.getShields()) {
+                    if (s.isActive()) s.render(gc);
+                }
+
+                for (FireWorkEffect e : gm.getEffects()) {
+                    if (e.isActive()) e.render(gc);
+                }
+
                 // Vẽ UI
                 drawUI(gm.getScore(), gm.getLives());
 
@@ -71,10 +94,17 @@ public class Renderer {
                 } else if (gameState == GameState.WIN) {
                     drawMessage("YOU WIN!");
                 } else if (gameState == GameState.LEVEL_TRANSITION) {
-                    drawMessage("Level " + (gm.getCurrentLevel()));
+                    drawMessage("Level " + (gm.getCurrentLevel() + 1));
                 }
                 break;
         }
+    }
+
+    private void drawLoadingScreen() {
+        gc.setFill(Color.WHITE);
+        gc.setFont(new Font("Arial", 40));
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.fillText("Loading...", canvasWidth / 2, canvasHeight / 2);
     }
 
     /**

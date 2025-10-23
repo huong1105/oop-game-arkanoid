@@ -7,8 +7,10 @@ import com.arkanoid.ui.PauseMenu;
 import com.arkanoid.ui.SettingsMenu;
 import com.arkanoid.entities.*;
 import com.arkanoid.ui.MainMenu;
+import com.arkanoid.ui.SpriteManager;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
+import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.util.Duration;
 
@@ -23,7 +25,11 @@ public class GameManager {
     private int savedLevel = 1;
     private static final int MAX_LEVELS = 3;
 
-    private final List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
+    private final List<Ball> balls = new CopyOnWriteArrayList<>();
+    private final List<Brick> bricks = new CopyOnWriteArrayList<>();
+    private final List<PowerUp> powerUps = new CopyOnWriteArrayList<>();
+    private final List<FireWorkEffect> effects = new CopyOnWriteArrayList<>();
+    private final List<Shield> shields = new CopyOnWriteArrayList<>();
     private final List<Animation> activeTimers = new ArrayList<>();
     private Paddle paddle;
     private Ball ball;
@@ -39,11 +45,27 @@ public class GameManager {
     private final SettingsMenu settingsMenu;
     private final PauseMenu pauseMenu;
 
-    private GameState gameState = GameState.MENU;
+    private GameState gameState = GameState.LOADING;
 
     private final HighScoreManager highScoreManager;
 
     public void setGameState(GameState newState) {
+        if (this.gameState == newState) return;
+
+        boolean wasInMenuZone = (this.gameState == GameState.MENU ||
+                                this.gameState == GameState.SETTINGS ||
+                                this.gameState == GameState.HIGH_SCORE);
+
+        boolean isEnteringMenuZone = (newState == GameState.MENU ||
+                                    newState == GameState.SETTINGS ||
+                                    newState == GameState.HIGH_SCORE);
+
+        if (isEnteringMenuZone && !wasInMenuZone) {
+            SoundManager.playBackgroundMusic();
+        } else if (!isEnteringMenuZone && wasInMenuZone) {
+            SoundManager.stopBackgroundMusic();
+        }
+
         this.gameState = newState;
     }
 
@@ -56,10 +78,12 @@ public class GameManager {
 
     private GameManager() {
         mainMenu = new MainMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
-        settingsMenu = new SettingsMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
+        settingsMenu = new SettingsMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
         pauseMenu = new PauseMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
-        SoundManager.playBackgroundMusic("background_music.mp3");
+        SoundManager.playBackgroundMusic();
         highScoreManager = new HighScoreManager();
+
+        loadAssets();
     }
 
     public static GameManager getInstance() {
@@ -69,13 +93,41 @@ public class GameManager {
         return instance;
     }
 
+    public void loadAssets() {
+        // Sử dụng Task của JavaFX để chạy nền
+        Task<Void> loadingTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Đang tải Sprites...");
+                SpriteManager.preload();
+
+                System.out.println("Đang tải Sounds...");
+                SoundManager.preload();
+
+                System.out.println("Tải xong!");
+                return null;
+            }
+        };
+
+        loadingTask.setOnSucceeded(e -> {
+            setGameState(GameState.MENU);
+        });
+
+        loadingTask.setOnFailed(e -> {
+            System.err.println("Tải tài nguyên thất bại!");
+            loadingTask.getException().printStackTrace();
+        });
+
+        new Thread(loadingTask).start();
+    }
+
     public void startLevel(int level) {
         this.currentLevel = level;
         for (Animation timer : activeTimers) {
             timer.stop();
         }
         activeTimers.clear();
-        gameObjects.clear();
+        resetGameLists();
         int paddleX = Const.PADDLE_DEFAULT_POS_X;
         int paddleY = Const.PADDLE_DEFAULT_POS_Y;
         paddle = new Paddle(paddleX, paddleY, Const.PADDLE_WIDTH, Const.PADDLE_HEIGHT);
@@ -88,7 +140,7 @@ public class GameManager {
         addGameObject(ball);
 
         loadLevel(level);
-        gameState = GameState.PLAYING;
+        setGameState(GameState.PLAYING);
     }
 
     public void loadLevel(int level) {
@@ -115,25 +167,6 @@ public class GameManager {
                     {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
                     {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
                     {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}
-                };
-                break;
-            case 2:
-                levelLayout = new int[][]{
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}
                 };
                 break;
             default:
@@ -198,15 +231,15 @@ public class GameManager {
     private void handleExplosion(int centerRow, int centerCol) {
         for (int row = Math.max(0, centerRow - 1); row <= Math.min(15, centerRow + 1); row++) {
             for (int col = Math.max(0, centerCol - 1); col <= Math.min(14, centerCol + 1); col++) {
-                for (GameObject obj : gameObjects) {
-                    if (obj instanceof Brick && ((Brick) obj).getType() != BrickType.WALL) {
-                        int[] gridPos = getBrickGridPosition((Brick) obj);
+                for (Brick brick : bricks) {
+                    if (brick.getType() != BrickType.WALL) {
+                        int[] gridPos = getBrickGridPosition(brick);
                         int brickRow = gridPos[0];
                         int brickCol = gridPos[1];
                         if (brickRow == row && brickCol == col) {
-                            boolean destroyed = ((Brick) obj).takeHit();
+                            boolean destroyed = brick.takeHit();
                             if (destroyed) {
-                                onBrickDestroyed((Brick) obj);
+                                onBrickDestroyed(brick);
                             }
                         }
                     }
@@ -242,7 +275,7 @@ public class GameManager {
 
     public void pauseGame() {
         if (gameState == GameState.PLAYING) {
-            gameState = GameState.PAUSED;
+            setGameState(GameState.PAUSED);
         }
 
         for (Animation timer : activeTimers) {
@@ -252,7 +285,7 @@ public class GameManager {
 
     public void resumeGame() {
         if (gameState == GameState.PAUSED) {
-            gameState = GameState.PLAYING;
+            setGameState(GameState.PLAYING);
         }
 
         for (Animation timer : activeTimers) {
@@ -261,11 +294,29 @@ public class GameManager {
     }
 
     public void quitToMainMenu() {
-        gameState = GameState.MENU;
+        setGameState(GameState.MENU);
     }
 
     public void addGameObject(GameObject object) {
-        gameObjects.add(object);
+        if (object instanceof Ball) {
+            balls.add((Ball) object);
+        } else if (object instanceof Brick) {
+            bricks.add((Brick) object);
+        } else if (object instanceof PowerUp) {
+            powerUps.add((PowerUp) object);
+        } else if (object instanceof FireWorkEffect) {
+            effects.add((FireWorkEffect) object);
+        } else if (object instanceof Shield) {
+            shields.add((Shield) object);
+        }
+    }
+
+    private void removeInactiveObjects() {
+        bricks.removeIf(obj -> !obj.isActive());
+        balls.removeIf(obj -> !obj.isActive());
+        powerUps.removeIf(obj -> !obj.isActive());
+        effects.removeIf(obj -> !obj.isActive());
+        shields.removeIf(obj -> !obj.isActive());
     }
 
     public void update(double deltaTimeSeconds) {
@@ -291,41 +342,42 @@ public class GameManager {
 
         if (gameState != GameState.PLAYING) return;
 
-        gameObjects.forEach(obj -> obj.update(deltaTimeSeconds));
+        paddle.update(deltaTimeSeconds);
+        for (Ball b : balls) b.update(deltaTimeSeconds);
+        for (PowerUp p : powerUps) p.update(deltaTimeSeconds);
+        for (FireWorkEffect e : effects) e.update(deltaTimeSeconds);
+        for (Shield s : shields) s.update(deltaTimeSeconds);
 
         checkCollisions();
-        gameObjects.removeIf(obj -> !obj.isActive());
+        removeInactiveObjects();
 
-        long remainingBricks = gameObjects.stream()
-                .filter(obj -> obj instanceof Brick)
-                .filter(obj -> ((Brick) obj).getType() != BrickType.WALL)
+        long remainingBricks = bricks.stream()
+                .filter(brick -> brick.getType() != BrickType.WALL)
                 .count();
 
         if (remainingBricks == 0) {
             if (currentLevel >= MAX_LEVELS) {
-                gameState = GameState.WIN;
+                setGameState(GameState.WIN);
             } else {
-                gameState = GameState.LEVEL_TRANSITION;
+                setGameState(GameState.LEVEL_TRANSITION);
                 levelTransitionTimer = DELAY_SEC;
             }
         }
     }
 
     private void loseLife() {
-        long remainingBalls = gameObjects.stream()
-                .filter(obj -> obj instanceof Ball)
-                .count();
+        long activeBalls = balls.stream().filter(GameObject::isActive).count();
 
-        if (remainingBalls <= 1) {
+        if (activeBalls <= 1) {
             int lifePenalty = feverBallActive ? FeverBallPowerUp.getLifePenaltyMultiplier() : 1;
             if (lives <= lifePenalty) {
                 lives = 0;
-                gameState = GameState.GAME_OVER;
+                setGameState(GameState.GAME_OVER);
                 highScoreManager.addScore(score);
                 gameOverTimer = DELAY_SEC;
             } else {
                 lives -= lifePenalty;
-                gameObjects.removeIf(obj -> obj instanceof Ball);
+                balls.clear();
                 int ballX = Const.BALL_DEFAULT_POS_X;
                 int ballY = Const.BALL_DEFAULT_POS_Y;
                 ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, 0, 0);
@@ -336,34 +388,27 @@ public class GameManager {
     }
 
     private void checkCollisions() {
-        for (GameObject ballObj : gameObjects.stream()
-                .filter(obj -> obj instanceof Ball)
-                .toList()) {
-            Ball ball = (Ball) ballObj;
+        for (Ball ball : balls) {
+            if (!ball.isActive()) continue; // Bỏ qua nếu bóng đã chết
 
-            if (!ball.isStarted()) {
-                ball.setSpeedX(paddle.getSpeedX());
-                return;
-            }
-
+            // Va chạm với tường
             if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
                 ball.reverseX();
-                if (ball.getX() <= 0) {
-                    ball.setX(0);
-                } else {
-                    ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
-                }
+                if (ball.getX() <= 0) ball.setX(0);
+                else ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
             }
             if (ball.getY() <= 0) {
                 ball.reverseY();
                 ball.setY(0);
             }
+            // Rơi ra ngoài
             if (ball.getY() >= Const.SCREEN_HEIGHT) {
                 ball.setActive(false);
                 loseLife();
                 continue;
             }
 
+            // Va chạm với Paddle
             if (ball.getBounds().intersects(paddle.getBounds())) {
                 Rectangle2D intersection = ball.intersection(paddle.getBounds());
                 double ballCurrentSpeedX = getBallCurrentSpeedX(ball);
@@ -371,53 +416,55 @@ public class GameManager {
                 double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
                         - Math.pow(ball.getSpeedX(), 2));
                 ball.setSpeedY(-newSpeedY);
-                if (intersection != null){
+                if (intersection != null) {
                     ball.setY(ball.getY() - intersection.getHeight());
                 }
             }
 
-            for (GameObject obj : gameObjects) {
-                if (obj instanceof Brick) {
-                    Rectangle2D brickBound = obj.getBounds();
-                    if (ball.getBounds().intersects(brickBound)) {
-                        Rectangle2D intersection = ball.intersection(brickBound);
-                        if (intersection.getHeight() >= intersection.getWidth()) {
-                            if (ball.getX() < brickBound.getMinX()) {
-                                ball.setX(brickBound.getMinX() - ball.getWidth());
-                            } else {
-                                ball.setX(brickBound.getMaxX());
-                            }
-                            ball.reverseX();
-                        } else {
-                            if (ball.getY() < brickBound.getMinY()) {
-                                ball.setY(brickBound.getMinY() - ball.getHeight());
-                            } else {
-                                ball.setY(brickBound.getMaxY());
-                            }
-                            ball.reverseY();
-                        }
-                        boolean destroyed = ((Brick) obj).takeHit();
-                        if (destroyed) {
-                            onBrickDestroyed((Brick) obj);
-                            break;
-                        }
-                    }
-                }
-                else if (obj instanceof Shield){
-                    Shield shield = (Shield) obj;
-                    if (ball.getBounds().intersects(shield.getBounds())){
-                        shield.hit();
-                        ball.setY(ball.getY() - ball.getHeight() - 5);
+            // Va chạm với Gạch
+            for (Brick brick : bricks) {
+                if (!brick.isActive()) continue;
+
+                if (ball.getBounds().intersects(brick.getBounds())) {
+                    Rectangle2D intersection = ball.intersection(brick.getBounds());
+
+                    // Logic xác định hướng va chạm
+                    if (intersection.getHeight() >= intersection.getWidth()) {
+                        if (ball.getX() < brick.getBounds().getMinX())
+                            ball.setX(brick.getBounds().getMinX() - ball.getWidth());
+                        else ball.setX(brick.getBounds().getMaxX());
+                        ball.reverseX();
+                    } else {
+                        if (ball.getY() < brick.getBounds().getMinY())
+                            ball.setY(brick.getBounds().getMinY() - ball.getHeight());
+                        else ball.setY(brick.getBounds().getMaxY());
                         ball.reverseY();
                     }
+
+                    boolean destroyed = brick.takeHit();
+                    if (destroyed) {
+                        onBrickDestroyed(brick);
+                        break; // Chỉ va chạm 1 gạch mỗi khung hình
+                    }
+                }
+            }
+
+            // Va chạm với Khiên
+            for (Shield shield : shields) {
+                if (!shield.isActive()) continue;
+                if (ball.getBounds().intersects(shield.getBounds())) {
+                    shield.hit();
+                    ball.setY(ball.getY() - ball.getHeight() - 5);
+                    ball.reverseY();
                 }
             }
         }
 
-        for (GameObject obj : gameObjects) {
-            if (obj instanceof PowerUp && obj.getBounds().intersects(paddle.getBounds())) {
-                ((PowerUp) obj).activate(paddle);
-                // Xóa dòng setActive(false) để power-up tự xử lý khi hết duration
+        for (PowerUp powerUp : powerUps) {
+            if (!powerUp.isActive()) continue;
+
+            if (paddle.getBounds().intersects(powerUp.getBounds())) {
+                powerUp.activate(paddle);
             }
         }
     }
@@ -444,7 +491,9 @@ public class GameManager {
     private void onBrickDestroyed(Brick brick) {
         score += (int) (brick.getScoreValue() * (feverBallActive ? FeverBallPowerUp.getScoreMultiplier() : 1));
 
-        FireWorkEffect fire = new FireWorkEffect(
+        FireWorkEffect fire = FireWorkEffectPool.getInstance().getEffect();
+
+        fire.reset(
                 (int) brick.getX(),
                 (int) brick.getY(),
                 Const.BRICK_WIDTH,
@@ -467,22 +516,47 @@ public class GameManager {
         }
 
         if (Math.random() < 0.05) {
-            PowerUp powerUp;
+            PowerUp powerUp = null;
+            Class<? extends PowerUp> typeToCreate = null; // Lưu loại class cần tạo
+
             double rand = Math.random();
 
             if (rand < 0.2) {
-                powerUp = new MultiBallPowerUp((int) brick.getX(), (int) brick.getY());
+                typeToCreate = MultiBallPowerUp.class;
             } else if (rand < 0.4) {
-                powerUp = new FastBallPowerUp((int) brick.getX(), (int) brick.getY());
+                typeToCreate = FastBallPowerUp.class;
             } else if (rand < 0.6) {
-                powerUp = new ExpandPaddlePowerUp((int) brick.getX(), (int) brick.getY());
+                typeToCreate = ExpandPaddlePowerUp.class;
             } else if (rand < 0.8) {
-                powerUp = new ShieldPowerUp((int) brick.getX(), (int) brick.getY()); // Đã thêm Shield
+                typeToCreate = ShieldPowerUp.class;
             } else {
-                powerUp = new FeverBallPowerUp((int) brick.getX(), (int) brick.getY());
+                typeToCreate = FeverBallPowerUp.class;
             }
-            addGameObject(powerUp);
+
+            powerUp = PowerUpPool.getInstance().getPowerUp(typeToCreate);
+
+            if (powerUp == null) {
+                try {
+                    powerUp = typeToCreate.getDeclaredConstructor(int.class, int.class)
+                            .newInstance((int) brick.getX(), (int) brick.getY());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                powerUp.reset(brick.getX(), brick.getY());
+            }
+            if (powerUp != null) {
+                addGameObject(powerUp);
+            }
         }
+    }
+
+    private void resetGameLists() {
+        balls.clear();
+        bricks.clear();
+        powerUps.clear();
+        effects.clear();
+        shields.clear();
     }
 
     /**
@@ -492,7 +566,7 @@ public class GameManager {
         this.score = Const.DEFAULT_SCORES;
         this.lives = Const.DEFAULT_LIVES;
         this.currentLevel = 1;
-        gameObjects.clear();
+        resetGameLists();
     }
 
     /**
@@ -503,9 +577,11 @@ public class GameManager {
         startLevel(this.currentLevel);
     }
 
-    public List<GameObject> getGameObjects() {
-        return gameObjects;
-    }
+    public List<Ball> getBalls() { return balls; }
+    public List<Brick> getBricks() { return bricks; }
+    public List<PowerUp> getPowerUps() { return powerUps; }
+    public List<FireWorkEffect> getEffects() { return effects; }
+    public List<Shield> getShields() { return shields; }
 
     public GameState getGameState() {
         return gameState;

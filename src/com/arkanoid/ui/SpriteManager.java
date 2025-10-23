@@ -11,7 +11,7 @@ public class SpriteManager {
 
     private static Image spritesheet;
 
-    static {
+    public static void preload() {
         try {
             spritesheet = new Image(SpriteManager.class.getResourceAsStream("/Images/blocks_bricks.png"));
         } catch (Exception e) {
