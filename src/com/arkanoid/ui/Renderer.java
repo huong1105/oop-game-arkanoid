@@ -83,9 +83,6 @@ public class Renderer {
                     if (e.isActive()) e.render(gc);
                 }
 
-                // Vẽ UI
-                drawUI(gm.getScore(), gm.getLives());
-
                 // Vẽ các thông báo đè lên màn hình
                 if (gameState == GameState.PAUSED) {
                     gm.getPauseMenu().render(gc);
@@ -152,20 +149,6 @@ public class Renderer {
         gc.setFont(new Font("Arial", 20));
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText("Press ESC or Click to return to Menu", canvasWidth / 2, canvasHeight - 50);
-    }
-
-
-    /**
-     * Vẽ các thông tin như điểm và mạng sống.
-     */
-    private void drawUI(int score, int lives) {
-        gc.setFill(Color.WHITE);
-        gc.setFont(new Font("Arial", 20));
-        gc.setTextAlign(TextAlignment.LEFT);
-        gc.fillText("Score: " + String.format("%,d", score), 10, 25);
-
-        gc.setTextAlign(TextAlignment.RIGHT);
-        gc.fillText("Lives: " + lives, canvasWidth - 10, 25);
     }
 
     /**
