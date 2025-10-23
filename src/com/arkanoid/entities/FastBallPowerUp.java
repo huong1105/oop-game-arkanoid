@@ -1,9 +1,10 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.Const;
+import com.arkanoid.core.GameObject;
 import com.arkanoid.game.GameManager;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class FastBallPowerUp extends PowerUp {
     private static final int DURATION = 5000; // ms
@@ -14,11 +15,24 @@ public class FastBallPowerUp extends PowerUp {
     }
 
     @Override
+    public void reset(double x, double y) {
+        super.reset(x, y);
+    }
+
+    @Override
     public void applyEffect() {
-        List<Ball> currentBalls = GameManager.getInstance().getGameObjects().stream()
-                .filter(obj -> obj instanceof Ball)
+        for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
+            if (obj instanceof FastBallPowerUp && obj != this && obj.isActivated()) {
+                obj.addDuration(this.durationSeconds);
+                this.durationSeconds = 0;
+                return;
+            }
+        }
+
+        List<Ball> currentBalls = GameManager.getInstance().getBalls().stream()
+                .filter(Objects::nonNull)
                 .map(obj -> (Ball) obj)
-                .collect(Collectors.toList());
+                .toList();
 
         for (Ball ball : currentBalls) {
             ball.setMaxSpeed((int)(ball.getMaxSpeed() * SPEED_MULTIPLIER));
@@ -29,10 +43,10 @@ public class FastBallPowerUp extends PowerUp {
 
     @Override
     public void removeEffect() {
-        List<Ball> currentBalls = GameManager.getInstance().getGameObjects().stream()
-                .filter(obj -> obj instanceof Ball)
+        List<Ball> currentBalls = GameManager.getInstance().getBalls().stream()
+                .filter(Objects::nonNull)
                 .map(obj -> (Ball) obj)
-                .collect(Collectors.toList());
+                .toList();
 
         for (Ball ball : currentBalls) {
             ball.setMaxSpeed(Const.BALL_MAXSPEED);

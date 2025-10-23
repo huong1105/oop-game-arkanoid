@@ -1,9 +1,6 @@
 package com.arkanoid.entities;
 
-import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FeverBallPowerUp extends PowerUp {
     private static final int DURATION = 8000; // ms
@@ -14,8 +11,20 @@ public class FeverBallPowerUp extends PowerUp {
         super(x, y, 20, 20, "FeverBall", DURATION);
     }
 
+    public void reset(double x, double y) {
+        super.reset(x, y);
+    }
+
     @Override
     public void applyEffect() {
+        for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
+            if ((obj instanceof FeverBallPowerUp) && (obj != this) && obj.isActivated()) {
+                obj.addDuration(this.durationSeconds);
+                this.durationSeconds = 0;
+                return;
+            }
+        }
+
         GameManager.getInstance().setFeverBallActive(true);
     }
 

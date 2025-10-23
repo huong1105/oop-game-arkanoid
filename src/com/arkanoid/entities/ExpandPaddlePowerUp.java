@@ -1,6 +1,7 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.Const;
+import com.arkanoid.core.GameObject;
 import com.arkanoid.game.GameManager;
 
 public class ExpandPaddlePowerUp extends PowerUp {
@@ -13,9 +14,21 @@ public class ExpandPaddlePowerUp extends PowerUp {
     }
 
     @Override
+    public void reset(double x, double y) {
+        super.reset(x, y);
+        this.originalWidth = 0;
+    }
+
+    @Override
     public void applyEffect() {
         Paddle paddle = GameManager.getInstance().getPaddle();
-        if (paddle.isExpanded()) return;
+        for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
+            if (obj instanceof ExpandPaddlePowerUp && obj != this && obj.isActivated()) {
+                obj.addDuration(this.durationSeconds);
+                this.durationSeconds = 0;
+                return;
+            }
+        }
 
         originalWidth = paddle.getWidth();
         paddle.setWidth(paddle.getWidth() * WIDTH_MULTIPLIER);
@@ -34,5 +47,6 @@ public class ExpandPaddlePowerUp extends PowerUp {
             paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth());
         }
         paddle.setExpanded(false);
+        this.originalWidth = 0;
     }
 }

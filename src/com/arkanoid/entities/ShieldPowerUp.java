@@ -6,6 +6,8 @@ import com.arkanoid.game.GameManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.Objects;
+
 public class ShieldPowerUp extends PowerUp {
     private Shield shield;
     private static final int DURATION = 0;
@@ -16,9 +18,14 @@ public class ShieldPowerUp extends PowerUp {
     }
 
     @Override
+    public void reset(double x, double y) {
+        super.reset(x, y);
+    }
+
+    @Override
     public void applyEffect() {
         GameManager gm = GameManager.getInstance();
-        gm.getGameObjects().removeIf(obj -> obj instanceof Shield);
+        gm.getShields().removeIf(Objects::nonNull);
         gm.addGameObject(shield);
     }
 

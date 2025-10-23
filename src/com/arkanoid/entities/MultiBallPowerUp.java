@@ -3,6 +3,7 @@ package com.arkanoid.entities;
 import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MultiBallPowerUp extends PowerUp {
@@ -13,14 +14,19 @@ public class MultiBallPowerUp extends PowerUp {
     }
 
     @Override
+    public void reset(double x, double y) {
+        super.reset(x, y);
+    }
+
+    @Override
     public void applyEffect() {
         GameManager gameManager = GameManager.getInstance();
 
         // Tìm tất cả các ball hiện tại
-        List<Ball> currentBalls = gameManager.getGameObjects().stream()
-                .filter(obj -> obj instanceof Ball)
+        List<Ball> currentBalls = gameManager.getBalls().stream()
+                .filter(Objects::nonNull)
                 .map(obj -> (Ball) obj)
-                .collect(Collectors.toList());
+                .toList();
 
         for (Ball currentBall : currentBalls) {
             Ball newBall = new Ball(

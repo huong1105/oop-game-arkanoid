@@ -23,6 +23,20 @@ public abstract class PowerUp extends MovableObject {
         this.timeRemaining = this.durationSeconds;
     }
 
+    public void reset(double x, double y) {
+        this.x = x;
+        this.y = y;
+        this.bounds = new javafx.geometry.Rectangle2D(x, y, width, height);
+
+        this.active = true;
+        this.isActivated = false;
+        this.target = null;
+        this.timeRemaining = this.durationSeconds;
+
+        this.speedX = 0;
+        this.speedY = FALL_SPEED;
+    }
+
     @Override
     public void update(double deltaTimeSeconds) {
         if (!isActive()) return;
@@ -30,14 +44,14 @@ public abstract class PowerUp extends MovableObject {
         if (!isActivated) {
             super.update(deltaTimeSeconds);
             if (getY() > Const.SCREEN_HEIGHT) {
-                setActive(false);
+                PowerUpPool.getInstance().returnPowerUp(this);
             }
         } else {
             if (durationSeconds > 0) {
                 timeRemaining -= deltaTimeSeconds;
                 if (timeRemaining <= 0) {
                     removeEffect();
-                    setActive(false);
+                    PowerUpPool.getInstance().returnPowerUp(this);
                 }
             }
         }
@@ -79,11 +93,21 @@ public abstract class PowerUp extends MovableObject {
         applyEffect();
 
         if (durationSeconds == 0) {
-            setActive(false); // Đối với power-up không có thời gian
+            PowerUpPool.getInstance().returnPowerUp(this);
         }
     }
 
     public abstract void applyEffect();
 
     public abstract void removeEffect();
+
+    public boolean isActivated() {
+        return isActivated;
+    }
+
+    public void addDuration(double extraTimeSeconds) {
+        if (isActivated && durationSeconds > 0) {
+            this.timeRemaining += extraTimeSeconds;
+        }
+    }
 }
