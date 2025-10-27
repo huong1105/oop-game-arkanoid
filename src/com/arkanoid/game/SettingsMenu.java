@@ -87,7 +87,7 @@ public class SettingsMenu {
         }
         gc.setFont(new Font("Arial", 32));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("Back", backBtnBounds.getMinX() + backBtnBounds.getWidth() / 2, backBtnBounds.getMinY() + backBtnBounds.getHeight() / 2 + 10);
+        gc.fillText("Back", backBtnBounds.getMinX() + backBtnBounds.getWidth() / 2, backBtnBounds.getMinY() + backBtnBounds.getHeight() / 2 );
     }
 
     /**
