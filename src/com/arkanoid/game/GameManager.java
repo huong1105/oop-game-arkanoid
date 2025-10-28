@@ -4,7 +4,6 @@ import com.arkanoid.BrickType;
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
 import com.arkanoid.ui.PauseMenu;
-import com.arkanoid.ui.SettingsMenu;
 import com.arkanoid.entities.*;
 import com.arkanoid.ui.MainMenu;
 import com.arkanoid.ui.SpriteManager;
@@ -44,6 +43,7 @@ public class GameManager {
 
     private final SettingsMenu settingsMenu;
     private final PauseMenu pauseMenu;
+    private final HighScoreMenu highScoreMenu;
 
     private GameState gameState = GameState.LOADING;
 
@@ -78,10 +78,11 @@ public class GameManager {
 
     private GameManager() {
         mainMenu = new MainMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
-        settingsMenu = new SettingsMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
+        settingsMenu = new SettingsMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu);
         pauseMenu = new PauseMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         SoundManager.playBackgroundMusic();
         highScoreManager = new HighScoreManager();
+        highScoreMenu = new HighScoreMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu, highScoreManager);
 
         loadAssets();
     }
@@ -607,7 +608,15 @@ public class GameManager {
         return highScoreManager;
     }
 
-    public int getCurrentLevel() { return currentLevel; }
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
 
-    public PauseMenu getPauseMenu() { return pauseMenu; }
+    public PauseMenu getPauseMenu() {
+        return pauseMenu;
+    }
+
+    public HighScoreMenu getHighScoreMenu() {
+        return highScoreMenu;
+    }
 }

@@ -30,6 +30,9 @@ public class KeyInput {
             else if (gm.getGameState() == GameState.SETTINGS) {
                 gm.getSettingsMenu().update(event.getX(), event.getY());
             }
+            else if (gm.getGameState() == GameState.HIGH_SCORE) {
+                gm.getHighScoreMenu().update(event.getX(), event.getY());
+            }
             else if (gm.getGameState() == GameState.PAUSED) {
                 gm.getPauseMenu().update(event.getX(), event.getY());
             }
@@ -99,7 +102,10 @@ public class KeyInput {
                     gm.setGameState(GameState.PLAYING);
                 }
                 else if (gm.getGameState() == GameState.HIGH_SCORE) {
-                    gm.setGameState(GameState.MENU);
+                    String action = gm.getHighScoreMenu().handleClick(mouseX, mouseY);
+                    if ("BACK_TO_MENU".equals(action)) {
+                        gm.quitToMainMenu();
+                    }
                 }
             }
             if (event.getButton() == MouseButton.SECONDARY) {

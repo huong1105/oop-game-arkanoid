@@ -15,23 +15,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsMenu {
-    private Rectangle2D sfxSliderBounds, bgmSliderBounds;
-    private double canvasWidth, canvasHeight;
-    private MainMenu mainMenu;
+public class HighScoreMenu {
 
+    private MainMenu mainMenu;
+    private HighScoreManager highScoreManager;
+    private double canvasWidth, canvasHeight;
     private final List<MenuItem> menuItems = new ArrayList<>();
     private Font titleFont;
     private Font regularFont;
+    private Font scoreFont;
     private final DropShadow neonGlow;
     private final Color neonCyan = Color.rgb(0, 255, 255);
 
-    public SettingsMenu(double canvasWidth, double canvasHeight, MainMenu mainMenu) {
+    public HighScoreMenu(double canvasWidth, double canvasHeight, MainMenu mainMenu, HighScoreManager highScoreManager) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.mainMenu = mainMenu;
+        this.highScoreManager = highScoreManager;
 
-        // --- Nạp font và hiệu ứng (từ MainMenu.java) ---
         try {
             titleFont = Font.loadFont(new File("res/fonts/Orbitron-Bold.ttf").toURI().toString(), 90);
             if (titleFont == null) throw new Exception("Font not loaded");
@@ -40,31 +41,29 @@ public class SettingsMenu {
         }
 
         try {
-            // Nạp font Orbitron-Regular cho các văn bản khác
             regularFont = Font.loadFont(new File("res/fonts/Orbitron-Regular.ttf").toURI().toString(), 30);
             if (regularFont == null) throw new Exception("Font not loaded");
         } catch (Exception e) {
             regularFont = Font.font("Monospaced", 30);
         }
 
+        try {
+            scoreFont = Font.loadFont(new File("res/fonts/Orbitron-Regular.ttf").toURI().toString(), 35);
+            if (scoreFont == null) throw new Exception("Font not loaded");
+        } catch (Exception e) {
+            scoreFont = Font.font("Monospaced", 35);
+        }
+
         neonGlow = new DropShadow(25, Color.rgb(0, 255, 255, 0.8));
 
-        double contentStartY = canvasHeight / 2.5;
-        double sliderWidth = 400;
-        double sliderHeight = 20;
-        double centerX = canvasWidth / 2;
-
-        sfxSliderBounds = new Rectangle2D(centerX - sliderWidth / 2, contentStartY, sliderWidth, sliderHeight);
-        bgmSliderBounds = new Rectangle2D(centerX - sliderWidth / 2, contentStartY + 100, sliderWidth, sliderHeight);
-
-        double buttonWidth = 350;
+        double buttonWidth = 300;
         double buttonHeight = 60;
         double startX = (canvasWidth - buttonWidth) / 2;
-        menuItems.add(new MenuItem("Back", startX, 480, buttonWidth, buttonHeight));
+        double buttonY = canvasHeight - buttonHeight - 80;
+        menuItems.add(new MenuItem("Back", startX, buttonY, buttonWidth, buttonHeight));
     }
 
     public void update(double mouseX, double mouseY) {
-        // Cập nhật hover cho nút "Back"
         for (MenuItem item : menuItems) {
             item.setHovered(item.getBounds().contains(mouseX, mouseY));
         }
@@ -74,64 +73,60 @@ public class SettingsMenu {
         if (this.mainMenu != null) {
             this.mainMenu.drawBackground(gc);
         }
-        drawStyledTitle(gc, "ARKANOID");
-        GameSettings settings = GameSettings.getInstance();
-        drawSlider(gc, "Sound Effects", sfxSliderBounds, settings.getSfxVolume());
-        drawSlider(gc, "Background Music", bgmSliderBounds, settings.getBgmVolume());
 
-        // 4. Vẽ nút "Back"
+        drawStyledTitle(gc, "ARKANOID");
+
+        double subtitleY = canvasHeight / 2.5 - 40;
+        double listStartY = subtitleY + 70;
+
+        // Vẽ nội dung High Score
+        gc.setFill(Color.WHITE);
+        gc.setFont(regularFont); // Dùng font Orbitron-Regular 30
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(VPos.CENTER);
+        gc.fillText("High Scores", canvasWidth / 2, subtitleY); // Đặt phía trên danh sách
+
+        gc.setFont(scoreFont); // Dùng font Orbitron-Regular 35
+        List<Integer> highScores = highScoreManager.getHighScores();
+
+        gc.setTextAlign(TextAlignment.CENTER);
+
+        if (highScores.isEmpty()) {
+            gc.setFill(Color.WHITE);
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.fillText("No scores yet!", canvasWidth / 2, listStartY);
+        } else {
+            for (int i = 0; i < highScores.size(); i++) {
+                String rank = (i + 1) + ".";
+                String scoreText = String.format("%,d", highScores.get(i));
+
+                gc.setFill(Color.WHITE);
+                gc.setTextAlign(TextAlignment.RIGHT);
+                gc.fillText(rank, canvasWidth / 2 - 20, listStartY + i * 60);
+
+                gc.setTextAlign(TextAlignment.LEFT);
+                gc.fillText(scoreText, canvasWidth / 2, listStartY + i * 60);
+            }
+        }
+
+        // 5. Vẽ nút "Back"
         for (MenuItem item : menuItems) {
             item.render(gc);
         }
     }
 
-    private void drawSlider(GraphicsContext gc, String label, Rectangle2D bounds, double value) {
-        gc.setFill(Color.WHITE);
-        gc.setFont(regularFont); // << SỬ DỤNG FONT ORBITRON
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText(label, canvasWidth / 2, bounds.getMinY() - 30); // Tăng khoảng cách label
-
-        gc.setFill(Color.GRAY);
-        gc.fillRoundRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 10, 10);
-
-        gc.setFill(Color.DODGERBLUE);
-        gc.fillRoundRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth() * value, bounds.getHeight(), 10, 10);
-
-        gc.setFill(Color.WHITE);
-        double handleX = bounds.getMinX() + bounds.getWidth() * value;
-        gc.fillOval(handleX - 15, bounds.getMinY() - 5, 30, 30);
-    }
-
     /**
-     * Xử lý khi chuột được kéo (giữ nguyên).
-     */
-    public void handleMouseDrag(double mouseX, double mouseY) {
-        updateSliderValue(mouseX, mouseY);
-    }
-
-    /**
-     * Xử lý khi click chuột.
+     * Xử lý khi click chuột
      */
     public String handleClick(double mouseX, double mouseY) {
-        updateSliderValue(mouseX, mouseY); // Xử lý click thanh trượt
-
         for (MenuItem item : menuItems) {
-            if (item.getBounds().contains(mouseX, mouseY) && "Back".equals(item.getText())) {
-                return "BACK_TO_MENU";
+            if (item.getBounds().contains(mouseX, mouseY)) {
+                if ("Back".equals(item.getText())) {
+                    return "BACK_TO_MENU";
+                }
             }
         }
         return null;
-    }
-
-    private void updateSliderValue(double mouseX, double mouseY) {
-        if (sfxSliderBounds.contains(mouseX, mouseY)) {
-            double newValue = (mouseX - sfxSliderBounds.getMinX()) / sfxSliderBounds.getWidth();
-            GameSettings.getInstance().setSfxVolume(newValue);
-        }
-        if (bgmSliderBounds.contains(mouseX, mouseY)) {
-            double newValue = (mouseX - bgmSliderBounds.getMinX()) / bgmSliderBounds.getWidth();
-            GameSettings.getInstance().setBgmVolume(newValue);
-        }
     }
 
     /**
@@ -139,7 +134,7 @@ public class SettingsMenu {
      * (Code được sao chép từ MainMenu.java)
      */
     private void drawStyledTitle(GraphicsContext gc, String titleText) {
-        // --- Vẽ Tiêu đề ---
+        // --- Vẽ tiêu đề ---
         gc.setFill(neonCyan);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);

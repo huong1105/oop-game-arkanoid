@@ -45,7 +45,7 @@ public class Renderer {
                 break;
 
             case HIGH_SCORE:
-                drawHighScores(gm.getHighScoreManager().getHighScores());
+                gm.getHighScoreMenu().render(gc);
                 break;
 
             case SETTINGS:
@@ -110,45 +110,6 @@ public class Renderer {
     private void clear() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
-    }
-
-    /**
-     * Vẽ màn hình hiển thị danh sách điểm cao.
-     * @param highScores Danh sách các điểm cao cần hiển thị.
-     */
-    private void drawHighScores(List<Integer> highScores) {
-        gc.setFill(Color.WHITE);
-        gc.setTextAlign(TextAlignment.CENTER);
-
-        // Vẽ tiêu đề
-        gc.setFont(new Font("Arial", 60));
-        gc.fillText("High Scores", canvasWidth / 2, canvasHeight / 5);
-
-        // Vẽ danh sách điểm
-        gc.setFont(new Font("Arial", 35));
-
-        if (highScores.isEmpty()) {
-            gc.setTextAlign(TextAlignment.CENTER);
-            gc.fillText("No scores yet!", canvasWidth / 2, canvasHeight / 2);
-        } else {
-            double startY = canvasHeight / 3;
-            for (int i = 0; i < highScores.size(); i++) {
-                String rank = (i + 1) + ".";
-                String scoreText = String.format("%,d", highScores.get(i));
-
-                // Căn lề cho đẹp
-                gc.setTextAlign(TextAlignment.RIGHT);
-                gc.fillText(rank, canvasWidth / 2 - 20, startY + i * 60);
-
-                gc.setTextAlign(TextAlignment.LEFT);
-                gc.fillText(scoreText, canvasWidth / 2, startY + i * 60);
-            }
-        }
-
-        // Thêm hướng dẫn quay lại
-        gc.setFont(new Font("Arial", 20));
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("Press ESC or Click to return to Menu", canvasWidth / 2, canvasHeight - 50);
     }
 
     /**

@@ -71,7 +71,7 @@ public class MainMenu {
     }
 
     /** Vẽ nền (sao và lưới). */
-    private void drawBackground(GraphicsContext gc) {
+    public void drawBackground(GraphicsContext gc) {
         // 1. Vẽ các ngôi sao
         gc.setFill(Color.WHITE);
         for (Point2D star : stars) {
