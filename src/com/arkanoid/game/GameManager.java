@@ -315,9 +315,35 @@ public class GameManager {
     private void removeInactiveObjects() {
         bricks.removeIf(obj -> !obj.isActive());
         balls.removeIf(obj -> !obj.isActive());
-        powerUps.removeIf(obj -> !obj.isActive());
-        effects.removeIf(obj -> !obj.isActive());
         shields.removeIf(obj -> !obj.isActive());
+
+        List<PowerUp> powerUpsToRemove = new ArrayList<>();
+
+        for (PowerUp powerUp : powerUps) {
+            if (!powerUp.isActive()) {
+                powerUpsToRemove.add(powerUp);
+            }
+        }
+
+        powerUps.removeAll(powerUpsToRemove);
+
+        for (PowerUp powerUp : powerUpsToRemove) {
+            PowerUpPool.getInstance().returnPowerUp(powerUp);
+        }
+
+        List<FireWorkEffect> effectsToRemove = new ArrayList<>();
+
+        for (FireWorkEffect effect : effects) {
+            if (!effect.isActive()) {
+                effectsToRemove.add(effect);
+            }
+        }
+
+        effects.removeAll(effectsToRemove);
+
+        for (FireWorkEffect effect : effectsToRemove) {
+            FireWorkEffectPool.getInstance().returnEffect(effect);
+        }
     }
 
     public void update(double deltaTimeSeconds) {
@@ -369,8 +395,10 @@ public class GameManager {
     private void loseLife() {
         long activeBalls = balls.stream().filter(GameObject::isActive).count();
 
-        if (activeBalls <= 1) {
-            int lifePenalty = feverBallActive ? FeverBallPowerUp.getLifePenaltyMultiplier() : 1;
+        if (activeBalls < 1) {
+            int lifePenalty;
+            if (feverBallActive) lifePenalty = FeverBallPowerUp.getLifePenaltyMultiplier();
+            else lifePenalty = 1;
             if (lives <= lifePenalty) {
                 lives = 0;
                 setGameState(GameState.GAME_OVER);
