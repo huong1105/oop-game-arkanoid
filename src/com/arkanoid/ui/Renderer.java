@@ -7,8 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-
-import java.util.List;
+import static com.arkanoid.game.FontManager.PAPYRUS_32;
 
 public class Renderer {
     private final GraphicsContext gc;
@@ -121,7 +120,7 @@ public class Renderer {
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
 
         gc.setFill(Color.WHITE);
-        gc.setFont(new Font("Arial", 50));
+        gc.setFont(PAPYRUS_32);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText(message, canvasWidth / 2, canvasHeight / 2);
     }

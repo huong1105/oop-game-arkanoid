@@ -25,16 +25,16 @@ public class KeyInput {
         // Cập nhật hiệu ứng "hover" khi di chuyển chuột trên menu
         scene.setOnMouseMoved((MouseEvent event) -> {
             if (gm.getGameState() == GameState.MENU) {
-                gm.getMainMenu().update(event.getX(), event.getY());
+                gm.getMainMenu().update(event.getX(), event.getY()); // SỬA
             }
             else if (gm.getGameState() == GameState.SETTINGS) {
-                gm.getSettingsMenu().update(event.getX(), event.getY());
+                gm.getSettingsMenu().update(event.getX(), event.getY()); // SỬA
             }
             else if (gm.getGameState() == GameState.HIGH_SCORE) {
-                gm.getHighScoreMenu().update(event.getX(), event.getY());
+                gm.getHighScoreMenu().update(event.getX(), event.getY()); // SỬA
             }
             else if (gm.getGameState() == GameState.PAUSED) {
-                gm.getPauseMenu().update(event.getX(), event.getY());
+                gm.getPauseMenu().update(event.getX(), event.getY()); // SỬA
             }
             // Điều khiển paddle bằng chuột
             if (gm.getGameState() == GameState.PLAYING) {
@@ -82,7 +82,7 @@ public class KeyInput {
                                 gm.resumeGame();
                                 break;
                             case "Restart Level":
-                                gm.startLevel(gm.getCurrentLevel());
+                                gm.restartCurrentLevel();
                                 break;
                             case "Quit to Menu":
                                 gm.quitToMainMenu();

@@ -23,4 +23,3 @@ public enum BrickType {
         return scoreValue;
     }
 }
-

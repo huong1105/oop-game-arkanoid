@@ -21,6 +21,9 @@ public class SpriteManager {
     public static Image BRICK_SPECIAL_LIGHT;
     public static Image BRICK_SPECIAL_HEAVY;
 
+    public static Image BALL_FIRE;
+    public static Image BALL_NORMAL;
+
     public static void preload() {
         try {
             spritesheet = new Image(SpriteManager.class.getResourceAsStream("/Images/blocks_bricks.png"));
@@ -38,6 +41,9 @@ public class SpriteManager {
         BRICK_HARD_CRACKED = getSprite(27, 13, 24, 10);
         BRICK_SPECIAL_LIGHT = getSprite(53, 13, 24, 10);
         BRICK_SPECIAL_HEAVY = getSprite(53, 25, 24, 10);
+
+        BALL_NORMAL = getSprite(167, 1, 12, 12);
+        BALL_FIRE = getSprite(168, 1, 12, 12);
     }
 
     /**

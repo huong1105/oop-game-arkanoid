@@ -87,6 +87,7 @@ public class Main extends Application {
                     canvas.setWidth(Const.WINDOW_WIDTH);
                     canvas.setHeight(Const.SCREEN_HEIGHT);
                     renderer.updateCanvasSize(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
+                    gm.getMainMenu().updateBackGround();
 
                 } else {
                     // Hiện infoPanel

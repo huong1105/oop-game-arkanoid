@@ -11,6 +11,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import static com.arkanoid.game.FontManager.*;
+
 /**
  * Lớp này quản lý việc khởi tạo và cập nhật
  * các thành phần UI trong cột thông tin (HUD).
@@ -69,8 +71,8 @@ public class HudManager {
         hudBox.setSpacing(25); // Khoảng cách giữa các mục
 
         // Tiêu đề game
-        Label title = createHudLabel("ARKANOID", 24);
-        title.setTextFill(Color.CYAN);
+        Label title = createHudLabel("ARKANOID", 20);
+        title.setTextFill(Color.GREEN);
 
         // Điểm số (Score)
         Label scoreLabel = createHudLabel("SCORE", 16);
@@ -104,7 +106,13 @@ public class HudManager {
     // --- Phương thức trợ giúp ---
     private Label createHudLabel(String text, int fontSize) {
         Label label = new Label(text);
-        label.setFont(Font.font("Consolas", FontWeight.BOLD, fontSize));
+        if (fontSize == 24) {
+            label.setFont(PAPYRUS_24);
+        } else if (fontSize == 20) {
+            label.setFont(PAPYRUS_20);
+        } else { // Mặc định là 16
+            label.setFont(PAPYRUS_16);
+        }
         label.setTextFill(Color.WHITE);
         return label;
     }

@@ -2,18 +2,20 @@ package com.arkanoid.game;
 
 import com.arkanoid.ui.MainMenu;
 import com.arkanoid.ui.MenuItem;
+import com.arkanoid.ui.UIUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.arkanoid.game.FontManager.PAPYRUS_90;
+import static com.arkanoid.game.FontManager.PAPYRUS_32;
 
 public class SettingsMenu {
     private Rectangle2D sfxSliderBounds, bgmSliderBounds;
@@ -21,10 +23,8 @@ public class SettingsMenu {
     private MainMenu mainMenu;
 
     private final List<MenuItem> menuItems = new ArrayList<>();
-    private Font titleFont;
-    private Font regularFont;
-    private final DropShadow neonGlow;
-    private final Color neonCyan = Color.rgb(0, 255, 255);
+    private final DropShadow forestGlow;
+    private final Color forestGreen = Color.rgb(60, 180, 70);
 
     public SettingsMenu(double canvasWidth, double canvasHeight, MainMenu mainMenu) {
         this.canvasWidth = canvasWidth;
@@ -32,22 +32,8 @@ public class SettingsMenu {
         this.mainMenu = mainMenu;
 
         // --- Nạp font và hiệu ứng (từ MainMenu.java) ---
-        try {
-            titleFont = Font.loadFont(new File("res/fonts/Orbitron-Bold.ttf").toURI().toString(), 90);
-            if (titleFont == null) throw new Exception("Font not loaded");
-        } catch (Exception e) {
-            titleFont = Font.font("Monospaced", 90);
-        }
 
-        try {
-            // Nạp font Orbitron-Regular cho các văn bản khác
-            regularFont = Font.loadFont(new File("res/fonts/Orbitron-Regular.ttf").toURI().toString(), 30);
-            if (regularFont == null) throw new Exception("Font not loaded");
-        } catch (Exception e) {
-            regularFont = Font.font("Monospaced", 30);
-        }
-
-        neonGlow = new DropShadow(25, Color.rgb(0, 255, 255, 0.8));
+        forestGlow = new DropShadow(25, Color.rgb(0, 255, 255, 0.8));
 
         double contentStartY = canvasHeight / 2.5;
         double sliderWidth = 400;
@@ -74,7 +60,7 @@ public class SettingsMenu {
         if (this.mainMenu != null) {
             this.mainMenu.drawBackground(gc);
         }
-        drawStyledTitle(gc, "ARKANOID");
+        UIUtils.drawStyledTitle(gc, canvasWidth, canvasHeight);
         GameSettings settings = GameSettings.getInstance();
         drawSlider(gc, "Sound Effects", sfxSliderBounds, settings.getSfxVolume());
         drawSlider(gc, "Background Music", bgmSliderBounds, settings.getBgmVolume());
@@ -87,14 +73,14 @@ public class SettingsMenu {
 
     private void drawSlider(GraphicsContext gc, String label, Rectangle2D bounds, double value) {
         gc.setFill(Color.WHITE);
-        gc.setFont(regularFont); // << SỬ DỤNG FONT ORBITRON
+        gc.setFont(PAPYRUS_32);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.fillText(label, canvasWidth / 2, bounds.getMinY() - 30); // Tăng khoảng cách label
 
         gc.setFill(Color.GRAY);
         gc.fillRoundRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 10, 10);
 
-        gc.setFill(Color.DODGERBLUE);
+        gc.setFill(Color.GREEN);
         gc.fillRoundRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth() * value, bounds.getHeight(), 10, 10);
 
         gc.setFill(Color.WHITE);
@@ -132,55 +118,5 @@ public class SettingsMenu {
             double newValue = (mouseX - bgmSliderBounds.getMinX()) / bgmSliderBounds.getWidth();
             GameSettings.getInstance().setBgmVolume(newValue);
         }
-    }
-
-    /**
-     * Phương thức trợ giúp để vẽ tiêu đề theo style của MainMenu.
-     * (Code được sao chép từ MainMenu.java)
-     */
-    private void drawStyledTitle(GraphicsContext gc, String titleText) {
-        // --- Vẽ Tiêu đề ---
-        gc.setFill(neonCyan);
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.setTextBaseline(VPos.CENTER);
-        gc.setFont(titleFont);
-
-        double titleY = canvasHeight / 4.5; // Giống Y của MainMenu
-
-        // LẦN 1: Vẽ ÁNH SÁNG
-        gc.setEffect(neonGlow);
-        gc.setFill(neonCyan);
-        gc.fillText(titleText, canvasWidth / 2, titleY);
-
-        // LẦN 2: Vẽ LÕI CHỮ
-        gc.setEffect(null);
-        gc.setFill(Color.WHITE);
-        gc.fillText(titleText, canvasWidth / 2, titleY);
-
-        Text tempText = new Text(titleText);
-        tempText.setFont(titleFont);
-        double textWidth = tempText.getLayoutBounds().getWidth();
-        double centerX = canvasWidth / 2;
-        double mainLineY = titleY + 60;
-        double thinLineY = titleY + 68;
-        double lineStartX = centerX - (textWidth / 2);
-        double lineEndX = centerX + (textWidth / 2);
-        double glyphsStartX = lineEndX + 15;
-        double glyphsWidth = 30;
-
-        gc.setStroke(neonCyan);
-        gc.setFill(neonCyan);
-        gc.setLineWidth(4);
-        gc.strokeLine(lineStartX, mainLineY, glyphsStartX - 5, mainLineY);
-        gc.setLineWidth(1.5);
-        gc.strokeLine(lineStartX - 10, thinLineY, glyphsStartX + glyphsWidth, thinLineY);
-        gc.fillPolygon(
-                new double[]{glyphsStartX, glyphsStartX + 8, glyphsStartX + 4},
-                new double[]{mainLineY + 2, mainLineY + 2, mainLineY - 5},
-                3
-        );
-        gc.setLineWidth(2);
-        gc.strokeLine(glyphsStartX + 13, mainLineY + 2, glyphsStartX + 18, mainLineY - 7);
-        gc.strokeLine(glyphsStartX + 19, mainLineY + 2, glyphsStartX + 24, mainLineY - 7);
     }
 }
