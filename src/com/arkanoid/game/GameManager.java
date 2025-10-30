@@ -129,6 +129,12 @@ public class GameManager {
         }
         activeTimers.clear();
         resetGameLists();
+
+        for (int i = 0; i < 5; i++) {
+            FireBallPowerUp pu = new FireBallPowerUp(0, 0);
+            PowerUpPool.getInstance().returnPowerUp(pu);
+        }
+
         int paddleX = Const.PADDLE_DEFAULT_POS_X;
         int paddleY = Const.PADDLE_DEFAULT_POS_Y;
         paddle = new Paddle(paddleX, paddleY, Const.PADDLE_WIDTH, Const.PADDLE_HEIGHT);
@@ -457,23 +463,35 @@ public class GameManager {
                 if (ball.getBounds().intersects(brick.getBounds())) {
                     Rectangle2D intersection = ball.intersection(brick.getBounds());
 
-                    // Logic xác định hướng va chạm
-                    if (intersection.getHeight() >= intersection.getWidth()) {
-                        if (ball.getX() < brick.getBounds().getMinX())
-                            ball.setX(brick.getBounds().getMinX() - ball.getWidth());
-                        else ball.setX(brick.getBounds().getMaxX());
-                        ball.reverseX();
-                    } else {
-                        if (ball.getY() < brick.getBounds().getMinY())
-                            ball.setY(brick.getBounds().getMinY() - ball.getHeight());
-                        else ball.setY(brick.getBounds().getMaxY());
-                        ball.reverseY();
-                    }
+                    boolean isFire = ball.isFireBall();  // THÊM: Kiểm tra trạng thái lửa
 
+                    if (!isFire) {  // THÊM: Chỉ reverse và adjust vị trí nếu KHÔNG phải lửa
+                        // Logic xác định hướng va chạm (gốc)
+                        if (intersection.getHeight() >= intersection.getWidth()) {
+                            if (ball.getX() < brick.getBounds().getMinX())
+                                ball.setX(brick.getBounds().getMinX() - ball.getWidth());
+                            else
+                                ball.setX(brick.getBounds().getMaxX());
+                            ball.reverseX();
+                        } else {
+                            if (ball.getY() < brick.getBounds().getMinY())
+                                ball.setY(brick.getBounds().getMinY() - ball.getHeight());
+                            else
+                                ball.setY(brick.getBounds().getMaxY());
+                            ball.reverseY();
+                        }
+                    }  // KẾT THÚC if (!isFire)
+
+                    // Luôn phá hủy gạch (gốc, nhưng giờ áp dụng cho cả fire)
                     boolean destroyed = brick.takeHit();
                     if (destroyed) {
                         onBrickDestroyed(brick);
-                        break; // Chỉ va chạm 1 gạch mỗi khung hình
+                        if (isFire) {
+                            // THÊM: Đối với fire, không break để xuyên qua nhiều gạch cùng lúc
+                            // (có thể comment break nếu muốn giới hạn)
+                        } else {
+                            break;  // Chỉ va chạm 1 gạch mỗi khung hình (gốc)
+                        }
                     }
                 }
             }
@@ -550,14 +568,16 @@ public class GameManager {
 
             double rand = Math.random();
 
-            if (rand < 0.2) {
+            if (rand < 0.15) {
                 typeToCreate = MultiBallPowerUp.class;
-            } else if (rand < 0.4) {
+            } else if (rand < 0.30) {
                 typeToCreate = FastBallPowerUp.class;
-            } else if (rand < 0.6) {
+            } else if (rand < 0.45) {
                 typeToCreate = ExpandPaddlePowerUp.class;
-            } else if (rand < 0.8) {
+            } else if (rand < 0.60) {
                 typeToCreate = ShieldPowerUp.class;
+            } else if (rand < 0.85) {
+                typeToCreate = FireBallPowerUp.class;
             } else {
                 typeToCreate = FeverBallPowerUp.class;
             }

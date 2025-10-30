@@ -74,8 +74,11 @@ public abstract class PowerUp extends MovableObject {
             case "FeverBall":
                 gc.setFill(Color.YELLOW);
                 break;
-            case "Shiled":
+            case "Shield":
                 gc.setFill(Color.CYAN);
+                break;
+            case "FireBall":
+                gc.setFill(Color.ORANGE);
                 break;
             default:
                 gc.setFill(Color.YELLOW);

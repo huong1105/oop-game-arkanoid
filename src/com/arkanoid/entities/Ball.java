@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 public class Ball extends MovableObject {
     private double maxSpeed = Const.BALL_MAXSPEED;
     private boolean started = false;
+    private boolean isFireBall = false;
 
     public Ball(int x, int y, int diameter, int speedX, int speedY) {
         super(x, y, diameter, diameter, speedX, speedY);
@@ -17,6 +18,14 @@ public class Ball extends MovableObject {
     public Ball() {
         super(0, 0, Const.BALL_DIAMETER, Const.BALL_DIAMETER, 0, 0);
         this.sprite = SpriteManager.getSprite(167, 1, 12, 12);
+    }
+
+    public boolean isFireBall() {
+        return isFireBall;
+    }
+
+    public void setFireBall(boolean fireBall) {
+        isFireBall = fireBall;
     }
 
     public double getMaxSpeed() {
@@ -56,7 +65,12 @@ public class Ball extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        super.render(gc);
+        if (isFireBall) {
+            //can render them fireball
+            gc.drawImage(SpriteManager.getSprite(168, 1, 12, 12), x, y, width, height);
+        } else {
+            super.render(gc);
+        }
     }
 
     public void reset(Paddle paddle) {
