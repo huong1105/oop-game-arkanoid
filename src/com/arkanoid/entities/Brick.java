@@ -26,19 +26,19 @@ public class Brick extends GameObject {
     private void setSpriteByType(BrickType type) {
         switch (type) {
             case NORMAL:
-                this.sprite = SpriteManager.getSprite(1, 1, 24, 10);
+                this.sprite = SpriteManager.BRICK_NORMAL;
                 break;
             case HARD:
-                this.sprite = SpriteManager.getSprite(27, 1, 24, 10);
+                this.sprite = SpriteManager.BRICK_HARD;
                 break;
             case SPECIAL:
-                this.sprite = SpriteManager.getSprite(53, 1, 24, 10);
+                this.sprite = SpriteManager.BRICK_SPECIAL;
                 break;
             case EXPLOSIVE:
-                this.sprite = SpriteManager.getSprite(79, 1, 24, 10);
+                this.sprite = SpriteManager.BRICK_EXPLOSIVE;
                 break;
             case WALL:
-                this.sprite = SpriteManager.getSprite(105, 1, 24, 10);
+                this.sprite = SpriteManager.BRICK_WALL;
                 break;
         }
     }
@@ -59,7 +59,7 @@ public class Brick extends GameObject {
         super.render(gc);
 
         if (type == BrickType.HARD && hitPoints < maxHitPoints) {
-            Image crackedSprite = SpriteManager.getSprite(27, 13, 24, 10);
+            Image crackedSprite = SpriteManager.BRICK_HARD_CRACKED
             if (crackedSprite != null) {
                 gc.drawImage(crackedSprite, x, y, width, height);
             }
@@ -67,12 +67,12 @@ public class Brick extends GameObject {
 
         else if (type == BrickType.SPECIAL && hitPoints < maxHitPoints) {
             if (hitPoints == 2) {
-                Image crackedSpriteLight = SpriteManager.getSprite(53, 13, 24, 10);
+                Image crackedSpriteLight = SpriteManager.BRICK_SPECIAL_LIGHT;
                 if (crackedSpriteLight != null) {
                     gc.drawImage(crackedSpriteLight, x, y, width, height);
                 }
             } else if (hitPoints == 1) {
-                Image crackedSpriteHeavy = SpriteManager.getSprite(53, 25, 24, 10);
+                Image crackedSpriteHeavy = SpriteManager.BRICK_SPECIAL_HEAVY;
                 if (crackedSpriteHeavy != null) {
                     gc.drawImage(crackedSpriteHeavy, x, y, width, height);
                 }

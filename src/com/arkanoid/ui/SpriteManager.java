@@ -11,6 +11,16 @@ public class SpriteManager {
 
     private static Image spritesheet;
 
+    public static Image BRICK_NORMAL;
+    public static Image BRICK_HARD;
+    public static Image BRICK_SPECIAL;
+    public static Image BRICK_EXPLOSIVE;
+    public static Image BRICK_WALL;
+
+    public static Image BRICK_HARD_CRACKED;
+    public static Image BRICK_SPECIAL_LIGHT;
+    public static Image BRICK_SPECIAL_HEAVY;
+
     public static void preload() {
         try {
             spritesheet = new Image(SpriteManager.class.getResourceAsStream("/Images/blocks_bricks.png"));
@@ -18,6 +28,16 @@ public class SpriteManager {
             System.err.println("Lỗi: Không thể tải spritesheet 'blocks_bricks.png' từ thư mục 'res/images/'");
             e.printStackTrace();
         }
+
+        BRICK_NORMAL = getSprite(1, 1, 24, 10);
+        BRICK_HARD = getSprite(27, 1, 24, 10);
+        BRICK_SPECIAL = getSprite(53, 1, 24, 10);
+        BRICK_EXPLOSIVE = getSprite(79, 1, 24, 10);
+        BRICK_WALL = getSprite(105, 1, 24, 10);
+
+        BRICK_HARD_CRACKED = getSprite(27, 13, 24, 10);
+        BRICK_SPECIAL_LIGHT = getSprite(53, 13, 24, 10);
+        BRICK_SPECIAL_HEAVY = getSprite(53, 25, 24, 10);
     }
 
     /**
