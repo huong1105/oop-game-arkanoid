@@ -11,6 +11,7 @@ import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class GameManager {
     private double gameOverTimer = 0;
 
     private final MainMenu mainMenu;
+    private Image preloadedBackgroundImage;
 
     private final SettingsMenu settingsMenu;
     private final PauseMenu pauseMenu;
@@ -76,6 +78,9 @@ public class GameManager {
     private int score = Const.DEFAULT_SCORES;
     private int lives = Const.DEFAULT_LIVES;
 
+    private int levelStartScore;
+    private int levelStartLives;
+
     private GameManager() {
         mainMenu = new MainMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT);
         settingsMenu = new SettingsMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu);
@@ -105,12 +110,28 @@ public class GameManager {
                 System.out.println("Đang tải Sounds...");
                 SoundManager.preload();
 
+                System.out.println("Đang tải Fonts...");
+                FontManager.preload();
+
+                System.out.println("Đang tải Background...");
+                try {
+                    var image = GameManager.class.getResource("/Images/background.jpg");
+                    if (image == null) {
+                        throw new Exception("Không tìm thấy /Images/background.jpg trong thư mục resources.");
+                    }
+                    preloadedBackgroundImage = new Image(image.toString());
+                } catch (Exception e) {
+                    System.err.println("Lỗi tải ảnh nền: " + e.getMessage());
+                    preloadedBackgroundImage = null;
+                }
+
                 System.out.println("Tải xong!");
                 return null;
             }
         };
 
         loadingTask.setOnSucceeded(e -> {
+            mainMenu.setBackgroundImage(preloadedBackgroundImage);
             setGameState(GameState.MENU);
         });
 
@@ -123,6 +144,9 @@ public class GameManager {
     }
 
     public void startLevel(int level) {
+        this.levelStartScore = this.score;
+        this.levelStartLives = this.lives;
+
         this.currentLevel = level;
         for (Animation timer : activeTimers) {
             timer.stop();
@@ -300,6 +324,12 @@ public class GameManager {
         }
     }
 
+    public void restartCurrentLevel() {
+        this.score = this.levelStartScore;
+        this.lives = this.levelStartLives;
+        startLevel(this.currentLevel);
+    }
+
     public void quitToMainMenu() {
         setGameState(GameState.MENU);
     }
@@ -319,37 +349,28 @@ public class GameManager {
     }
 
     private void removeInactiveObjects() {
+        PowerUpPool powerUpPool = PowerUpPool.getInstance();
+        FireWorkEffectPool effectPool = FireWorkEffectPool.getInstance();
+
         bricks.removeIf(obj -> !obj.isActive());
         balls.removeIf(obj -> !obj.isActive());
         shields.removeIf(obj -> !obj.isActive());
 
-        List<PowerUp> powerUpsToRemove = new ArrayList<>();
-
-        for (PowerUp powerUp : powerUps) {
+        powerUps.removeIf(powerUp -> {
             if (!powerUp.isActive()) {
-                powerUpsToRemove.add(powerUp);
+                powerUpPool.returnPowerUp(powerUp);
+                return true;
             }
-        }
+            return false;
+        });
 
-        powerUps.removeAll(powerUpsToRemove);
-
-        for (PowerUp powerUp : powerUpsToRemove) {
-            PowerUpPool.getInstance().returnPowerUp(powerUp);
-        }
-
-        List<FireWorkEffect> effectsToRemove = new ArrayList<>();
-
-        for (FireWorkEffect effect : effects) {
+        effects.removeIf(effect -> {
             if (!effect.isActive()) {
-                effectsToRemove.add(effect);
+                effectPool.returnEffect(effect);
+                return true;
             }
-        }
-
-        effects.removeAll(effectsToRemove);
-
-        for (FireWorkEffect effect : effectsToRemove) {
-            FireWorkEffectPool.getInstance().returnEffect(effect);
-        }
+            return false;
+        });
     }
 
     public void update(double deltaTimeSeconds) {
@@ -399,6 +420,14 @@ public class GameManager {
     }
 
     private void loseLife() {
+        for (PowerUp p : powerUps) {
+            if (p.isActivated()) {
+                p.removeEffect();
+                p.setActive(false);
+            }
+        }
+        setFeverBallActive(false);
+
         long activeBalls = balls.stream().filter(GameObject::isActive).count();
 
         if (activeBalls < 1) {

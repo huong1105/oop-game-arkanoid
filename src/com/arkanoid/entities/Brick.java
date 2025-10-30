@@ -59,7 +59,7 @@ public class Brick extends GameObject {
         super.render(gc);
 
         if (type == BrickType.HARD && hitPoints < maxHitPoints) {
-            Image crackedSprite = SpriteManager.BRICK_HARD_CRACKED
+            Image crackedSprite = SpriteManager.BRICK_HARD_CRACKED;
             if (crackedSprite != null) {
                 gc.drawImage(crackedSprite, x, y, width, height);
             }

@@ -12,12 +12,12 @@ public class Ball extends MovableObject {
 
     public Ball(int x, int y, int diameter, int speedX, int speedY) {
         super(x, y, diameter, diameter, speedX, speedY);
-        this.sprite = SpriteManager.getSprite(167, 1, 12, 12);
+        this.sprite = SpriteManager.BALL_NORMAL;
     }
 
     public Ball() {
         super(0, 0, Const.BALL_DIAMETER, Const.BALL_DIAMETER, 0, 0);
-        this.sprite = SpriteManager.getSprite(167, 1, 12, 12);
+        this.sprite = SpriteManager.BALL_NORMAL;
     }
 
     public boolean isFireBall() {
@@ -54,7 +54,7 @@ public class Ball extends MovableObject {
     @Override
     public void update(double deltaTimeSeconds) {
         if (started) {
-            while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed) {
+            while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed * maxSpeed) {
                 setSpeedX(getSpeedX() * 0.99);
                 setSpeedY(getSpeedY() * 0.99);
             }
@@ -67,7 +67,7 @@ public class Ball extends MovableObject {
     public void render(GraphicsContext gc) {
         if (isFireBall) {
             //can render them fireball
-            gc.drawImage(SpriteManager.getSprite(168, 1, 12, 12), x, y, width, height);
+            gc.drawImage(SpriteManager.BALL_FIRE, x, y, width, height);
         } else {
             super.render(gc);
         }

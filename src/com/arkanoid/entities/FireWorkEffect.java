@@ -79,7 +79,7 @@ public class FireWorkEffect extends GameObject {
         particles.removeIf(Particle::isDead);
 
         if (particles.isEmpty()) {
-            FireWorkEffectPool.getInstance().returnEffect(this);
+            this.setActive(false);
         }
     }
 
