@@ -51,7 +51,7 @@ public abstract class PowerUp extends MovableObject {
                 timeRemaining -= deltaTimeSeconds;
                 if (timeRemaining <= 0) {
                     removeEffect();
-                    PowerUpPool.getInstance().returnPowerUp(this);
+                    this.active = false;
                 }
             }
         }
@@ -106,11 +106,5 @@ public abstract class PowerUp extends MovableObject {
 
     public boolean isActivated() {
         return isActivated;
-    }
-
-    public void addDuration(double extraTimeSeconds) {
-        if (isActivated && durationSeconds > 0) {
-            this.timeRemaining += extraTimeSeconds;
-        }
     }
 }

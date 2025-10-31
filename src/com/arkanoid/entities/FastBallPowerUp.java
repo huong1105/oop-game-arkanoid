@@ -23,7 +23,7 @@ public class FastBallPowerUp extends PowerUp {
     public void applyEffect() {
         for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
             if (obj instanceof FastBallPowerUp && obj != this && obj.isActivated()) {
-                obj.addDuration(this.durationSeconds);
+                obj.durationSeconds = this.durationSeconds;
                 this.durationSeconds = 0;
                 return;
             }
