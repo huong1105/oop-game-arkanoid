@@ -107,4 +107,8 @@ public abstract class PowerUp extends MovableObject {
     public boolean isActivated() {
         return isActivated;
     }
+
+    public String getType() {
+        return type;
+    }
 }

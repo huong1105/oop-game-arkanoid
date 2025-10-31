@@ -15,13 +15,24 @@ public class FontManager {
     public static Font PAPYRUS_90; // Dùng cho Tiêu đề Menu
     public static Font PAPYRUS_32; // Dùng cho các nút MenuItem
 
-    private static Font loadFont(String path, double size, String fallback) {
+    public static Font loadFont(String path, double size, String fallback) {
         try {
-            Font font = Font.loadFont(new File(path).toURI().toString(), size);
-            if (font == null) throw new Exception("Font not loaded");
+            java.net.URL fontUrl = FontManager.class.getResource(path);
+
+            if (fontUrl == null) {
+                throw new Exception("Resource not found: " + path);
+            }
+
+            String urlString = fontUrl.toExternalForm();
+            Font font = Font.loadFont(urlString, size);
+
+            if (font == null) {
+                throw new Exception("Font.loadFont returned null (file font bị lỗi?)");
+            }
             return font;
-        } catch (Exception e) {
-            System.err.println("Không thể tải font: " + path + ". Sử dụng fallback: " + fallback);
+
+        } catch (Exception a) {
+            System.err.println("Không thể tải font: " + path + ". Lỗi: " + a.getMessage() + ". Sử dụng fallback: " + fallback);
             return Font.font(fallback, size);
         }
     }
@@ -30,7 +41,7 @@ public class FontManager {
      * Tải tất cả các font chữ cần thiết
      */
     public static void preload() {
-        String papyrusPath = "res/fonts/papyrus.ttf";
+        String papyrusPath = "/Fonts/Papyrus.ttf";
 
         // Tải các kích thước Papyrus
         PAPYRUS_90 = loadFont(papyrusPath, 90, "Serif");
