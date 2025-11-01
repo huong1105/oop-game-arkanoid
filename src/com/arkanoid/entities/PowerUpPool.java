@@ -35,7 +35,7 @@ public class PowerUpPool {
         List<PowerUp> pool = inactivePools.get(type);
 
         if (pool != null && !pool.isEmpty()) {
-            return pool.removeFirst();
+            return pool.remove(0);
         } else {
             return null;
         }

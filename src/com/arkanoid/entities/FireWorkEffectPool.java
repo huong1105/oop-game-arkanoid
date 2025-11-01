@@ -27,7 +27,7 @@ public class FireWorkEffectPool {
         if (inactiveEffects.isEmpty()) {
             return new FireWorkEffect(0, 0, 0, 0);
         } else {
-            return inactiveEffects.removeFirst();
+            return inactiveEffects.remove(0);
         }
     }
 
