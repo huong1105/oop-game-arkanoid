@@ -14,7 +14,7 @@ public class Paddle extends MovableObject {
 
     public Paddle(int x, int y, int width, int height) {
         super(x, y, width, height, 0, 0); // Vận tốc ban đầu là 0
-        this.sprite = SpriteManager.getSprite(131, 1, 32, 10);
+        this.sprite = SpriteManager.PADDLE_NORMAL;
         this.isExpanded = false;
     }
 
@@ -33,7 +33,11 @@ public class Paddle extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        super.render(gc);
+        if (isExpanded) {
+            gc.drawImage(SpriteManager.PADDLE_EXPANDED, x, y, width, height);
+        } else {
+            gc.drawImage(SpriteManager.PADDLE_NORMAL, x, y, width, height);
+        }
     }
 
     public void reset() {
@@ -42,6 +46,7 @@ public class Paddle extends MovableObject {
         width = Const.PADDLE_WIDTH;
         height = Const.PADDLE_HEIGHT;
         isExpanded = false;
+        this.sprite = SpriteManager.PADDLE_NORMAL;
     }
 
     public boolean isMovingLeft() {
