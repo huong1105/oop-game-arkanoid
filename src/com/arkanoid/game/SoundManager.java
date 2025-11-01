@@ -3,15 +3,11 @@ package com.arkanoid.game;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SoundManager {
     private static MediaPlayer musicPlayer;
     private static Media backgroundMusicMedia;
 
-    // Key: Tên file, Value: File âm thanh
-    private static final Map<String, Media> sfx = new HashMap<>();
     /**
      * Tải trước các file âm thanh nặng.
      */
@@ -26,25 +22,6 @@ public class SoundManager {
         } catch (Exception e) {
             System.err.println("Lỗi khi tải trước nhạc nền: " + e.getMessage());
         }
-
-        loadSfx("brick_break.wav");
-        loadSfx("powerup_collect.wav");
-        loadSfx("lose_life.wav");
-        loadSfx("paddle_hit.wav");
-    }
-
-    private static void loadSfx(String fileName) {
-        try {
-            URL resource = SoundManager.class.getResource("/sounds/" + fileName);
-            if (resource == null) {
-                System.err.println("Không tìm thấy file âm thanh SFX: " + fileName);
-                return;
-            }
-            Media sound = new Media(resource.toString());
-            sfx.put(fileName, sound); // Lưu vào cache
-        } catch (Exception e) {
-            System.err.println("Lỗi khi tải trước âm thanh SFX: " + fileName + " - " + e.getMessage());
-        }
     }
 
     /**
@@ -52,17 +29,15 @@ public class SoundManager {
      * Âm lượng được lấy từ GameSettings.
      */
     public static void playSound(String fileName) {
-        Media sound = sfx.get(fileName);
-
-        if (sound == null) {
-            System.err.println("Lỗi: Âm thanh '" + fileName + "' chưa được tải trước (chưa có trong preload())");
-            return;
-        }
-
         try {
+            URL resource = SoundManager.class.getResource("/sounds/" + fileName);
+            if (resource == null) {
+                System.err.println("Không tìm thấy file âm thanh: " + fileName);
+                return;
+            }
+            Media sound = new Media(resource.toString());
             MediaPlayer sfxPlayer = new MediaPlayer(sound);
             sfxPlayer.setVolume(GameSettings.getInstance().getSfxVolume());
-            sfxPlayer.setOnEndOfMedia(sfxPlayer::dispose);
             sfxPlayer.play();
         } catch (Exception e) {
             System.err.println("Lỗi khi phát âm thanh: " + e.getMessage());

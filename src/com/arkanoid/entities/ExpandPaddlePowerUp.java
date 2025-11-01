@@ -24,7 +24,7 @@ public class ExpandPaddlePowerUp extends PowerUp {
         Paddle paddle = GameManager.getInstance().getPaddle();
         for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
             if (obj instanceof ExpandPaddlePowerUp && obj != this && obj.isActivated()) {
-                obj.durationSeconds = this.durationSeconds;
+                obj.addDuration(this.durationSeconds);
                 this.durationSeconds = 0;
                 return;
             }

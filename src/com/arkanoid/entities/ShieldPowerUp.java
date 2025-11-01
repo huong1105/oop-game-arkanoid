@@ -20,7 +20,6 @@ public class ShieldPowerUp extends PowerUp {
     @Override
     public void reset(double x, double y) {
         super.reset(x, y);
-        shield = new Shield();
     }
 
     @Override
