@@ -57,6 +57,14 @@ public class Renderer {
             case GAME_OVER:
             case WIN:
             case LEVEL_TRANSITION:
+
+                if (SpriteManager.BACKGROUND_GAME != null) {
+                    gc.drawImage(SpriteManager.BACKGROUND_GAME, 0, 0, canvasWidth, canvasHeight);
+                } else {
+                    // Nếu tải lỗi, vẽ nền đen dự phòng
+                    clear();
+                }
+
                 // Vẽ các đối tượng game
                 if (gm.getPaddle() != null) {
                     gm.getPaddle().render(gc);
