@@ -19,7 +19,7 @@ public class FeverBallPowerUp extends PowerUp {
     public void applyEffect() {
         for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
             if ((obj instanceof FeverBallPowerUp) && (obj != this) && obj.isActivated()) {
-                obj.addDuration(this.durationSeconds);
+                obj.durationSeconds = this.durationSeconds;
                 this.durationSeconds = 0;
                 return;
             }
