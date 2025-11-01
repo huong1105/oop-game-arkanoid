@@ -18,7 +18,6 @@ public class FireBallPowerUp extends PowerUp {
         for (Ball ball : gm.getBalls()) {
             if (ball.isActive()) {
                 ball.setFireBall(true);  // Thêm method này vào Ball
-                ball.setMaxSpeed(ball.getMaxSpeed() * 2.0);  // Tăng speed
             }
         }
         gm.setFeverBallActive(false);  // Tắt fever nếu đang on (ưu tiên?)
@@ -30,7 +29,6 @@ public class FireBallPowerUp extends PowerUp {
         for (Ball ball : gm.getBalls()) {
             if (ball.isActive()) {
                 ball.setFireBall(false);
-                ball.setMaxSpeed(Const.BALL_MAXSPEED);  // Reset speed
             }
         }
     }
