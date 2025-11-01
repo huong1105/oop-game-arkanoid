@@ -13,7 +13,15 @@ public class Brick extends GameObject {
     private BrickType type;
 
     public Brick(int x, int y, BrickType type) {
-        super(x, y, Const.BRICK_WIDTH, Const.BRICK_HEIGHT);
+        this(x, y, Const.BRICK_WIDTH, Const.BRICK_HEIGHT, type);
+        this.hitPoints = type.getHitPoints();
+        this.maxHitPoints = type.getHitPoints();
+        this.type = type;
+        setSpriteByType(type);
+    }
+
+    protected Brick(int x, int y, int width, int height, BrickType type) {
+        super(x, y, width, height);
         this.hitPoints = type.getHitPoints();
         this.maxHitPoints = type.getHitPoints();
         this.type = type;
