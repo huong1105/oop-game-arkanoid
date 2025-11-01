@@ -42,11 +42,11 @@ public class KeyInput {
                 Ball ball = gm.getBall();
                 double mouseX = event.getX();
                 double newPaddleX = mouseX - paddle.getWidth() / 2;
-                if (newPaddleX < 0) {
-                    newPaddleX = 0;
+                if (newPaddleX < 25) {
+                    newPaddleX = 25;
                 }
-                if (newPaddleX + paddle.getWidth() > Const.SCREEN_WIDTH) {
-                    newPaddleX = Const.SCREEN_WIDTH - paddle.getWidth();
+                if (newPaddleX + paddle.getWidth() > Const.SCREEN_WIDTH - 25) {
+                    newPaddleX = Const.SCREEN_WIDTH - paddle.getWidth() - 25;
                 }
                 paddle.setX(newPaddleX);
                 if (!ball.isStarted()) {

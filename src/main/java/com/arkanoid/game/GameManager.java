@@ -88,7 +88,7 @@ public class GameManager {
         SoundManager.playBackgroundMusic();
         highScoreManager = new HighScoreManager();
         highScoreMenu = new HighScoreMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu, highScoreManager);
-
+        FontManager.preload();
         loadAssets();
     }
 
@@ -109,9 +109,6 @@ public class GameManager {
 
                 System.out.println("Đang tải Sounds...");
                 SoundManager.preload();
-
-                System.out.println("Đang tải Fonts...");
-                FontManager.preload();
 
                 System.out.println("Đang tải Background...");
                 try {

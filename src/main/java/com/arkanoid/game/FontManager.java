@@ -1,8 +1,6 @@
 package com.arkanoid.game;
 
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import java.io.File;
 
 /**
  * Tải trước tất cả các font chữ của game một lần duy nhất.
