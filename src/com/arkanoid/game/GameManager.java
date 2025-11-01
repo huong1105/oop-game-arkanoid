@@ -154,6 +154,8 @@ public class GameManager {
         activeTimers.clear();
         resetGameLists();
 
+        createBorderWalls();
+
         for (int i = 0; i < 5; i++) {
             FireBallPowerUp pu = new FireBallPowerUp(0, 0);
             PowerUpPool.getInstance().returnPowerUp(pu);
@@ -172,6 +174,47 @@ public class GameManager {
 
         loadLevel(level);
         setGameState(GameState.PLAYING);
+    }
+
+    private void createBorderWalls() {
+
+        int screenWidth = Const.SCREEN_WIDTH;
+        int screenHeight = Const.SCREEN_HEIGHT;
+
+        final int BORDER_WIDTH = 25;
+        final int BORDER_HEIGHT = 25;
+        final Image BORDER_SPRITE = SpriteManager.BORDER_12x12;
+
+        if (BORDER_SPRITE == null) {
+            System.err.println("LỖI: BORDER_12x12 sprite chưa được tải!");
+            return;
+        }
+
+        // Tạo Tường Trái
+        for (int y = 0; y < screenHeight; y += BORDER_HEIGHT) {
+            Wall leftWallBrick = new Wall(0, y, BORDER_WIDTH, BORDER_HEIGHT, BORDER_SPRITE);
+            addGameObject(leftWallBrick);
+        }
+
+        // Tạo Tường Phải
+        int rightWallX = screenWidth - BORDER_WIDTH;
+        for (int y = 0; y < screenHeight; y += BORDER_HEIGHT) {
+            Wall rightWallBrick = new Wall(rightWallX, y, BORDER_WIDTH, BORDER_HEIGHT, BORDER_SPRITE);
+            addGameObject(rightWallBrick);
+        }
+
+        int startX = BORDER_WIDTH;
+        int endX = rightWallX;
+
+        for (int x = startX; x < endX; x += BORDER_WIDTH) {
+
+            if (x + BORDER_WIDTH > endX) {
+                break;
+            }
+
+            Wall topWallBrick = new Wall(x, 0, BORDER_WIDTH, BORDER_HEIGHT, BORDER_SPRITE);
+            addGameObject(topWallBrick);
+        }
     }
 
     public void loadLevel(int level) {
@@ -202,21 +245,21 @@ public class GameManager {
                 break;
             default:
                 levelLayout = new int[][]{
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2, 1},
-                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2, 1},
-                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 2},
+                        {1, 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 2, 2, 2},
+                        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
                 };
                 break;
         }
@@ -452,27 +495,45 @@ public class GameManager {
     }
 
     private void checkCollisions() {
-        for (Ball ball : balls) {
-            if (!ball.isActive()) continue; // Bỏ qua nếu bóng đã chết
 
-            // Va chạm với tường
-            if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH) {
+        final int BORDER_WIDTH = 25;
+        final int BORDER_HEIGHT = 25;
+
+        for (Ball ball : balls) {
+            if (!ball.isActive()) continue;
+
+            // 1a. Va chạm Tường Trái
+            if (ball.getX() <= BORDER_WIDTH) {
+                ball.setX(BORDER_WIDTH);
                 ball.reverseX();
-                if (ball.getX() <= 0) ball.setX(0);
-                else ball.setX(Const.SCREEN_WIDTH - ball.getWidth());
+                // SoundManager.playSound("hit_wall.wav"); // (Tùy chọn: thêm âm thanh)
+                continue;
             }
-            if (ball.getY() <= 0) {
+
+            // 1b. Va chạm Tường Phải
+            if (ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH - BORDER_WIDTH) {
+                ball.setX(Const.SCREEN_WIDTH - BORDER_WIDTH - ball.getWidth());
+                ball.reverseX();
+                // SoundManager.playSound("hit_wall.wav");
+                continue;
+            }
+
+            // 1c. Va chạm Tường Trên
+            if (ball.getY() <= BORDER_HEIGHT) {
+                ball.setY(BORDER_HEIGHT);
                 ball.reverseY();
-                ball.setY(0);
+                // SoundManager.playSound("hit_wall.wav");
+                continue;
             }
-            // Rơi ra ngoài
+
+            // 1d. Rơi ra ngoài
             if (ball.getY() >= Const.SCREEN_HEIGHT) {
                 ball.setActive(false);
                 loseLife();
                 continue;
             }
 
-            // Va chạm với Paddle
+            // 2. Logic va cham paddle
             if (ball.getBounds().intersects(paddle.getBounds())) {
                 Rectangle2D intersection = ball.intersection(paddle.getBounds());
                 double ballCurrentSpeedX = getBallCurrentSpeedX(ball);
@@ -485,17 +546,19 @@ public class GameManager {
                 }
             }
 
-            // Va chạm với Gạch
+            // 3. Logic va cham gach
             for (Brick brick : bricks) {
-                if (!brick.isActive()) continue;
+
+                if (!brick.isActive() || brick.getType() == BrickType.WALL) {
+                    continue;
+                }
 
                 if (ball.getBounds().intersects(brick.getBounds())) {
                     Rectangle2D intersection = ball.intersection(brick.getBounds());
+                    boolean isFire = ball.isFireBall();
 
-                    boolean isFire = ball.isFireBall();  // THÊM: Kiểm tra trạng thái lửa
-
-                    if (!isFire) {  // THÊM: Chỉ reverse và adjust vị trí nếu KHÔNG phải lửa
-                        // Logic xác định hướng va chạm (gốc)
+                    // Logic nảy bóng (chỉ khi không phải bóng lửa)
+                    if (!isFire) {
                         if (intersection.getHeight() >= intersection.getWidth()) {
                             if (ball.getX() < brick.getBounds().getMinX())
                                 ball.setX(brick.getBounds().getMinX() - ball.getWidth());
@@ -509,23 +572,21 @@ public class GameManager {
                                 ball.setY(brick.getBounds().getMaxY());
                             ball.reverseY();
                         }
-                    }  // KẾT THÚC if (!isFire)
+                    }
 
-                    // Luôn phá hủy gạch (gốc, nhưng giờ áp dụng cho cả fire)
+                    // Logic phá gạch
                     boolean destroyed = brick.takeHit();
                     if (destroyed) {
                         onBrickDestroyed(brick);
                         if (isFire) {
-                            // THÊM: Đối với fire, không break để xuyên qua nhiều gạch cùng lúc
-                            // (có thể comment break nếu muốn giới hạn)
                         } else {
-                            break;  // Chỉ va chạm 1 gạch mỗi khung hình (gốc)
+                            break;
                         }
                     }
                 }
             }
 
-            // Va chạm với Khiên
+            // 4. Logic va cham khien
             for (Shield shield : shields) {
                 if (!shield.isActive()) continue;
                 if (ball.getBounds().intersects(shield.getBounds())) {
@@ -536,6 +597,7 @@ public class GameManager {
             }
         }
 
+        // 5. Logic va cham cua power up va paddle
         for (PowerUp powerUp : powerUps) {
             if (!powerUp.isActive()) continue;
 
