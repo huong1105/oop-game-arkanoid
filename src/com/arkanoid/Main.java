@@ -31,8 +31,6 @@ public class Main extends Application {
 
         BorderPane root = new BorderPane();
 
-        root.setStyle("-fx-background-color: #000000;");
-
         Canvas canvas = new Canvas(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         root.setCenter(canvas);
