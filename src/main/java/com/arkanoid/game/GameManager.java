@@ -634,8 +634,8 @@ public class GameManager {
                     Rectangle2D intersection = ball.intersection(brick.getBounds());
                     boolean isFire = ball.isFireBall();
 
-                    // Logic nảy bóng (chỉ khi không phải bóng lửa)
-                    if (!isFire) {
+                    // Logic nảy bóng (chỉ khi không phải bóng lửa va khi brick la wall)
+                    if (!isFire || (brick instanceof Wall)) {
                         if (intersection.getHeight() >= intersection.getWidth()) {
                             if (ball.getX() < brick.getBounds().getMinX())
                                 ball.setX(brick.getBounds().getMinX() - ball.getWidth());
@@ -655,9 +655,9 @@ public class GameManager {
                     boolean destroyed = brick.takeHit();
                     if (destroyed) {
                         onBrickDestroyed(brick);
-                        if (isFire) {
-                        } else {
-                            break;
+                        if (isFire && !(brick instanceof Wall)) {
+                            } else {
+                            break;  // Break nếu wall hoặc !fire
                         }
                     }
                 }
