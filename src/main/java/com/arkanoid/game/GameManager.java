@@ -623,41 +623,57 @@ public class GameManager {
                 }
             }
 
-            // 3. Logic va cham gach
+            // Va chạm với Gạch
             for (Brick brick : bricks) {
-
-                if (!brick.isActive()) {
-                    continue;
-                }
+                if (!brick.isActive()) continue;
 
                 if (ball.getBounds().intersects(brick.getBounds())) {
                     Rectangle2D intersection = ball.intersection(brick.getBounds());
-                    boolean isFire = ball.isFireBall();
+                    if (intersection == null) continue;
 
-                    // Logic nảy bóng (chỉ khi không phải bóng lửa va khi brick la wall)
-                    if (!isFire || (brick instanceof Wall)) {
-                        if (intersection.getHeight() >= intersection.getWidth()) {
-                            if (ball.getX() < brick.getBounds().getMinX())
-                                ball.setX(brick.getBounds().getMinX() - ball.getWidth());
-                            else
-                                ball.setX(brick.getBounds().getMaxX());
+                    boolean isFire = ball.isFireBall();
+                    boolean isWall = (brick.getType() == BrickType.WALL);
+
+                    double left_pen = ball.getX() + ball.getWidth() - brick.getBounds().getMinX();
+                    double right_pen = brick.getBounds().getMaxX() - ball.getX();
+                    double top_pen = ball.getY() + ball.getHeight() - brick.getBounds().getMinY();
+                    double bottom_pen = brick.getBounds().getMaxY() - ball.getY();
+
+                    double min_pen = Double.MAX_VALUE;
+                    String entry_side = null;
+
+                    if (left_pen > 0 && left_pen < min_pen) { min_pen = left_pen; entry_side = "left"; }
+                    if (right_pen > 0 && right_pen < min_pen) { min_pen = right_pen; entry_side = "right"; }
+                    if (top_pen > 0 && top_pen < min_pen) { min_pen = top_pen; entry_side = "top"; }
+                    if (bottom_pen > 0 && bottom_pen < min_pen) { min_pen = bottom_pen; entry_side = "bottom"; }
+
+                    // Reverse và adjust dựa entry_side (nếu !fire hoặc wall)
+                    if (!isFire || isWall) {
+                        if (entry_side == "left" || entry_side == "right") {
                             ball.reverseX();
-                        } else {
-                            if (ball.getY() < brick.getBounds().getMinY())
-                                ball.setY(brick.getBounds().getMinY() - ball.getHeight());
-                            else
-                                ball.setY(brick.getBounds().getMaxY());
+                            if (entry_side == "left") {
+                                ball.setX(ball.getX() - min_pen);
+                            } else {
+                                ball.setX(ball.getX() + min_pen);
+                            }
+                        } else if (entry_side == "top" || entry_side == "bottom") {
                             ball.reverseY();
+                            if (entry_side == "top") {
+                                ball.setY(ball.getY() - min_pen);
+                            } else {
+                                ball.setY(ball.getY() + min_pen);
+                            }
                         }
                     }
 
-                    // Logic phá gạch
+                    // Luôn takeHit
                     boolean destroyed = brick.takeHit();
                     if (destroyed) {
                         onBrickDestroyed(brick);
-                        if (isFire && !(brick instanceof Wall)) {
-                            } else {
-                            break;  // Break nếu wall hoặc !fire
+                        if (isFire && !isWall) {
+                            // Không break để xuyên nhiều
+                        } else {
+                            break;
                         }
                     }
                 }
