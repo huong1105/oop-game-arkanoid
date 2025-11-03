@@ -578,7 +578,10 @@ public class GameManager {
 
         for (Ball ball : balls) {
             if (!ball.isActive()) continue;
-
+            if (!ball.isStarted()){
+                ball.setX(paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2);
+                continue;
+            }
             // 1a. Va chạm Tường Trái
             if (ball.getX() <= BORDER_WIDTH) {
                 ball.setX(BORDER_WIDTH);
@@ -613,8 +616,7 @@ public class GameManager {
             // 2. Logic va cham paddle
             if (ball.getBounds().intersects(paddle.getBounds())) {
                 Rectangle2D intersection = ball.intersection(paddle.getBounds());
-                double ballCurrentSpeedX = getBallCurrentSpeedX(ball);
-                ball.setSpeedX(ballCurrentSpeedX);
+                setBallSpeedXAfterPaddleCollision(ball);
                 double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
                         - Math.pow(ball.getSpeedX(), 2));
                 ball.setSpeedY(-newSpeedY);
@@ -700,20 +702,19 @@ public class GameManager {
         }
     }
 
-    private double getBallCurrentSpeedX(Ball ball) {
+    private void setBallSpeedXAfterPaddleCollision(Ball ball) {
         double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
         double ballCenterX = ball.getX() + ball.getWidth() / 2;
         double offX = ballCenterX - paddleCenterX;
-        double ballCurrentSpeedX = ball.getMaxSpeed() * 0.99 * offX / (paddle.getWidth() / 2);
+        double ballCurrentSpeedX = ball.getMaxSpeed() * 0.9 * offX / (paddle.getWidth() / 2);
         double paddleCurrentSpeed = paddle.getSpeedX();
-        ballCurrentSpeedX += paddleCurrentSpeed * 0.25;
         if (ballCurrentSpeedX > ball.getMaxSpeed()) {
-            ballCurrentSpeedX = ball.getMaxSpeed() * 0.99;
+            ballCurrentSpeedX = ball.getMaxSpeed() * 0.9;
         }
         if (ballCurrentSpeedX < -ball.getMaxSpeed()) {
-            ballCurrentSpeedX = -ball.getMaxSpeed() * 0.99;
+            ballCurrentSpeedX = -ball.getMaxSpeed() * 0.9;
         }
-        return ballCurrentSpeedX;
+        ball.setSpeedX(ballCurrentSpeedX);
     }
 
     /**
