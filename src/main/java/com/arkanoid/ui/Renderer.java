@@ -90,6 +90,10 @@ public class Renderer {
                     if (e.isActive()) e.render(gc);
                 }
 
+                for (CannonShot shot : gm.getCannonShots()) {
+                    shot.render(gc);
+                }
+
                 // Vẽ các thông báo đè lên màn hình
                 if (gameState == GameState.PAUSED) {
                     gm.getPauseMenu().render(gc);
