@@ -31,6 +31,7 @@ public class GameManager {
     private final List<FireWorkEffect> effects = new CopyOnWriteArrayList<>();
     private final List<Shield> shields = new CopyOnWriteArrayList<>();
     private final List<Animation> activeTimers = new ArrayList<>();
+    private final List<CannonShot> cannonShots = new CopyOnWriteArrayList<>();
     private Paddle paddle;
     private Ball ball;
     private boolean feverBallActive = false;
@@ -55,12 +56,12 @@ public class GameManager {
         if (this.gameState == newState) return;
 
         boolean wasInMenuZone = (this.gameState == GameState.MENU ||
-                                this.gameState == GameState.SETTINGS ||
-                                this.gameState == GameState.HIGH_SCORE);
+                this.gameState == GameState.SETTINGS ||
+                this.gameState == GameState.HIGH_SCORE);
 
         boolean isEnteringMenuZone = (newState == GameState.MENU ||
-                                    newState == GameState.SETTINGS ||
-                                    newState == GameState.HIGH_SCORE);
+                newState == GameState.SETTINGS ||
+                newState == GameState.HIGH_SCORE);
 
         if (isEnteringMenuZone && !wasInMenuZone) {
             SoundManager.playBackgroundMusic();
@@ -158,6 +159,11 @@ public class GameManager {
             PowerUpPool.getInstance().returnPowerUp(pu);
         }
 
+        // Pre-pool CannonShots
+        for (int i = 0; i < 20; i++) {
+            CannonShotPool.getInstance().returnShot(new CannonShot(0, 0));
+        }
+
         int paddleX = Const.PADDLE_DEFAULT_POS_X;
         int paddleY = Const.PADDLE_DEFAULT_POS_Y;
         paddle = new Paddle(paddleX, paddleY, Const.PADDLE_WIDTH, Const.PADDLE_HEIGHT);
@@ -222,101 +228,101 @@ public class GameManager {
         switch (level) {
             case 1:
                 levelLayout = new int[][]{
-                    {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
-                    {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
-                    {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
-                    {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}
+                        {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+                        {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 5, 5, 5, 5, 5, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 5},
+                        {5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5},
+                        {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}
                 };
                 break;
             case 2:
                 levelLayout = new int[][] {
-                    {0, 0, 0, 0, 5, 5, 0, 0, 0, 5, 5, 0, 0, 0, 0},
-                    {0, 0, 0, 5, 1, 1, 5, 0, 5, 1, 1, 5, 0, 0, 0},
-                    {0, 0, 5, 1, 2, 1, 5, 5, 5, 1, 2, 1, 5, 0, 0},
-                    {0, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 0},
-                    {0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0},
-                    {0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0},
-                    {0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 0},
-                    {0, 0, 0, 0, 5, 1, 1, 1, 1, 1, 5, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 5, 1, 1, 1, 5, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 5, 1, 5, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                        {0, 0, 0, 0, 5, 5, 0, 0, 0, 5, 5, 0, 0, 0, 0},
+                        {0, 0, 0, 5, 1, 1, 5, 0, 5, 1, 1, 5, 0, 0, 0},
+                        {0, 0, 5, 1, 2, 1, 5, 5, 5, 1, 2, 1, 5, 0, 0},
+                        {0, 5, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 5, 0},
+                        {0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0},
+                        {0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0},
+                        {0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 0},
+                        {0, 0, 0, 0, 5, 1, 1, 1, 1, 1, 5, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 5, 1, 1, 1, 5, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 5, 1, 5, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
                 };
-            break;
+                break;
             case 3:
                 levelLayout = new int [][] {
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-                    {0, 1, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 1, 0},
-                    {0, 1, 2, 3, 3, 3, 3, 5, 3, 3, 3, 3, 2, 1, 0},
-                    {0, 1, 2, 3, 5, 5, 5, 5, 5, 5, 5, 3, 2, 1, 0},
-                    {0, 1, 2, 3, 3, 3, 3, 5, 3, 3, 3, 3, 2, 1, 0},
-                    {0, 1, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 1, 0},
-                    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-            };
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                        {0, 1, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 1, 0},
+                        {0, 1, 2, 3, 3, 3, 3, 5, 3, 3, 3, 3, 2, 1, 0},
+                        {0, 1, 2, 3, 5, 5, 5, 5, 5, 5, 5, 3, 2, 1, 0},
+                        {0, 1, 2, 3, 3, 3, 3, 5, 3, 3, 3, 3, 2, 1, 0},
+                        {0, 1, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 1, 0},
+                        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                };
                 break;
             case 4:
                 levelLayout = new int [][] {
-                    {0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 5, 3, 3, 3, 5, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 5, 3, 2, 2, 2, 3, 5, 0, 0, 0, 0},
-                    {0, 0, 0, 5, 3, 2, 1, 1, 1, 2, 3, 5, 0, 0, 0},
-                    {0, 0, 5, 3, 2, 1, 1, 5, 1, 1, 2, 3, 5, 0, 0},
-                    {0, 5, 3, 2, 1, 1, 5, 5, 5, 1, 1, 2, 3, 5, 0},
-                    {5, 3, 2, 1, 1, 5, 5, 5, 5, 5, 1, 1, 2, 3, 5},
-                    {0, 5, 3, 2, 1, 1, 5, 5, 5, 1, 1, 2, 3, 5, 0},
-                    {0, 0, 5, 3, 2, 1, 1, 5, 1, 1, 2, 3, 5, 0, 0},
-                    {0, 0, 0, 5, 3, 2, 1, 1, 1, 2, 3, 5, 0, 0, 0},
-                    {0, 0, 0, 0, 5, 3, 2, 2, 2, 3, 5, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 5, 3, 3, 3, 5, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                        {0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 5, 3, 3, 3, 5, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 5, 3, 2, 2, 2, 3, 5, 0, 0, 0, 0},
+                        {0, 0, 0, 5, 3, 2, 1, 1, 1, 2, 3, 5, 0, 0, 0},
+                        {0, 0, 5, 3, 2, 1, 1, 5, 1, 1, 2, 3, 5, 0, 0},
+                        {0, 5, 3, 2, 1, 1, 5, 5, 5, 1, 1, 2, 3, 5, 0},
+                        {5, 3, 2, 1, 1, 5, 5, 5, 5, 5, 1, 1, 2, 3, 5},
+                        {0, 5, 3, 2, 1, 1, 5, 5, 5, 1, 1, 2, 3, 5, 0},
+                        {0, 0, 5, 3, 2, 1, 1, 5, 1, 1, 2, 3, 5, 0, 0},
+                        {0, 0, 0, 5, 3, 2, 1, 1, 1, 2, 3, 5, 0, 0, 0},
+                        {0, 0, 0, 0, 5, 3, 2, 2, 2, 3, 5, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 5, 3, 3, 3, 5, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
                 };
                 break;
             case 5:
                 levelLayout = new int [][] {
-                    {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-                    {4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4},
-                    {0, 2, 2, 0, 3, 3, 3, 0, 3, 3, 3, 0, 2, 2, 0},
-                    {0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 0},
-                    {0, 1, 0, 5, 0, 1, 5, 0, 5, 1, 0, 5, 0, 1, 0},
-                    {0, 2, 5, 0, 5, 2, 0, 5, 0, 2, 5, 0, 5, 2, 0},
-                    {0, 0, 0, 5, 0, 0, 5, 0, 5, 0, 0, 5, 0, 0, 0},
-                    {4, 3, 3, 0, 3, 3, 5, 3, 5, 3, 3, 0, 3, 3, 4},
-                    {0, 0, 5, 0, 0, 5, 0, 5, 0, 5, 0, 0, 5, 0, 0},
-                    {0, 1, 0, 5, 0, 1, 5, 0, 5, 1, 0, 5, 0, 1, 0},
-                    {0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 0},
-                    {4, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 4},
-                    {0, 0, 0, 0, 5, 0, 5, 0, 5, 0, 5, 0, 0, 0, 0},
-                    {4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4},
-                    {4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4}
+                        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+                        {4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4},
+                        {0, 2, 2, 0, 3, 3, 3, 0, 3, 3, 3, 0, 2, 2, 0},
+                        {0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 0},
+                        {0, 1, 0, 5, 0, 1, 5, 0, 5, 1, 0, 5, 0, 1, 0},
+                        {0, 2, 5, 0, 5, 2, 0, 5, 0, 2, 5, 0, 5, 2, 0},
+                        {0, 0, 0, 5, 0, 0, 5, 0, 5, 0, 0, 5, 0, 0, 0},
+                        {4, 3, 3, 0, 3, 3, 5, 3, 5, 3, 3, 0, 3, 3, 4},
+                        {0, 0, 5, 0, 0, 5, 0, 5, 0, 5, 0, 0, 5, 0, 0},
+                        {0, 1, 0, 5, 0, 1, 5, 0, 5, 1, 0, 5, 0, 1, 0},
+                        {0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 5, 0, 0, 0},
+                        {4, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 4},
+                        {0, 0, 0, 0, 5, 0, 5, 0, 5, 0, 5, 0, 0, 0, 0},
+                        {4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4},
+                        {4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4}
                 };
                 break;
 
@@ -465,12 +471,15 @@ public class GameManager {
             effects.add((FireWorkEffect) object);
         } else if (object instanceof Shield) {
             shields.add((Shield) object);
+        } else if (object instanceof CannonShot) {
+            cannonShots.add((CannonShot) object);
         }
     }
 
     private void removeInactiveObjects() {
         PowerUpPool powerUpPool = PowerUpPool.getInstance();
         FireWorkEffectPool effectPool = FireWorkEffectPool.getInstance();
+        CannonShotPool sPool = CannonShotPool.getInstance();
 
         bricks.removeIf(obj -> !obj.isActive());
         balls.removeIf(obj -> !obj.isActive());
@@ -487,6 +496,13 @@ public class GameManager {
         effects.removeIf(effect -> {
             if (!effect.isActive()) {
                 effectPool.returnEffect(effect);
+                return true;
+            }
+            return false;
+        });
+
+        cannonShots.removeIf(shot -> {
+            if (!shot.isActive()) {
                 return true;
             }
             return false;
@@ -521,6 +537,7 @@ public class GameManager {
         for (PowerUp p : powerUps) p.update(deltaTimeSeconds);
         for (FireWorkEffect e : effects) e.update(deltaTimeSeconds);
         for (Shield s : shields) s.update(deltaTimeSeconds);
+        for (CannonShot c : cannonShots) c.update(deltaTimeSeconds);
 
         checkCollisions();
         removeInactiveObjects();
@@ -575,6 +592,20 @@ public class GameManager {
 
         final int BORDER_WIDTH = 25;
         final int BORDER_HEIGHT = 25;
+
+        for (CannonShot shot : cannonShots) {
+            if (!shot.isActive()) continue;
+            for (Brick brick : bricks) {
+                if (!brick.isActive() || brick.getType() == BrickType.WALL) continue;
+                if (shot.getBounds().intersects(brick.getBounds())) {
+                    if (brick.takeHit()) {
+                        onBrickDestroyed(brick);
+                    }
+                    CannonShotPool.getInstance().returnShot(shot);
+                    break;
+                }
+            }
+        }
 
         for (Ball ball : balls) {
             if (!ball.isActive()) continue;
@@ -702,6 +733,10 @@ public class GameManager {
         }
     }
 
+    public void removeCannonEffect() {
+        paddle.disableCannon();
+    }
+
     private void setBallSpeedXAfterPaddleCollision(Ball ball) {
         double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
         double ballCenterX = ball.getX() + ball.getWidth() / 2;
@@ -747,19 +782,23 @@ public class GameManager {
             delay.play();
         }
 
-        if (Math.random() < 0.05) {
+        final double OVERALL_DROP_CHANCE = 0.08;
+
+        if (Math.random() < OVERALL_DROP_CHANCE) {
             PowerUp powerUp = null;
-            Class<? extends PowerUp> typeToCreate = null; // Lưu loại class cần tạo
+            Class<? extends PowerUp> typeToCreate = null;
 
             double rand = Math.random();
 
-            if (rand < 0.15) {
+            if (rand < 0.05) {
+                typeToCreate = CannonPowerUp.class;
+            } else if (rand < 0.20) {
                 typeToCreate = MultiBallPowerUp.class;
-            } else if (rand < 0.30) {
+            } else if (rand < 0.35) {
                 typeToCreate = FastBallPowerUp.class;
-            } else if (rand < 0.45) {
+            } else if (rand < 0.50) {
                 typeToCreate = ExpandPaddlePowerUp.class;
-            } else if (rand < 0.60) {
+            } else if (rand < 0.65) {
                 typeToCreate = ShieldPowerUp.class;
             } else if (rand < 0.85) {
                 typeToCreate = FireBallPowerUp.class;
@@ -836,6 +875,8 @@ public class GameManager {
     public Ball getBall() {
         return ball;
     }
+
+    public List<CannonShot> getCannonShots() { return cannonShots; }
 
     public HighScoreManager getHighScoreManager() {
         return highScoreManager;

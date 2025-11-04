@@ -107,6 +107,12 @@ public class KeyInput {
                         gm.quitToMainMenu();
                     }
                 }
+                else if (gm.getGameState() == GameState.PLAYING) {
+                    Paddle paddle = gm.getPaddle();
+                    if (paddle != null && paddle.canShoot()) {
+                        paddle.shoot(gm);
+                    }
+                }
             }
             if (event.getButton() == MouseButton.SECONDARY) {
                 if (gm.getGameState() == GameState.PLAYING && !gm.getBall().isStarted()) {

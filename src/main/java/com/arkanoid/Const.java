@@ -20,6 +20,10 @@ public final class Const {
     public static final int BRICK_WIDTH = 60;
     public static final int BRICK_HEIGHT = 25;
 
+    public static final double CANNON_SHOT_SPEED = 400.0;
+    public static final int CANNON_SHOT_WIDTH = 8;
+    public static final int CANNON_SHOT_HEIGHT = 16;
+
     public static final int DEFAULT_LIVES = 3;
     public static final int DEFAULT_SCORES = 0;
 }
