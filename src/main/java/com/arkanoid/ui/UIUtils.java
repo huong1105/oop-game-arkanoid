@@ -14,13 +14,39 @@ import static com.arkanoid.game.FontManager.PAPYRUS_90;
  */
 public class UIUtils {
 
-    private static final DropShadow forestGlow = new DropShadow(25, Color.rgb(60, 180, 70, 0.8));
-    private static final Color forestGreen = Color.rgb(60, 180, 70);
+    private static DropShadow forestGlow = null;
+    private static DropShadow menuItemHoverGlow = null;
 
-    /**
-     * Ngăn không cho tạo instance của lớp này.
-     */
+    public static Color getForestGreen() {
+        return forestGreen;
+    }
+
+    private static Color forestGreen = Color.rgb(60, 180, 70);
+
     private UIUtils() {}
+
+
+    public static DropShadow getTitleGlow() {
+        if (forestGlow == null) {
+            forestGlow = new DropShadow();
+            forestGlow.setRadius(25);
+            forestGlow.setColor(Color.rgb(60, 180, 70, 0.8));
+        }
+        return forestGlow;
+    }
+
+    public static DropShadow getForestGlow() {
+        return forestGlow;
+    }
+
+    public static DropShadow getMenuItemHoverGlow() {
+        if (menuItemHoverGlow == null) {
+            menuItemHoverGlow = new DropShadow();
+            menuItemHoverGlow.setRadius(20);
+            menuItemHoverGlow.setColor(Color.rgb(60, 180, 70, 0.7));
+        }
+        return menuItemHoverGlow;
+    }
 
     /**
      * Vẽ tiêu đề game "ARKANOID" với style thống nhất.

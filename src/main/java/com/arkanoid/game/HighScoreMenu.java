@@ -5,15 +5,13 @@ import com.arkanoid.ui.MenuItem;
 import com.arkanoid.ui.UIUtils;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.arkanoid.game.FontManager.*;
+import static com.arkanoid.game.FontManager.PAPYRUS_32;
 
 public class HighScoreMenu {
 
@@ -21,16 +19,12 @@ public class HighScoreMenu {
     private HighScoreManager highScoreManager;
     private double canvasWidth, canvasHeight;
     private final List<MenuItem> menuItems = new ArrayList<>();
-    private final DropShadow forestGlow;
-    private final Color forestGreen = Color.rgb(60, 180, 70);
 
     public HighScoreMenu(double canvasWidth, double canvasHeight, MainMenu mainMenu, HighScoreManager highScoreManager) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.mainMenu = mainMenu;
         this.highScoreManager = highScoreManager;
-
-        forestGlow = new DropShadow(25, Color.rgb(0, 255, 255, 0.8));
 
         double buttonWidth = 300;
         double buttonHeight = 60;

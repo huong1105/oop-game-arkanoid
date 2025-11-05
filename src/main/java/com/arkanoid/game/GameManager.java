@@ -3,9 +3,10 @@ package com.arkanoid.game;
 import com.arkanoid.BrickType;
 import com.arkanoid.Const;
 import com.arkanoid.core.GameObject;
-import com.arkanoid.ui.PauseMenu;
 import com.arkanoid.entities.*;
+import com.arkanoid.ui.LevelSelectionMenu;
 import com.arkanoid.ui.MainMenu;
+import com.arkanoid.ui.PauseMenu;
 import com.arkanoid.ui.SpriteManager;
 import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
@@ -23,7 +24,7 @@ public class GameManager {
     private static GameManager instance;
     private int currentLevel = 1;
     private int savedLevel = 1;
-    private static final int MAX_LEVELS = 3;
+    public static final int MAX_LEVELS = 5;
 
     private final List<Ball> balls = new CopyOnWriteArrayList<>();
     private final List<Brick> bricks = new CopyOnWriteArrayList<>();
@@ -49,7 +50,7 @@ public class GameManager {
     private final HighScoreMenu highScoreMenu;
 
     private GameState gameState = GameState.LOADING;
-
+    private final LevelSelectionMenu levelSelectionMenu;
     private final HighScoreManager highScoreManager;
 
     public void setGameState(GameState newState) {
@@ -57,11 +58,13 @@ public class GameManager {
 
         boolean wasInMenuZone = (this.gameState == GameState.MENU ||
                 this.gameState == GameState.SETTINGS ||
-                this.gameState == GameState.HIGH_SCORE);
+                this.gameState == GameState.HIGH_SCORE ||
+                this.gameState == GameState.LEVEL_SELECTION);
 
         boolean isEnteringMenuZone = (newState == GameState.MENU ||
                 newState == GameState.SETTINGS ||
-                newState == GameState.HIGH_SCORE);
+                this.gameState == GameState.HIGH_SCORE ||
+                this.gameState == GameState.LEVEL_SELECTION);
 
         if (isEnteringMenuZone && !wasInMenuZone) {
             SoundManager.playBackgroundMusic();
@@ -70,6 +73,11 @@ public class GameManager {
         }
 
         this.gameState = newState;
+        if (newState == GameState.MENU) {
+            if (mainMenu != null) {
+                mainMenu.updateMenuState();
+            }
+        }
     }
 
     public void setFeverBallActive(boolean active) {
@@ -88,6 +96,7 @@ public class GameManager {
         pauseMenu = new PauseMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         SoundManager.playBackgroundMusic();
         highScoreManager = new HighScoreManager();
+        levelSelectionMenu = new LevelSelectionMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu);
         highScoreMenu = new HighScoreMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu, highScoreManager);
         FontManager.preload();
         loadAssets();
@@ -831,6 +840,7 @@ public class GameManager {
         powerUps.clear();
         effects.clear();
         shields.clear();
+        cannonShots.clear();
     }
 
     /**
@@ -894,4 +904,8 @@ public class GameManager {
     public HighScoreMenu getHighScoreMenu() {
         return highScoreMenu;
     }
+
+    public int getSavedLevel() { return savedLevel; }
+
+    public LevelSelectionMenu getLevelSelectionMenu() { return levelSelectionMenu; }
 }

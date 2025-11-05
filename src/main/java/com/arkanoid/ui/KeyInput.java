@@ -27,6 +27,9 @@ public class KeyInput {
             if (gm.getGameState() == GameState.MENU) {
                 gm.getMainMenu().update(event.getX(), event.getY()); // SỬA
             }
+            else if (gm.getGameState() == GameState.LEVEL_SELECTION) {
+                gm.getLevelSelectionMenu().update(event.getX(), event.getY());
+            }
             else if (gm.getGameState() == GameState.SETTINGS) {
                 gm.getSettingsMenu().update(event.getX(), event.getY()); // SỬA
             }
@@ -90,6 +93,17 @@ public class KeyInput {
                         }
                     }
                 }
+                else if (gm.getGameState() == GameState.LEVEL_SELECTION) {
+                    String clickedItem = gm.getLevelSelectionMenu().getClickedItem(mouseX, mouseY);
+                    if ("Back".equals(clickedItem)) {
+                        gm.setGameState(GameState.MENU);
+                    } else {
+                        int clickedLevel = gm.getLevelSelectionMenu().getClickedLevel(mouseX, mouseY);
+                        if (clickedLevel > 0) {
+                            gm.selectLevel(clickedLevel);
+                        }
+                    }
+                }
                 // Logic cho các trạng thái khác
                 else if (gm.getGameState() == GameState.MENU) {
                     String clickedItem = gm.getMainMenu().getClickedItem(mouseX, mouseY);
@@ -128,6 +142,12 @@ public class KeyInput {
             KeyCode code = event.getCode();
 
             if (gm.getGameState() == GameState.HIGH_SCORE) {
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    gm.setGameState(GameState.MENU);
+                }
+            }
+
+            if (gm.getGameState() == GameState.LEVEL_SELECTION) {
                 if (event.getCode() == KeyCode.ESCAPE) {
                     gm.setGameState(GameState.MENU);
                 }
@@ -203,6 +223,10 @@ public class KeyInput {
         switch (itemName) {
             case "New Game":
                 gm.startNewGame();
+                break;
+            case "Continue":
+                gm.getLevelSelectionMenu().updateLevelButtons();
+                gm.setGameState(GameState.LEVEL_SELECTION);
                 break;
             case "High Score":
                 gm.setGameState(GameState.HIGH_SCORE);

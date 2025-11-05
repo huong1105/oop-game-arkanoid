@@ -43,6 +43,10 @@ public class Renderer {
                 gm.getMainMenu().render(gc);
                 break;
 
+            case LEVEL_SELECTION:
+                gm.getLevelSelectionMenu().render(gc);
+                break;
+
             case HIGH_SCORE:
                 gm.getHighScoreMenu().render(gc);
                 break;

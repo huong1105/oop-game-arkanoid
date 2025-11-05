@@ -4,17 +4,13 @@ import com.arkanoid.ui.MainMenu;
 import com.arkanoid.ui.MenuItem;
 import com.arkanoid.ui.UIUtils;
 import javafx.geometry.Rectangle2D;
-import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.arkanoid.game.FontManager.PAPYRUS_90;
 import static com.arkanoid.game.FontManager.PAPYRUS_32;
 
 public class SettingsMenu {
@@ -23,18 +19,11 @@ public class SettingsMenu {
     private MainMenu mainMenu;
 
     private final List<MenuItem> menuItems = new ArrayList<>();
-    private final DropShadow forestGlow;
-    private final Color forestGreen = Color.rgb(60, 180, 70);
 
     public SettingsMenu(double canvasWidth, double canvasHeight, MainMenu mainMenu) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.mainMenu = mainMenu;
-
-        // --- Nạp font và hiệu ứng (từ MainMenu.java) ---
-
-        forestGlow = new DropShadow(25, Color.rgb(0, 255, 255, 0.8));
-
         double contentStartY = canvasHeight / 2.5;
         double sliderWidth = 400;
         double sliderHeight = 20;

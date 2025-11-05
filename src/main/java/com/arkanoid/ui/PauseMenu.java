@@ -1,19 +1,10 @@
 package com.arkanoid.ui;
 
-import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.arkanoid.game.FontManager.PAPYRUS_32;
-import static com.arkanoid.game.FontManager.PAPYRUS_90;
 
 public class PauseMenu {
 
@@ -21,15 +12,9 @@ public class PauseMenu {
     private final double canvasWidth;
     private final double canvasHeight;
 
-    private final DropShadow forestGlow;
-    private final Color forestGreen = Color.rgb(60, 180, 70);
-
     public PauseMenu(double canvasWidth, double canvasHeight) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-
-        // Tạo hiệu ứng phát sáng
-        forestGlow = new DropShadow(25, Color.rgb(60, 180, 70, 0.8));
 
         double buttonWidth = 300;
         double buttonHeight = 60;

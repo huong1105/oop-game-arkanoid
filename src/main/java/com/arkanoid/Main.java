@@ -7,18 +7,11 @@ import com.arkanoid.ui.KeyInput;
 import com.arkanoid.ui.Renderer;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -76,7 +69,8 @@ public class Main extends Application {
                 // Kiểm tra trạng thái để ẩn/hiện cột thông tin
                 boolean isFullScreenState = (currentState == GameState.MENU ||
                         currentState == GameState.HIGH_SCORE ||
-                        currentState == GameState.SETTINGS);
+                        currentState == GameState.SETTINGS ||
+                        currentState == GameState.LEVEL_SELECTION);
 
                 if (isFullScreenState) {
                     if (root.getRight() != null) {
