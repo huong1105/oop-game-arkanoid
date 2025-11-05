@@ -683,19 +683,19 @@ public class GameManager {
                     // Reverse và adjust dựa entry_side (nếu !fire hoặc wall)
                     if (!isFire || isWall) {
                         if (entry_side.equals("left") || entry_side.equals("right")) {
-                            ball.reverseX();
                             if (entry_side.equals("left")) {
                                 ball.setX(ball.getX() - min_pen);
                             } else {
                                 ball.setX(ball.getX() + min_pen);
                             }
+                            ball.reverseX();
                         } else if (entry_side.equals("top") || entry_side.equals("bottom")) {
-                            ball.reverseY();
                             if (entry_side.equals("top")) {
                                 ball.setY(ball.getY() - min_pen);
                             } else {
                                 ball.setY(ball.getY() + min_pen);
                             }
+                            ball.reverseY();
                         }
                     }
 
@@ -709,6 +709,7 @@ public class GameManager {
                             break;
                         }
                     }
+                    break;
                 }
             }
 
