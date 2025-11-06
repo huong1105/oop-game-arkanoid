@@ -36,6 +36,7 @@ public class GameManager {
     private Paddle paddle;
     private Ball ball;
     private boolean feverBallActive = false;
+    private boolean isFireBallActive = false;
 
     private double levelTransitionTimer = 0;
     private static final double DELAY_SEC = 1.5;
@@ -63,8 +64,8 @@ public class GameManager {
 
         boolean isEnteringMenuZone = (newState == GameState.MENU ||
                 newState == GameState.SETTINGS ||
-                this.gameState == GameState.HIGH_SCORE ||
-                this.gameState == GameState.LEVEL_SELECTION);
+                newState == GameState.HIGH_SCORE ||
+                newState == GameState.LEVEL_SELECTION);
 
         if (isEnteringMenuZone && !wasInMenuZone) {
             SoundManager.playBackgroundMusic();
@@ -111,9 +112,9 @@ public class GameManager {
 
     public void loadAssets() {
         // Sử dụng Task của JavaFX để chạy nền
-        Task<Void> loadingTask = new Task<Void>() {
+        Task<Void> loadingTask = new Task<>() {
             @Override
-            protected Void call() throws Exception {
+            protected Void call() {
                 System.out.println("Đang tải Sprites...");
                 SpriteManager.preload();
 
@@ -215,12 +216,9 @@ public class GameManager {
             addGameObject(rightWallBrick);
         }
 
-        int startX = BORDER_WIDTH;
-        int endX = rightWallX;
+        for (int x = BORDER_WIDTH; x < rightWallX; x += BORDER_WIDTH) {
 
-        for (int x = startX; x < endX; x += BORDER_WIDTH) {
-
-            if (x + BORDER_WIDTH > endX) {
+            if (x + BORDER_WIDTH > rightWallX) {
                 break;
             }
 
@@ -542,7 +540,11 @@ public class GameManager {
         if (gameState != GameState.PLAYING) return;
 
         paddle.update(deltaTimeSeconds);
-        for (Ball b : balls) b.update(deltaTimeSeconds);
+        boolean fireStatus = this.isFireBallActive();
+        for (Ball b : balls) {
+            b.setFireBall(fireStatus);
+            b.update(deltaTimeSeconds);
+        }
         for (PowerUp p : powerUps) p.update(deltaTimeSeconds);
         for (FireWorkEffect e : effects) e.update(deltaTimeSeconds);
         for (Shield s : shields) s.update(deltaTimeSeconds);
@@ -558,6 +560,7 @@ public class GameManager {
         if (remainingBricks == 0) {
             if (currentLevel >= MAX_LEVELS) {
                 setGameState(GameState.WIN);
+                SoundManager.playSound("win.wav");
             } else {
                 setGameState(GameState.LEVEL_TRANSITION);
                 levelTransitionTimer = DELAY_SEC;
@@ -569,8 +572,8 @@ public class GameManager {
         for (PowerUp p : powerUps) {
             if (p.isActivated()) {
                 p.removeEffect();
-                p.setActive(false);
             }
+            p.setActive(false);
         }
         setFeverBallActive(false);
 
@@ -585,9 +588,11 @@ public class GameManager {
                 setGameState(GameState.GAME_OVER);
                 highScoreManager.addScore(score);
                 gameOverTimer = DELAY_SEC;
+                SoundManager.playSound("lost.wav");
             } else {
                 lives -= lifePenalty;
                 balls.clear();
+                SoundManager.playSound("lose.wav");
                 int ballX = Const.BALL_DEFAULT_POS_X;
                 int ballY = Const.BALL_DEFAULT_POS_Y;
                 ball = new Ball(ballX, ballY, Const.BALL_DIAMETER, 0, 0);
@@ -869,6 +874,13 @@ public class GameManager {
 
     public GameState getGameState() {
         return gameState;
+    }
+
+    public void setFireBallActive(boolean active) {
+        this.isFireBallActive = active;
+    }
+    public boolean isFireBallActive() {
+        return this.isFireBallActive;
     }
 
     public int getScore() {

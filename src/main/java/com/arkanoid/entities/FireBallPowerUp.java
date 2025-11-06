@@ -1,9 +1,6 @@
 package com.arkanoid.entities;
 
-import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class FireBallPowerUp extends PowerUp {
     public static final int DURATION_MILLIS = 5000;
@@ -14,22 +11,24 @@ public class FireBallPowerUp extends PowerUp {
 
     @Override
     public void applyEffect() {
-        GameManager gm = GameManager.getInstance();
-        for (Ball ball : gm.getBalls()) {
-            if (ball.isActive()) {
-                ball.setFireBall(true);  // Thêm method này vào Ball
+        for (PowerUp p : GameManager.getInstance().getPowerUps()) {
+            if (p instanceof FireBallPowerUp && p != this && p.isActivated()) {
+                p.setActive(false);
             }
         }
-        gm.setFeverBallActive(false);  // Tắt fever nếu đang on (ưu tiên?)
+
+        GameManager.getInstance().setFireBallActive(true);
+        GameManager.getInstance().setFeverBallActive(false);
     }
 
     @Override
     public void removeEffect() {
-        GameManager gm = GameManager.getInstance();
-        for (Ball ball : gm.getBalls()) {
-            if (ball.isActive()) {
-                ball.setFireBall(false);
+        for (PowerUp p : GameManager.getInstance().getPowerUps()) {
+            if (p instanceof FireBallPowerUp && p != this && p.isActivated()) {
+                return; // Vẫn còn cái khác, không làm gì cả
             }
         }
+
+        GameManager.getInstance().setFireBallActive(false);
     }
 }

@@ -1,10 +1,7 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.Const;
-import com.arkanoid.core.GameObject;
 import com.arkanoid.game.GameManager;
-import java.util.List;
-import java.util.Objects;
 
 public class FastBallPowerUp extends PowerUp {
     private static final int DURATION = 5000; // ms
@@ -23,33 +20,36 @@ public class FastBallPowerUp extends PowerUp {
     public void applyEffect() {
         for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
             if (obj instanceof FastBallPowerUp && obj != this && obj.isActivated()) {
-                obj.durationSeconds = this.durationSeconds;
-                this.durationSeconds = 0;
-                return;
+                obj.setActive(false);
             }
         }
-
-        List<Ball> currentBalls = GameManager.getInstance().getBalls().stream()
-                .filter(Objects::nonNull)
-                .map(obj -> (Ball) obj)
-                .toList();
-
-        for (Ball ball : currentBalls) {
-            ball.setMaxSpeed((int)(ball.getMaxSpeed() * SPEED_MULTIPLIER));
-            ball.setSpeedX(ball.getSpeedX() * SPEED_MULTIPLIER);
-            ball.setSpeedY(ball.getSpeedY() * SPEED_MULTIPLIER);
+        double newSpeed = Const.BALL_MAXSPEED * SPEED_MULTIPLIER;
+        for (Ball ball : GameManager.getInstance().getBalls()) {
+            ball.setMaxSpeed(newSpeed);
+            double currentSpeed = Math.sqrt(ball.getSpeedX() * ball.getSpeedX() + ball.getSpeedY() * ball.getSpeedY());
+            if (currentSpeed > 0) {
+                ball.setSpeedX((ball.getSpeedX() / currentSpeed) * newSpeed);
+                ball.setSpeedY((ball.getSpeedY() / currentSpeed) * newSpeed);
+            }
         }
     }
 
     @Override
-    public void removeEffect() {
-        List<Ball> currentBalls = GameManager.getInstance().getBalls().stream()
-                .filter(Objects::nonNull)
-                .map(obj -> (Ball) obj)
-                .toList();
+    public void removeEffect () {
+        for (PowerUp p : GameManager.getInstance().getPowerUps()) {
+            if (p instanceof FastBallPowerUp && p != this && p.isActivated()) {
+                return;
+            }
+        }
 
-        for (Ball ball : currentBalls) {
+        for (Ball ball : GameManager.getInstance().getBalls()) {
             ball.setMaxSpeed(Const.BALL_MAXSPEED);
+            double currentSpeed = Math.sqrt(ball.getSpeedX() * ball.getSpeedX() + ball.getSpeedY() * ball.getSpeedY());
+
+            if (currentSpeed > 0) {
+                ball.setSpeedX((ball.getSpeedX() / currentSpeed) * Const.BALL_MAXSPEED);
+                ball.setSpeedY((ball.getSpeedY() / currentSpeed) * Const.BALL_MAXSPEED);
+            }
         }
     }
 }

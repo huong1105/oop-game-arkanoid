@@ -24,9 +24,9 @@ public class Paddle extends MovableObject {
 
     @Override
     public void update(double deltaTimeSeconds) {
-        if (movingLeft && getX() > 0) {
+        if (movingLeft && getX() > 25) {
             setSpeedX(-speed);
-        } else if (movingRight && getX() + width < Const.SCREEN_WIDTH) {
+        } else if (movingRight && getX() + width < Const.SCREEN_WIDTH - 25) {
             setSpeedX(speed);
         } else {
             setSpeedX(0);
@@ -97,6 +97,8 @@ public class Paddle extends MovableObject {
 
     public void shoot(GameManager gm) {
         if (!canShoot()) return;
+
+        com.arkanoid.game.SoundManager.playSound("bullet.wav");
 
         double shotX = getX() + getWidth() / 2 - (double) Const.CANNON_SHOT_WIDTH / 2;
         double shotY = getY() - Const.CANNON_SHOT_HEIGHT;

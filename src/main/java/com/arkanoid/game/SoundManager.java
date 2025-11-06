@@ -27,10 +27,10 @@ public class SoundManager {
             System.err.println("Lỗi khi tải trước nhạc nền: " + e.getMessage());
         }
 
-        loadSfx("brick_break.wav");
-        loadSfx("powerup_collect.wav");
-        loadSfx("lose_life.wav");
-        loadSfx("paddle_hit.wav");
+        loadSfx("bullet.wav");
+        loadSfx("lost.wav");
+        loadSfx("win.wav");
+        loadSfx("lose.wav");
     }
 
     private static void loadSfx(String fileName) {

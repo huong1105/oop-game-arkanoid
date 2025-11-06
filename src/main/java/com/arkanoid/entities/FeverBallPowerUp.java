@@ -19,9 +19,7 @@ public class FeverBallPowerUp extends PowerUp {
     public void applyEffect() {
         for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
             if ((obj instanceof FeverBallPowerUp) && (obj != this) && obj.isActivated()) {
-                obj.durationSeconds = this.durationSeconds;
-                this.durationSeconds = 0;
-                return;
+                obj.setActive(false);
             }
         }
 
@@ -30,6 +28,11 @@ public class FeverBallPowerUp extends PowerUp {
 
     @Override
     public void removeEffect() {
+        for (PowerUp p : GameManager.getInstance().getPowerUps()) {
+            if (p instanceof FeverBallPowerUp && p != this && p.isActivated()) {
+                return;
+            }
+        }
         GameManager.getInstance().setFeverBallActive(false);
     }
 

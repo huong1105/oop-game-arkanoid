@@ -1,13 +1,11 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.Const;
-import com.arkanoid.core.GameObject;
 import com.arkanoid.game.GameManager;
 
 public class ExpandPaddlePowerUp extends PowerUp {
     private static final int DURATION = 10000;
     private static final double WIDTH_MULTIPLIER = 2.0;
-    private double originalWidth;
 
     public ExpandPaddlePowerUp(int x, int y) {
         super(x, y, 20, 20, "ExpandPaddle", DURATION);
@@ -16,37 +14,39 @@ public class ExpandPaddlePowerUp extends PowerUp {
     @Override
     public void reset(double x, double y) {
         super.reset(x, y);
-        this.originalWidth = 0;
     }
 
     @Override
     public void applyEffect() {
-        Paddle paddle = GameManager.getInstance().getPaddle();
-        for (PowerUp obj : GameManager.getInstance().getPowerUps()) {
-            if (obj instanceof ExpandPaddlePowerUp && obj != this && obj.isActivated()) {
-                obj.durationSeconds = this.durationSeconds;
-                this.durationSeconds = 0;
-                return;
+        for (PowerUp p : GameManager.getInstance().getPowerUps()) {
+            if (p instanceof ExpandPaddlePowerUp && p != this && p.isActivated()) {
+                p.setActive(false);
             }
         }
 
-        originalWidth = paddle.getWidth();
-        paddle.setWidth(paddle.getWidth() * WIDTH_MULTIPLIER);
-        if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH) {
-            paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth());
-        }
+        Paddle paddle = GameManager.getInstance().getPaddle();
+        paddle.setWidth(Const.PADDLE_WIDTH * WIDTH_MULTIPLIER);
         paddle.setExpanded(true);
+
+        if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH - 25) {
+            paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth() - 25);
+        }
     }
 
     @Override
     public void removeEffect() {
-        if (originalWidth == 0) return;
-        Paddle paddle = GameManager.getInstance().getPaddle();
-        paddle.setWidth(originalWidth);
-        if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH) {
-            paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth());
+        for (PowerUp p : GameManager.getInstance().getPowerUps()) {
+            if (p instanceof ExpandPaddlePowerUp && p != this && p.isActivated()) {
+                return;
+            }
         }
+
+        Paddle paddle = GameManager.getInstance().getPaddle();
+        paddle.setWidth(Const.PADDLE_WIDTH); // Reset về hằng số gốc
         paddle.setExpanded(false);
-        this.originalWidth = 0;
+
+        if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH - 25) {
+            paddle.setX(Const.SCREEN_WIDTH - paddle.getWidth() - 25);
+        }
     }
 }

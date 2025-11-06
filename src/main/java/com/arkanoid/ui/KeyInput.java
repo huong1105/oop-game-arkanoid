@@ -226,7 +226,7 @@ public class KeyInput {
                 break;
             case "Continue":
                 gm.getLevelSelectionMenu().updateLevelButtons();
-                gm.setGameState(GameState.LEVEL_SELECTION);
+                gm.continueGame();
                 break;
             case "High Score":
                 gm.setGameState(GameState.HIGH_SCORE);

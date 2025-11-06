@@ -2,7 +2,6 @@ package com.arkanoid.entities;
 
 import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
-import com.arkanoid.game.GameManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -52,6 +51,7 @@ public abstract class PowerUp extends MovableObject {
                 if (timeRemaining <= 0) {
                     removeEffect();
                     this.active = false;
+                    this.isActivated = false;
                 }
             }
         }
@@ -113,5 +113,9 @@ public abstract class PowerUp extends MovableObject {
 
     public String getType() {
         return type;
+    }
+
+    public void resetTimer() {
+        this.timeRemaining = this.durationSeconds;
     }
 }
