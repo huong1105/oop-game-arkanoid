@@ -5,7 +5,6 @@ import com.arkanoid.core.MovableObject;
 import com.arkanoid.game.GameManager;
 import javafx.scene.canvas.GraphicsContext;
 import com.arkanoid.ui.SpriteManager;
-import javafx.scene.paint.Color;
 
 // Lớp Paddle kế thừa từ MovableObject
 public class Paddle extends MovableObject {
@@ -43,32 +42,6 @@ public class Paddle extends MovableObject {
             gc.drawImage(SpriteManager.PADDLE_NORMAL, x, y, width, height);
         }
 
-        if (canShoot && remainingShots > 0) {
-            double cannonW = 16;
-            double cannonH = 20;
-            double cannonX = x + width / 2 - cannonW / 2;
-            double cannonY = y - cannonH + 5; // nhô lên trên paddle
-
-            // Thân pháo (hình chữ nhật đỏ sẫm)
-            gc.setFill(Color.DARKRED);
-            gc.fillRect(cannonX, cannonY, cannonW, cannonH);
-
-            // Viền sáng
-            gc.setStroke(Color.RED);
-            gc.setLineWidth(1.5);
-            gc.strokeRect(cannonX, cannonY, cannonW, cannonH);
-
-            // Nòng pháo (hình chữ nhật cam, nhô lên trên)
-            double barrelW = 5;
-            double barrelH = 10;
-            double barrelX = cannonX + cannonW / 2 - barrelW / 2;
-            double barrelY = cannonY - barrelH;
-
-            gc.setFill(Color.ORANGE);
-            gc.fillRect(barrelX, barrelY, barrelW, barrelH);
-            gc.setStroke(Color.YELLOW);
-            gc.strokeRect(barrelX, barrelY, barrelW, barrelH);
-        }
     }
 
     public void reset() {
