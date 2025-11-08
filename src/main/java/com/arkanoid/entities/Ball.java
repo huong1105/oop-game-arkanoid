@@ -1,0 +1,99 @@
+package com.arkanoid.entities;
+
+import com.arkanoid.Const;
+import com.arkanoid.core.MovableObject;
+import com.arkanoid.ui.SpriteManager;
+import javafx.scene.canvas.GraphicsContext;
+
+public class Ball extends MovableObject {
+    private double maxSpeed = Const.BALL_MAXSPEED;
+    private boolean started = false;
+    private boolean isFireBall = false;
+
+    public Ball(int x, int y, int diameter, int speedX, int speedY) {
+        super(x, y, diameter, diameter, speedX, speedY);
+        this.sprite = SpriteManager.BALL_NORMAL;
+    }
+
+    public Ball() {
+        super(0, 0, Const.BALL_DIAMETER, Const.BALL_DIAMETER, 0, 0);
+        this.sprite = SpriteManager.BALL_NORMAL;
+    }
+
+    public boolean isFireBall() {
+        return isFireBall;
+    }
+
+    public void setFireBall(boolean fireBall) {
+        isFireBall = fireBall;
+    }
+
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void start() {
+        started = true;
+    }
+
+    public void stop() {
+        started = false;
+    }
+
+    /**
+     * cập nhật vị trí bóng.
+     */
+    @Override
+    public void update(double deltaTimeSeconds) {
+        if (started) {
+            while (getSpeedX() * getSpeedX() + getSpeedY() * getSpeedY() > maxSpeed * maxSpeed) {
+                setSpeedX(getSpeedX() * 0.99);
+                setSpeedY(getSpeedY() * 0.99);
+            }
+        }
+
+        super.update(deltaTimeSeconds);
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+        if (isFireBall) {
+            //can render them fireball
+            gc.drawImage(SpriteManager.BALL_FIRE, x, y, width, height);
+        } else {
+            super.render(gc);
+        }
+    }
+
+    public void reset(Paddle paddle) {
+        x = Const.BALL_DEFAULT_POS_X;
+        y = Const.BALL_DEFAULT_POS_Y;
+        width = Const.BALL_DIAMETER;
+        height = Const.BALL_DIAMETER;
+        speedX = 0;
+        speedY = 0;
+        started = false;
+    }
+
+    /**
+     * thay đổi hướng theo phương y.
+     */
+    public void reverseX() {
+        setSpeedX(-getSpeedX());
+    }
+
+    /**
+     * thay đổi hướng theo phương x.
+     */
+    public void reverseY() {
+        setSpeedY(-getSpeedY());
+    }
+}
