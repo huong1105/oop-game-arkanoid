@@ -100,6 +100,14 @@ public abstract class PowerUp extends MovableObject {
         return type;
     }
 
+    public double getTimeRemaining() {
+        return timeRemaining;
+    }
+
+    public double getDurationSeconds() {
+        return durationSeconds;
+    }
+
     public void resetTimer() {
         this.timeRemaining = this.durationSeconds;
     }
