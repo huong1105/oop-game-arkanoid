@@ -12,6 +12,7 @@ public class SpriteManager {
 
     private static Image spritesheet;
     private static Image entitySpritesheet;
+    private static Image powerupSpritesheet;
 
     public static Image BRICK_NORMAL;
     public static Image BRICK_HARD;
@@ -29,6 +30,17 @@ public class SpriteManager {
     public static Image BALL_NORMAL;
     public static Image PADDLE_NORMAL;
     public static Image PADDLE_EXPANDED;
+
+    public static Image POWERUP_MULTIBALL;
+    public static Image POWERUP_FASTBALL;
+    public static Image POWERUP_EXPAND;
+    public static Image POWERUP_SHIELD;
+    public static Image POWERUP_FIREBALL;
+    public static Image POWERUP_FEVER;
+    public static Image POWERUP_CANNON;
+
+    public static Image BULLET;
+
 
     public static void preload() {
         try {
@@ -53,6 +65,13 @@ public class SpriteManager {
             BACKGROUND_GAME = null;
         }
 
+        try {
+            String pwrPath = "/Images/powerup.png";
+            powerupSpritesheet = new Image(SpriteManager.class.getResourceAsStream(pwrPath));
+        } catch (Exception e) {
+            System.err.println("Lỗi: Không thể tải file 'powerup.png': " + e.getMessage());
+        }
+
         BRICK_NORMAL = getSprite(spritesheet, 1, 1, 24, 10);
         BRICK_HARD = getSprite(spritesheet, 27, 1, 24, 10);
         BRICK_SPECIAL = getSprite(spritesheet, 53, 1, 24, 10);
@@ -64,12 +83,23 @@ public class SpriteManager {
         BRICK_SPECIAL_HEAVY = getSprite(spritesheet, 53, 25, 24, 10);
 
         BALL_NORMAL = getSprite(entitySpritesheet, 10, 4, 42, 42);
-        BALL_FIRE = getSprite(entitySpritesheet, 10, 4, 42, 42);
+        BALL_FIRE = getSprite(entitySpritesheet, 69, 4, 42, 42);
 
         PADDLE_NORMAL = getSprite(entitySpritesheet, 14, 65, 256, 64);
         PADDLE_EXPANDED = getSprite(entitySpritesheet, 22, 188, 352, 64);
 
         BORDER_12x12 = getSprite(spritesheet, 167, 1, 12, 12);
+
+        POWERUP_CANNON = getSprite(powerupSpritesheet, 97, 124, 140, 129);
+        POWERUP_MULTIBALL = getSprite(powerupSpritesheet, 184, 352, 142, 124);
+        POWERUP_FASTBALL = getSprite(powerupSpritesheet, 426, 124, 141, 129);
+        POWERUP_EXPAND = getSprite(powerupSpritesheet, 262, 124, 140, 129);
+        POWERUP_SHIELD = getSprite(powerupSpritesheet, 514, 352, 139, 125);
+        POWERUP_FIREBALL = getSprite(powerupSpritesheet, 350, 352, 138, 124);
+        POWERUP_FEVER = getSprite(powerupSpritesheet, 591, 124, 140, 129);
+
+        BULLET = getSprite(entitySpritesheet, 128, 4, 24, 48);
+
     }
 
     /**
