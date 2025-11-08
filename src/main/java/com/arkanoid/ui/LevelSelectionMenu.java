@@ -29,7 +29,7 @@ public class LevelSelectionMenu {
         double startY = canvasHeight / 2 - 50;
 
         for (int i = 1; i <= totalLevels; i++) {
-            MenuItem button = new MenuItem("Level " + i, startX + (i - 1) * 120, startY, 100, 100);
+            MenuItem button = new MenuItem("" + i, startX + (i - 1) * 120, startY, 100, 100);
             if (i > maxLevel) {
                 button.setLocked(true); // (Ví dụ)
             }

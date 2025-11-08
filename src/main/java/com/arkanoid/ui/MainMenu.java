@@ -32,15 +32,12 @@ public class MainMenu {
     public void updateMenuState() {
         menuItems.clear();
         int maxLevel = GameManager.getInstance().getSavedLevel();
-        boolean showContinue = (maxLevel > 1);
 
         double currentY = this.startY;
         menuItems.add(new MenuItem("New Game", startX, currentY, buttonWidth, buttonHeight));
         currentY += spacingY;
-        if (showContinue) {
-            menuItems.add(new MenuItem("Continue", startX, currentY, buttonWidth, buttonHeight));
-            currentY += spacingY;
-        }
+        menuItems.add(new MenuItem("Continue", startX, currentY, buttonWidth, buttonHeight));
+        currentY += spacingY;
         menuItems.add(new MenuItem("High Score", startX, currentY, buttonWidth, buttonHeight));
         currentY += spacingY;
         menuItems.add(new MenuItem("Setting", startX, currentY, buttonWidth, buttonHeight));

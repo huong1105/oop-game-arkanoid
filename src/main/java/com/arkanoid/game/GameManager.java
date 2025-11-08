@@ -72,6 +72,9 @@ public class GameManager {
             SoundManager.playBackgroundMusic();
         }
 
+        if (!isEnteringMenuZone && wasInMenuZone) {
+            SoundManager.stopBackgroundMusic();
+        }
 
         this.gameState = newState;
         if (newState == GameState.MENU) {
@@ -444,14 +447,6 @@ public class GameManager {
         lives = Const.DEFAULT_LIVES;
         score =  Const.DEFAULT_SCORES;
         startLevel(1);
-    }
-
-    public SettingsMenu getSettingsMenu() {
-        return settingsMenu;
-    }
-
-    public MainMenu getMainMenu() {
-        return mainMenu;
     }
 
     public void pauseGame() {
@@ -917,6 +912,14 @@ public class GameManager {
     }
 
     public List<CannonShot> getCannonShots() { return cannonShots; }
+
+    public SettingsMenu getSettingsMenu() {
+        return settingsMenu;
+    }
+
+    public MainMenu getMainMenu() {
+        return mainMenu;
+    }
 
     public HighScoreManager getHighScoreManager() {
         return highScoreManager;
