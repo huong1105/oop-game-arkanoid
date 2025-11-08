@@ -9,7 +9,7 @@ public abstract class PowerUp extends MovableObject {
     protected double durationSeconds;
     protected Object target;
     protected String type;
-    private boolean isActivated = false;
+    public boolean isActivated = false;
     private double timeRemaining;
 
     private static final double FALL_SPEED = 120.0;
