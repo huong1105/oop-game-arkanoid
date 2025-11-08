@@ -4,6 +4,9 @@ import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import com.arkanoid.ui.SpriteManager;
+
 
 public abstract class PowerUp extends MovableObject {
     protected double durationSeconds;
@@ -14,12 +17,13 @@ public abstract class PowerUp extends MovableObject {
 
     private static final double FALL_SPEED = 120.0;
 
-    public PowerUp(int x, int y, int width, int height, String type, int durationMillis) {
+    public PowerUp(int x, int y, int width, int height, String type, int durationMillis, Image sprite) {
         super(x, y, width, height, (float) 0, (float) FALL_SPEED);
         this.type = type;
 
         this.durationSeconds = durationMillis / 1000.0;
         this.timeRemaining = this.durationSeconds;
+        this.sprite = sprite;
     }
 
     public void reset(double x, double y) {
@@ -61,33 +65,14 @@ public abstract class PowerUp extends MovableObject {
     public void render(GraphicsContext gc) {
         if (!isActive() || isActivated) return; // Chỉ render khi chưa activate
 
-        switch (type) {
-            case "MultiBall":
-                gc.setFill(Color.GREEN);
-                break;
-            case "FastBall":
-                gc.setFill(Color.RED);
-                break;
-            case "ExpandPaddle":
-                gc.setFill(Color.WHITE);
-                break;
-            case "FeverBall":
-                gc.setFill(Color.YELLOW);
-                break;
-            case "Shield":
-                gc.setFill(Color.CYAN);
-                break;
-            case "FireBall":
-                gc.setFill(Color.ORANGE);
-                break;
-            case "Cannon":
-                gc.setFill(Color.PURPLE);
-                break;
-            default:
-                gc.setFill(Color.YELLOW);
+        if (this.sprite != null) {
+            gc.drawImage(this.sprite, x, y, width, height);
+        } else {
+            gc.setFill(Color.MAGENTA);
+            gc.fillRect(x, y, width, height);
         }
-        gc.fillRect(x, y, width, height);
     }
+
 
     public void activate(Object obj) {
         if (isActivated) return;
