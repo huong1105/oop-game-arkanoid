@@ -70,9 +70,8 @@ public class GameManager {
 
         if (isEnteringMenuZone && !wasInMenuZone) {
             SoundManager.playBackgroundMusic();
-        } else if (!isEnteringMenuZone && wasInMenuZone) {
-            SoundManager.stopBackgroundMusic();
         }
+
 
         this.gameState = newState;
         if (newState == GameState.MENU) {
@@ -124,9 +123,9 @@ public class GameManager {
 
                 System.out.println("Đang tải Background...");
                 try {
-                    var image = GameManager.class.getResource("/Images/background.jpg");
+                    var image = GameManager.class.getResource("/Images/background.png");
                     if (image == null) {
-                        throw new Exception("Không tìm thấy /Images/background.jpg trong thư mục resources.");
+                        throw new Exception("Không tìm thấy /Images/background.png trong thư mục resources.");
                     }
                     preloadedBackgroundImage = new Image(image.toString());
                 } catch (Exception e) {
