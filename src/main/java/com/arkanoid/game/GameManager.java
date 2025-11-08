@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 
 public class GameManager {
@@ -152,6 +153,25 @@ public class GameManager {
     }
 
     public void startLevel(int level) {
+        List<PowerUp> activatedPowerUps = powerUps.stream()
+                .filter(PowerUp::isActivated)
+                .collect(Collectors.toList());
+
+        powerUps.removeAll(activatedPowerUps);
+
+        // Deactivate and return activated powerups
+        for (PowerUp p : activatedPowerUps) {
+            p.removeEffect();
+            p.isActivated = false;
+            p.setActive(false);
+            PowerUpPool.getInstance().returnPowerUp(p);
+        }
+
+        for (PowerUp p : new ArrayList<>(powerUps)) {
+            p.setActive(false);
+            PowerUpPool.getInstance().returnPowerUp(p);
+        }
+
         this.levelStartScore = this.score;
         this.levelStartLives = this.lives;
 
@@ -203,13 +223,11 @@ public class GameManager {
             return;
         }
 
-        // Tạo Tường Trái
         for (int y = 0; y < screenHeight; y += BORDER_HEIGHT) {
             Wall leftWallBrick = new Wall(0, y, BORDER_WIDTH, BORDER_HEIGHT, BORDER_SPRITE);
             addGameObject(leftWallBrick);
         }
 
-        // Tạo Tường Phải
         int rightWallX = screenWidth - BORDER_WIDTH;
         for (int y = 0; y < screenHeight; y += BORDER_HEIGHT) {
             Wall rightWallBrick = new Wall(rightWallX, y, BORDER_WIDTH, BORDER_HEIGHT, BORDER_SPRITE);
@@ -569,17 +587,17 @@ public class GameManager {
     }
 
     private void loseLife() {
-        for (PowerUp p : powerUps) {
-            if (p.isActivated()) {
-                p.removeEffect();
-            }
-            p.setActive(false);
-        }
-        setFeverBallActive(false);
-
         long activeBalls = balls.stream().filter(GameObject::isActive).count();
 
         if (activeBalls < 1) {
+            for (PowerUp p : powerUps) {
+                if (p.isActivated()) {
+                    p.removeEffect();
+                }
+                p.setActive(false);
+            }
+            setFeverBallActive(false);
+
             int lifePenalty;
             if (feverBallActive) lifePenalty = FeverBallPowerUp.getLifePenaltyMultiplier();
             else lifePenalty = 1;
