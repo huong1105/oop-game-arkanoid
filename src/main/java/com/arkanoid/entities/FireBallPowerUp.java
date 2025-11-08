@@ -1,12 +1,13 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 
 public class FireBallPowerUp extends PowerUp {
     public static final int DURATION_MILLIS = 5000;
 
     public FireBallPowerUp(int x, int y) {
-        super(x, y, 20, 20, "FireBall", DURATION_MILLIS);
+        super(x, y, 20, 20, "FireBall", DURATION_MILLIS, SpriteManager.POWERUP_FIREBALL);
     }
 
     @Override

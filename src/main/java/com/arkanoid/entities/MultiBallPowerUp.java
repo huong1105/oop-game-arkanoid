@@ -5,12 +5,13 @@ import com.arkanoid.game.GameManager;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import com.arkanoid.ui.SpriteManager;
 
 public class MultiBallPowerUp extends PowerUp {
     private static final int DURATION = 0;
 
     public MultiBallPowerUp(int x, int y) {
-        super(x, y, 20, 20, "MultiBall", DURATION); // Kích thước 20x20
+        super(x, y, 20, 20, "MultiBall", DURATION, SpriteManager.POWERUP_MULTIBALL); // Kích thước 20x20
     }
 
     @Override

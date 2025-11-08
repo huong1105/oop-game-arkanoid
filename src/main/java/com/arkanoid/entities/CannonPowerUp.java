@@ -2,12 +2,13 @@ package com.arkanoid.entities;
 
 import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 
 public class CannonPowerUp extends PowerUp {
     public static final int DURATION_MILLIS = 0;
 
     public CannonPowerUp(int x, int y) {
-        super(x, y, 20, 20, "Cannon", DURATION_MILLIS);
+        super(x, y, 20, 20, "Cannon", DURATION_MILLIS, SpriteManager.POWERUP_CANNON);
     }
 
     @Override

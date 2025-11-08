@@ -3,6 +3,7 @@ package com.arkanoid.entities;
 import com.arkanoid.BrickType;
 import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -13,7 +14,7 @@ public class ShieldPowerUp extends PowerUp {
     private static final int DURATION = 0;
 
     public ShieldPowerUp(int x, int y) {
-        super(x, y, 20, 20, "Shield", DURATION);
+        super(x, y, 20, 20, "Shield", DURATION, SpriteManager.POWERUP_SHIELD);
         shield = new Shield();
     }
 

@@ -1,6 +1,7 @@
 package com.arkanoid.entities;
 
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 
 public class FeverBallPowerUp extends PowerUp {
     private static final int DURATION = 8000; // ms
@@ -8,7 +9,7 @@ public class FeverBallPowerUp extends PowerUp {
     private static final int LIFE_PENALTY_MULTIPLIER = 2;
 
     public FeverBallPowerUp(int x, int y) {
-        super(x, y, 20, 20, "FeverBall", DURATION);
+        super(x, y, 20, 20, "FeverBall", DURATION, SpriteManager.POWERUP_FEVER);
     }
 
     public void reset(double x, double y) {

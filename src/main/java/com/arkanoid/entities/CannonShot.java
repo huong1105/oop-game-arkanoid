@@ -3,18 +3,19 @@ package com.arkanoid.entities;
 import com.arkanoid.Const;
 import com.arkanoid.core.MovableObject;
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class CannonShot extends MovableObject {
 
     public CannonShot(int x, int y) {
         super(x, y, Const.CANNON_SHOT_WIDTH, Const.CANNON_SHOT_HEIGHT, 0, (float) -Const.CANNON_SHOT_SPEED);
-        // Không cần sprite → vẽ bằng hình chữ nhật
+        this.sprite = SpriteManager.BULLET;
     }
 
     @Override
     public void update(double deltaTimeSeconds) {
+        if (!active) return;
         super.update(deltaTimeSeconds);
         if (getY() < -height) {
             CannonShotPool.getInstance().returnShot(this);
@@ -31,10 +32,6 @@ public class CannonShot extends MovableObject {
     @Override
     public void render(GraphicsContext gc) {
         if (!active) return;
-        // VẼ ĐẠN BẰNG RECTANGLE
-        gc.setFill(Color.ORANGERED);
-        gc.fillRect(x, y, width, height);
-        gc.setStroke(Color.YELLOW);
-        gc.strokeRect(x, y, width, height);
+        super.render(gc);
     }
 }

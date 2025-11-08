@@ -2,13 +2,14 @@ package com.arkanoid.entities;
 
 import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 
 public class ExpandPaddlePowerUp extends PowerUp {
     private static final int DURATION = 10000;
     private static final double WIDTH_MULTIPLIER = 2.0;
 
     public ExpandPaddlePowerUp(int x, int y) {
-        super(x, y, 20, 20, "ExpandPaddle", DURATION);
+        super(x, y, 20, 20, "ExpandPaddle", DURATION, SpriteManager.POWERUP_EXPAND);
     }
 
     @Override

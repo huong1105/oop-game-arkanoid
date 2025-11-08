@@ -2,13 +2,14 @@ package com.arkanoid.entities;
 
 import com.arkanoid.Const;
 import com.arkanoid.game.GameManager;
+import com.arkanoid.ui.SpriteManager;
 
 public class FastBallPowerUp extends PowerUp {
     private static final int DURATION = 5000; // ms
     private static final double SPEED_MULTIPLIER = 2.0;
 
     public FastBallPowerUp(int x, int y) {
-        super(x, y, 20, 20, "FastBall", DURATION);
+        super(x, y, 20, 20, "FastBall", DURATION, SpriteManager.POWERUP_FASTBALL);
     }
 
     @Override
