@@ -10,7 +10,7 @@ public final class Const {
     public static final double WINDOW_WIDTH = SCREEN_WIDTH + INFO_PANEL_WIDTH;
     public static final double BALL_MAXSPEED = 400.0;
     public static final int PADDLE_WIDTH = 120;
-    public static final int PADDLE_HEIGHT = 20;
+    public static final int PADDLE_HEIGHT = 30;
     public static final int BALL_DIAMETER = 20;
     public static final int PADDLE_DEFAULT_SPEED = 900;
     public static final int PADDLE_DEFAULT_POS_X = SCREEN_WIDTH / 2 - PADDLE_WIDTH / 2;
