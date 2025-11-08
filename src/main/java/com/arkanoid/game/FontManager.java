@@ -39,13 +39,13 @@ public class FontManager {
      * Tải tất cả các font chữ cần thiết
      */
     public static void preload() {
-        String papyrusPath = "/Fonts/Papyrus.ttf";
+        String pixelPath = "/Fonts/PixeloidMono-d94EV.ttf";
 
         // Tải các kích thước Papyrus
-        PAPYRUS_90 = loadFont(papyrusPath, 90, "Serif");
-        PAPYRUS_32 = loadFont(papyrusPath, 32, "Serif");
-        PAPYRUS_24 = loadFont(papyrusPath, 24, "Serif");
-        PAPYRUS_20 = loadFont(papyrusPath, 20, "Serif");
-        PAPYRUS_16 = loadFont(papyrusPath, 16, "Serif");
+        PAPYRUS_90 = loadFont(pixelPath, 90, "Serif");
+        PAPYRUS_32 = loadFont(pixelPath, 32, "Serif");
+        PAPYRUS_24 = loadFont(pixelPath, 24, "Serif");
+        PAPYRUS_20 = loadFont(pixelPath, 20, "Serif");
+        PAPYRUS_16 = loadFont(pixelPath, 16, "Serif");
     }
 }
