@@ -27,13 +27,13 @@ public class GameManager {
     private int savedLevel = 1;
     public static final int MAX_LEVELS = 5;
 
-    private final List<Ball> balls = new CopyOnWriteArrayList<>();
-    private final List<Brick> bricks = new CopyOnWriteArrayList<>();
-    private final List<PowerUp> powerUps = new CopyOnWriteArrayList<>();
-    private final List<FireWorkEffect> effects = new CopyOnWriteArrayList<>();
-    private final List<Shield> shields = new CopyOnWriteArrayList<>();
     private final List<Animation> activeTimers = new ArrayList<>();
-    private final List<CannonShot> cannonShots = new CopyOnWriteArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Brick> bricks = new ArrayList<>();
+    private final List<PowerUp> powerUps = new ArrayList<>();
+    private final List<FireWorkEffect> effects = new ArrayList<>();
+    private final List<Shield> shields = new ArrayList<>();
+    private final List<CannonShot> cannonShots = new ArrayList<>();
     private Paddle paddle;
     private Ball ball;
     private boolean feverBallActive = false;
@@ -643,7 +643,7 @@ public class GameManager {
             if (ball.getX() <= BORDER_WIDTH) {
                 ball.setX(BORDER_WIDTH);
                 ball.reverseX();
-                // SoundManager.playSound("hit_wall.wav"); // (Tùy chọn: thêm âm thanh)
+                SoundManager.playSound("hit.wav");
                 continue;
             }
 
@@ -651,7 +651,7 @@ public class GameManager {
             if (ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH - BORDER_WIDTH) {
                 ball.setX(Const.SCREEN_WIDTH - BORDER_WIDTH - ball.getWidth());
                 ball.reverseX();
-                // SoundManager.playSound("hit_wall.wav");
+                SoundManager.playSound("hit.wav");
                 continue;
             }
 
@@ -659,7 +659,7 @@ public class GameManager {
             if (ball.getY() <= BORDER_HEIGHT) {
                 ball.setY(BORDER_HEIGHT);
                 ball.reverseY();
-                // SoundManager.playSound("hit_wall.wav");
+                SoundManager.playSound("hit.wav");
                 continue;
             }
 
@@ -672,6 +672,7 @@ public class GameManager {
 
             // 2. Logic va cham paddle
             if (ball.getBounds().intersects(paddle.getBounds())) {
+                SoundManager.playSound("hit.wav");
                 Rectangle2D intersection = ball.intersection(paddle.getBounds());
                 setBallSpeedXAfterPaddleCollision(ball);
                 double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
@@ -687,6 +688,7 @@ public class GameManager {
                 if (!brick.isActive()) continue;
 
                 if (ball.getBounds().intersects(brick.getBounds())) {
+                    SoundManager.playSound("hit.wav");
                     Rectangle2D intersection = ball.intersection(brick.getBounds());
                     if (intersection == null) continue;
 
@@ -710,16 +712,16 @@ public class GameManager {
                     if (!isFire || isWall) {
                         if (entry_side.equals("left") || entry_side.equals("right")) {
                             if (entry_side.equals("left")) {
-                                ball.setX(ball.getX() - min_pen);
+                                ball.setX(ball.getX() - min_pen - 2);
                             } else {
-                                ball.setX(ball.getX() + min_pen);
+                                ball.setX(ball.getX() + min_pen + 2);
                             }
                             ball.reverseX();
                         } else if (entry_side.equals("top") || entry_side.equals("bottom")) {
                             if (entry_side.equals("top")) {
-                                ball.setY(ball.getY() - min_pen);
+                                ball.setY(ball.getY() - min_pen - 2);
                             } else {
-                                ball.setY(ball.getY() + min_pen);
+                                ball.setY(ball.getY() + min_pen + 2);
                             }
                             ball.reverseY();
                         }

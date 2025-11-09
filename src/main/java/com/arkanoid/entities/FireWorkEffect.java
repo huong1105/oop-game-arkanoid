@@ -36,7 +36,7 @@ public class FireWorkEffect extends GameObject {
     }
 
     private List<Particle> particles = new ArrayList<>();
-    private static final int NUM_PARTICLES = 30;
+    private static final int NUM_PARTICLES = 20;
     private Random rand = new Random();
 
     public FireWorkEffect(int x, int y, int width, int height) {
