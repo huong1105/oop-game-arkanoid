@@ -712,16 +712,16 @@ public class GameManager {
                     if (!isFire || isWall) {
                         if (entry_side.equals("left") || entry_side.equals("right")) {
                             if (entry_side.equals("left")) {
-                                ball.setX(ball.getX() - min_pen);
+                                ball.setX(ball.getX() - min_pen - 2);
                             } else {
-                                ball.setX(ball.getX() + min_pen);
+                                ball.setX(ball.getX() + min_pen + 2);
                             }
                             ball.reverseX();
                         } else if (entry_side.equals("top") || entry_side.equals("bottom")) {
                             if (entry_side.equals("top")) {
-                                ball.setY(ball.getY() - min_pen);
+                                ball.setY(ball.getY() - min_pen - 2);
                             } else {
-                                ball.setY(ball.getY() + min_pen);
+                                ball.setY(ball.getY() + min_pen + 2);
                             }
                             ball.reverseY();
                         }
