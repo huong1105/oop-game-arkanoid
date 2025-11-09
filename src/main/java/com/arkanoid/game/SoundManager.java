@@ -31,6 +31,7 @@ public class SoundManager {
         loadSfx("lost.wav");
         loadSfx("win.wav");
         loadSfx("lose.wav");
+        loadSfx("hit.wav");
     }
 
     private static void loadSfx(String fileName) {

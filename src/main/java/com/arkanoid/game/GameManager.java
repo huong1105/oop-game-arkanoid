@@ -643,7 +643,7 @@ public class GameManager {
             if (ball.getX() <= BORDER_WIDTH) {
                 ball.setX(BORDER_WIDTH);
                 ball.reverseX();
-                // SoundManager.playSound("hit_wall.wav"); // (Tùy chọn: thêm âm thanh)
+                SoundManager.playSound("hit.wav");
                 continue;
             }
 
@@ -651,7 +651,7 @@ public class GameManager {
             if (ball.getX() + ball.getWidth() >= Const.SCREEN_WIDTH - BORDER_WIDTH) {
                 ball.setX(Const.SCREEN_WIDTH - BORDER_WIDTH - ball.getWidth());
                 ball.reverseX();
-                // SoundManager.playSound("hit_wall.wav");
+                SoundManager.playSound("hit.wav");
                 continue;
             }
 
@@ -659,7 +659,7 @@ public class GameManager {
             if (ball.getY() <= BORDER_HEIGHT) {
                 ball.setY(BORDER_HEIGHT);
                 ball.reverseY();
-                // SoundManager.playSound("hit_wall.wav");
+                SoundManager.playSound("hit.wav");
                 continue;
             }
 
@@ -672,6 +672,7 @@ public class GameManager {
 
             // 2. Logic va cham paddle
             if (ball.getBounds().intersects(paddle.getBounds())) {
+                SoundManager.playSound("hit.wav");
                 Rectangle2D intersection = ball.intersection(paddle.getBounds());
                 setBallSpeedXAfterPaddleCollision(ball);
                 double newSpeedY = Math.sqrt(Math.pow(ball.getMaxSpeed(), 2)
@@ -687,6 +688,7 @@ public class GameManager {
                 if (!brick.isActive()) continue;
 
                 if (ball.getBounds().intersects(brick.getBounds())) {
+                    SoundManager.playSound("hit.wav");
                     Rectangle2D intersection = ball.intersection(brick.getBounds());
                     if (intersection == null) continue;
 
