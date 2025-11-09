@@ -32,7 +32,6 @@ public class Main extends Application {
         infoPanel.setPrefWidth(Const.INFO_PANEL_WIDTH);
         infoPanel.setStyle(
                 "-fx-background-color: #000000;" +
-                        "-fx-border-color: white;" +
                         "-fx-border-width: 0 0 0 2;" + // Chỉ viền trái 2px
                         "-fx-border-style: solid;"
         );
@@ -70,7 +69,8 @@ public class Main extends Application {
                 boolean isFullScreenState = (currentState == GameState.MENU ||
                         currentState == GameState.HIGH_SCORE ||
                         currentState == GameState.SETTINGS ||
-                        currentState == GameState.LEVEL_SELECTION);
+                        currentState == GameState.LEVEL_SELECTION ||
+                        currentState == GameState.LOADING);
 
                 if (isFullScreenState) {
                     if (root.getRight() != null) {

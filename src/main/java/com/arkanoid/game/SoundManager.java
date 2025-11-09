@@ -2,16 +2,24 @@ package com.arkanoid.game;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SoundManager {
     private static MediaPlayer musicPlayer;
     private static Media backgroundMusicMedia;
 
-    // Key: Tên file, Value: File âm thanh
-    private static final Map<String, Media> sfx = new HashMap<>();
+    private static final int SFX_POOL_SIZE = 11; // Hồ chứa cho mỗi âm thanh
+    private static final Map<String, List<Clip>> sfxClipPool = new HashMap<>();
     /**
      * Tải trước các file âm thanh nặng.
      */
@@ -36,13 +44,26 @@ public class SoundManager {
 
     private static void loadSfx(String fileName) {
         try {
-            URL resource = SoundManager.class.getResource("/sounds/" + fileName);
+            InputStream resource = SoundManager.class.getResourceAsStream("/sounds/" + fileName);
             if (resource == null) {
                 System.err.println("Không tìm thấy file âm thanh SFX: " + fileName);
                 return;
             }
-            Media sound = new Media(resource.toString());
-            sfx.put(fileName, sound); // Lưu vào cache
+            InputStream bufferedIn = new BufferedInputStream(resource);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+            List<Clip> clipList = new ArrayList<>(SFX_POOL_SIZE);
+            for (int i = 0; i < SFX_POOL_SIZE; i++) {
+                Clip clip = AudioSystem.getClip();
+                if (i > 0) {
+                    resource = SoundManager.class.getResourceAsStream("/sounds/" + fileName);
+                    bufferedIn = new BufferedInputStream(resource);
+                    audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+                }
+
+                clip.open(audioStream);
+                clipList.add(clip);
+            }
+            sfxClipPool.put(fileName, clipList);// Lưu vào cache
         } catch (Exception e) {
             System.err.println("Lỗi khi tải trước âm thanh SFX: " + fileName + " - " + e.getMessage());
         }
@@ -53,20 +74,19 @@ public class SoundManager {
      * Âm lượng được lấy từ GameSettings.
      */
     public static void playSound(String fileName) {
-        Media sound = sfx.get(fileName);
+        List<Clip> clipList = sfxClipPool.get(fileName);
 
-        if (sound == null) {
-            System.err.println("Lỗi: Âm thanh '" + fileName + "' chưa được tải trước (chưa có trong preload())");
+        if (clipList == null || clipList.isEmpty()) {
+            System.err.println("Lỗi: Âm thanh Clip '" + fileName + "' chưa được tải trước");
             return;
         }
 
-        try {
-            MediaPlayer sfxPlayer = new MediaPlayer(sound);
-            sfxPlayer.setVolume(GameSettings.getInstance().getSfxVolume());
-            sfxPlayer.setOnEndOfMedia(sfxPlayer::dispose);
-            sfxPlayer.play();
-        } catch (Exception e) {
-            System.err.println("Lỗi khi phát âm thanh: " + e.getMessage());
+        for (Clip clip : clipList) {
+            if (!clip.isRunning()) {
+                clip.setFramePosition(0);
+                clip.start();
+                return;
+            }
         }
     }
 

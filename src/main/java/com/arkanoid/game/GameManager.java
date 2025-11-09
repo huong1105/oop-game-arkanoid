@@ -27,13 +27,13 @@ public class GameManager {
     private int savedLevel = 1;
     public static final int MAX_LEVELS = 5;
 
-    private final List<Ball> balls = new CopyOnWriteArrayList<>();
-    private final List<Brick> bricks = new CopyOnWriteArrayList<>();
-    private final List<PowerUp> powerUps = new CopyOnWriteArrayList<>();
-    private final List<FireWorkEffect> effects = new CopyOnWriteArrayList<>();
-    private final List<Shield> shields = new CopyOnWriteArrayList<>();
     private final List<Animation> activeTimers = new ArrayList<>();
-    private final List<CannonShot> cannonShots = new CopyOnWriteArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Brick> bricks = new ArrayList<>();
+    private final List<PowerUp> powerUps = new ArrayList<>();
+    private final List<FireWorkEffect> effects = new ArrayList<>();
+    private final List<Shield> shields = new ArrayList<>();
+    private final List<CannonShot> cannonShots = new ArrayList<>();
     private Paddle paddle;
     private Ball ball;
     private boolean feverBallActive = false;
