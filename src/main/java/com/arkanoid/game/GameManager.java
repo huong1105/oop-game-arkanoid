@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
@@ -37,6 +38,8 @@ public class GameManager {
     private final List<CannonShot> cannonShots = new ArrayList<>();
     private Paddle paddle;
     private Ball ball;
+    private final AtomicInteger tasksRemaining = new AtomicInteger(0);
+    private Image loadedBackgroundImage = null;
     private boolean feverBallActive = false;
     private boolean isFireBallActive = false;
 
@@ -115,44 +118,84 @@ public class GameManager {
     }
 
     public void loadAssets() {
-        // Sử dụng Task của JavaFX để chạy nền
-        Task<Void> loadingTask = new Task<>() {
+        // Đặt bộ đếm về 3 (chúng ta có 3 nhiệm vụ song song)
+        tasksRemaining.set(3);
+        loadedBackgroundImage = null;
+
+        Task<Void> spriteTask = new Task<>() {
             @Override
-            protected Void call() {
-                System.out.println("Đang tải Sprites...");
+            protected Void call() throws Exception {
+                System.out.println("Luồng 1 (Sprites): Đang tải...");
                 SpriteManager.preload();
-
-                System.out.println("Đang tải Sounds...");
-                SoundManager.preload();
-
-                System.out.println("Đang tải Background...");
-                try {
-                    var image = GameManager.class.getResource("/Images/background.png");
-                    if (image == null) {
-                        throw new Exception("Không tìm thấy /Images/background.png trong thư mục resources.");
-                    }
-                    preloadedBackgroundImage = new Image(image.toString());
-                } catch (Exception e) {
-                    System.err.println("Lỗi tải ảnh nền: " + e.getMessage());
-                    preloadedBackgroundImage = null;
-                }
-
-                System.out.println("Tải xong!");
+                System.out.println("Luồng 1 (Sprites): Tải xong!");
                 return null;
             }
         };
 
-        loadingTask.setOnSucceeded(e -> {
-            mainMenu.setBackgroundImage(preloadedBackgroundImage);
+        spriteTask.setOnSucceeded(e -> onTaskFinished());
+        spriteTask.setOnFailed(e -> onTaskFailed(e.getSource().getException()));
+
+        Task<Void> soundTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Luồng 2 (Sounds): Đang tải...");
+                SoundManager.preload();
+                System.out.println("Luồng 2 (Sounds): Tải xong!");
+                return null;
+            }
+        };
+
+        soundTask.setOnSucceeded(e -> onTaskFinished());
+        soundTask.setOnFailed(e -> onTaskFailed(e.getSource().getException()));
+
+        Task<Image> backgroundTask = new Task<>() {
+            @Override
+            protected Image call() throws Exception {
+                System.out.println("Luồng 3 (Background): Đang tải...");
+                var image = GameManager.class.getResource("/Images/background.png");
+                if (image == null) {
+                    throw new Exception("Không tìm thấy /Images/background.png trong thư mục resources.");
+                }
+                Image loadedImage = new Image(image.toString());
+                System.out.println("Luồng 3 (Background): Tải xong!");
+                return loadedImage;
+            }
+        };
+
+        backgroundTask.setOnSucceeded(e -> {
+            loadedBackgroundImage = backgroundTask.getValue();
+            onTaskFinished();
+        });
+        backgroundTask.setOnFailed(e -> onTaskFailed(e.getSource().getException()));
+        
+        new Thread(spriteTask).start();
+        new Thread(soundTask).start();
+        new Thread(backgroundTask).start();
+    }
+
+    /**
+     * Phương thức trợ giúp, được gọi MỖI KHI một luồng (Task) hoàn thành THÀNH CÔNG.
+     * Nó chạy trên Luồng JavaFX (UI Thread).
+     */
+    private void onTaskFinished() {
+        // tasksRemaining.decrementAndGet() sẽ trừ đi 1 VÀ trả về giá trị MỚI
+        if (tasksRemaining.decrementAndGet() == 0) {
+            // Đây là luồng cuối cùng, tất cả 3 nhiệm vụ đã hoàn tất!
+            System.out.println("Tải xong tất cả tài nguyên!");
+
+            // Đặt ảnh nền và chuyển trạng thái game
+            mainMenu.setBackgroundImage(loadedBackgroundImage);
             setGameState(GameState.MENU);
-        });
+        }
+    }
 
-        loadingTask.setOnFailed(e -> {
-            System.err.println("Tải tài nguyên thất bại!");
-            loadingTask.getException().printStackTrace();
-        });
-
-        new Thread(loadingTask).start();
+    /**
+     * Phương thức trợ giúp, được gọi NẾU BẤT KỲ luồng nào thất bại.
+     */
+    private void onTaskFailed(Throwable exception) {
+        System.err.println("Một luồng tải tài nguyên đã thất bại!");
+        exception.printStackTrace();
+        // Bạn có thể dừng game hoặc hiển thị thông báo lỗi ở đây
     }
 
     public void startLevel(int level) {
