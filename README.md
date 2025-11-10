@@ -36,7 +36,7 @@ Mã UML của dự án: https://drive.google.com/drive/folders/1ADVP8I3q-8XWJMCV
     * **ExpandPaddle:** Làm thanh đỡ (paddle) dài ra.
     * **FastBall:** Tăng tốc độ của bóng.
     * **MultiBall:** Nhân đôi tất cả bóng đang có trên màn hình.
-    * **CannonPowerUp:** Paddle mọc ra 2 khẩu súng, cho phép bắn đạn phá gạch.
+    * **CannonPowerUp:** Paddle mọc ra 1 khẩu súng, cho phép bắn đạn phá gạch.
     * **FireBall:** Bóng biến thành "bóng lửa", phá hủy gạch ngay lập tức mà không nảy lại.
     * **FeverBall:** Kích hoạt "Fever Mode" (x2 điểm, nhưng cũng x2 hình phạt nếu mất bóng).
     * **Shield:** Tạo một tấm khiên ở đáy màn hình, cứu bóng khỏi bị rơi.
