@@ -437,7 +437,9 @@ public class GameManager {
 
     public void selectLevel(int level) {
         if (level <= savedLevel) {
+            this.lives = Const.DEFAULT_LIVES;
             startLevel(level);
+
         }
     }
 
