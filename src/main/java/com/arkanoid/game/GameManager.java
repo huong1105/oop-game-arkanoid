@@ -584,6 +584,11 @@ public class GameManager {
         long activeBalls = balls.stream().filter(GameObject::isActive).count();
 
         if (activeBalls < 1) {
+            int lifePenalty;
+            if (feverBallActive) {
+                lifePenalty = FeverBallPowerUp.getLifePenaltyMultiplier();
+            } else lifePenalty = 1;
+
             for (PowerUp p : powerUps) {
                 if (p.isActivated()) {
                     p.removeEffect();
@@ -592,9 +597,6 @@ public class GameManager {
             }
             setFeverBallActive(false);
 
-            int lifePenalty;
-            if (feverBallActive) lifePenalty = FeverBallPowerUp.getLifePenaltyMultiplier();
-            else lifePenalty = 1;
             if (lives <= lifePenalty) {
                 lives = 0;
                 setGameState(GameState.GAME_OVER);
