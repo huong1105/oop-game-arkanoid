@@ -8,7 +8,7 @@ public class GameSettings {
 
     private GameSettings() {
         // Giá trị mặc định
-        this.sfxVolume = 0.8;
+        this.sfxVolume = 0.6;
         this.bgmVolume = 0.5;
 
     }

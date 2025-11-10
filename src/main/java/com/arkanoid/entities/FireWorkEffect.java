@@ -51,7 +51,7 @@ public class FireWorkEffect extends GameObject {
         this.width = width;
         this.height = height;
         this.active = true;
-        this.bounds = new javafx.geometry.Rectangle2D(x, y, width, height); // Cập nhật bounds nếu cần
+        //this.bounds = new javafx.geometry.Rectangle2D(x, y, width, height); // Cập nhật bounds nếu cần
 
         particles.clear();
 
