@@ -4,7 +4,7 @@ import com.arkanoid.game.GameManager;
 import com.arkanoid.ui.SpriteManager;
 
 public class FeverBallPowerUp extends PowerUp {
-    private static final int DURATION = 8000; // ms
+    private static final int DURATION = 8000;
     private static final double SCORE_MULTIPLIER = 2.0;
     private static final int LIFE_PENALTY_MULTIPLIER = 2;
 

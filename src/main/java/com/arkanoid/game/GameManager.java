@@ -17,7 +17,6 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 
@@ -26,6 +25,8 @@ public class GameManager {
     private int currentLevel = 1;
     private int savedLevel = 1;
     public static final int MAX_LEVELS = 5;
+    final double OVERALL_DROP_CHANCE = 0.09;
+
 
     private final List<Animation> activeTimers = new ArrayList<>();
     private final List<Ball> balls = new ArrayList<>();
@@ -161,7 +162,6 @@ public class GameManager {
 
         powerUps.removeAll(activatedPowerUps);
 
-        // Deactivate and return activated powerups
         for (PowerUp p : activatedPowerUps) {
             p.removeEffect();
             p.isActivated = false;
@@ -191,7 +191,6 @@ public class GameManager {
             PowerUpPool.getInstance().returnPowerUp(pu);
         }
 
-        // Pre-pool CannonShots
         for (int i = 0; i < 20; i++) {
             CannonShotPool.getInstance().returnShot(new CannonShot(0, 0));
         }
@@ -813,7 +812,6 @@ public class GameManager {
             delay.play();
         }
 
-        final double OVERALL_DROP_CHANCE = 0.08;
 
         if (Math.random() < OVERALL_DROP_CHANCE) {
             PowerUp powerUp = null;

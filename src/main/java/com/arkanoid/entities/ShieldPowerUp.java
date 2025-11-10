@@ -33,6 +33,5 @@ public class ShieldPowerUp extends PowerUp {
 
     @Override
     public void removeEffect() {
-        // Không làm gì vì hiệu lực vĩnh viễn
     }
 }

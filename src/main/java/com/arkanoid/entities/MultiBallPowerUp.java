@@ -38,7 +38,7 @@ public class MultiBallPowerUp extends PowerUp {
                     (int) currentBall.getSpeedY()
             );
 
-            double speedX = newBall.getSpeedX();
+            double speedX;
             double speedY = newBall.getSpeedY();
             if (speedY == 0) {
                 speedY = currentBall.getMaxSpeed() * 0.7;
@@ -65,6 +65,5 @@ public class MultiBallPowerUp extends PowerUp {
 
     @Override
     public void removeEffect() {
-        // Không làm gì vì hiệu lực vĩnh viễn
     }
 }

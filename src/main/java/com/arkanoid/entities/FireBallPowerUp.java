@@ -26,7 +26,7 @@ public class FireBallPowerUp extends PowerUp {
     public void removeEffect() {
         for (PowerUp p : GameManager.getInstance().getPowerUps()) {
             if (p instanceof FireBallPowerUp && p != this && p.isActivated()) {
-                return; // Vẫn còn cái khác, không làm gì cả
+                return;
             }
         }
 

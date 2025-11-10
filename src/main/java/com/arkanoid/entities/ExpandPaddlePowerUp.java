@@ -43,7 +43,7 @@ public class ExpandPaddlePowerUp extends PowerUp {
         }
 
         Paddle paddle = GameManager.getInstance().getPaddle();
-        paddle.setWidth(Const.PADDLE_WIDTH); // Reset về hằng số gốc
+        paddle.setWidth(Const.PADDLE_WIDTH);
         paddle.setExpanded(false);
 
         if (paddle.getX() + paddle.getWidth() > Const.SCREEN_WIDTH - 25) {
