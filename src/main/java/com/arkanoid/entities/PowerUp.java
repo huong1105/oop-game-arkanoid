@@ -5,7 +5,6 @@ import com.arkanoid.core.MovableObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
-import com.arkanoid.ui.SpriteManager;
 
 
 public abstract class PowerUp extends MovableObject {

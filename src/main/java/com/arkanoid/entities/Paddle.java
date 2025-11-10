@@ -6,7 +6,6 @@ import com.arkanoid.game.GameManager;
 import javafx.scene.canvas.GraphicsContext;
 import com.arkanoid.ui.SpriteManager;
 
-// Lớp Paddle kế thừa từ MovableObject
 public class Paddle extends MovableObject {
     private int speed = Const.PADDLE_DEFAULT_SPEED;
     private boolean movingLeft;
@@ -16,7 +15,7 @@ public class Paddle extends MovableObject {
     private int remainingShots = 0;
 
     public Paddle(int x, int y, int width, int height) {
-        super(x, y, width, height, 0, 0); // Vận tốc ban đầu là 0
+        super(x, y, width, height, 0, 0);
         this.sprite = SpriteManager.PADDLE_NORMAL;
         this.isExpanded = false;
     }

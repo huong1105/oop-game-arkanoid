@@ -1,7 +1,5 @@
 package com.arkanoid.entities;
 
-import com.arkanoid.Const;
-import com.arkanoid.game.GameManager;
 import com.arkanoid.ui.SpriteManager;
 
 public class CannonPowerUp extends PowerUp {

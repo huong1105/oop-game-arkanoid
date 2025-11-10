@@ -5,7 +5,7 @@ import com.arkanoid.game.GameManager;
 import com.arkanoid.ui.SpriteManager;
 
 public class FastBallPowerUp extends PowerUp {
-    private static final int DURATION = 5000; // ms
+    private static final int DURATION = 5000;
     private static final double SPEED_MULTIPLIER = 2.0;
 
     public FastBallPowerUp(int x, int y) {
