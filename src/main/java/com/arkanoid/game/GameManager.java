@@ -54,6 +54,7 @@ public class GameManager {
     private final SettingsMenu settingsMenu;
     private final PauseMenu pauseMenu;
     private final HighScoreMenu highScoreMenu;
+    private final ProgressManager progressManager;
 
     private GameState gameState = GameState.LOADING;
     private final LevelSelectionMenu levelSelectionMenu;
@@ -104,9 +105,11 @@ public class GameManager {
         pauseMenu = new PauseMenu(Const.SCREEN_WIDTH, Const.SCREEN_HEIGHT);
         SoundManager.playBackgroundMusic();
         highScoreManager = new HighScoreManager();
+        progressManager = new ProgressManager();
         levelSelectionMenu = new LevelSelectionMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu);
         highScoreMenu = new HighScoreMenu(Const.WINDOW_WIDTH, Const.SCREEN_HEIGHT, mainMenu, highScoreManager);
         FontManager.preload();
+        this.savedLevel = progressManager.loadProgress();
         loadAssets();
     }
 
@@ -167,7 +170,7 @@ public class GameManager {
             onTaskFinished();
         });
         backgroundTask.setOnFailed(e -> onTaskFailed(e.getSource().getException()));
-        
+
         new Thread(spriteTask).start();
         new Thread(soundTask).start();
         new Thread(backgroundTask).start();
@@ -490,6 +493,7 @@ public class GameManager {
         savedLevel = 1;
         lives = Const.DEFAULT_LIVES;
         score =  Const.DEFAULT_SCORES;
+        progressManager.saveProgress(1);
         startLevel(1);
     }
 
@@ -580,6 +584,7 @@ public class GameManager {
                 startLevel(currentLevel);
                 if (savedLevel < currentLevel) {
                     savedLevel = currentLevel;
+                    progressManager.saveProgress(savedLevel);
                 }
             }
             return; // Dừng update trong lúc chờ
